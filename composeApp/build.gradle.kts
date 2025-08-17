@@ -54,6 +54,12 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+
+            implementation(libs.precompose.koin)
+            implementation(libs.precompose.core)
+            implementation(libs.precompose.viewmodel)
+
+            implementation(libs.androidx.datastore)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
