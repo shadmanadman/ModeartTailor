@@ -1,10 +1,7 @@
 <resources>
-    <string name="app_name"></string>
-    <string name="welcome_page_1">با دفترچه اندازه‌گیری دیجیتال،
- تمام اطلاعات مشتریان‌تان
-همیشه در دسترس شماست</string>
+    <string name="app_name">Modeart</string>
+    <string name="welcome_page_1">با دفترچه اندازه‌گیری دیجیتال، تمام اطلاعات مشتریان‌تان همیشه در دسترس شماست</string>
     <string name="welcome_page_2">اندازه‌ها را دقیق ثبت کنید، یادداشت بگذارید و تغییرات را در طول زمان پیگیری کنید.</string>
-    <string name="welcome_page_3">هر وقت و هر جا،
-سفارش‌ها را بر اساس اندازه واقعی مشتری آماده کنید.</string>
+    <string name="welcome_page_3">هر وقت و هر جا،سفارش‌ها را بر اساس اندازه واقعی مشتری آماده کنید.</string>
 
 </resources>

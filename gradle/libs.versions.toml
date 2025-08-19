@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.0"
+agp = "8.12.1"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
@@ -16,7 +16,7 @@ kotlinSerialization = "2.2.10"
 ktor = "3.2.3"
 logback = "1.5.18"
 koin = "4.1.0"
-precompose = "1.7.0-alpha03"
+precompose = "1.6.2"
 androidx-datastore = "1.1.7"
 
 [libraries]
