@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.login
 import org.jetbrains.compose.resources.stringResource
+import org.modeart.tailor.theme.appTypography
 
 @Composable
 fun RoundedCornerButton(
@@ -31,6 +32,6 @@ fun RoundedCornerButton(
         enabled = isEnabled,
         onClick = onClick
     ) {
-        Text(text = text, color = textColor)
+        Text(text = text, color = textColor, style = appTypography().title16)
     }
 }

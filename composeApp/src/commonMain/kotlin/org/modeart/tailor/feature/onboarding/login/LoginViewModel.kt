@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiEffect
@@ -26,6 +27,12 @@ class LoginViewModel : ViewModel() {
     var effects = Channel<LoginScreenUiEffect>(Channel.UNLIMITED)
         private set
 
+
+    fun goToSignUp() {
+        viewModelScope.launch {
+            effects.send(LoginScreenUiEffect.Navigation.SignUp)
+        }
+    }
 
     fun verifyPhoneNumber(phone: String) {
         val isValid = phone.length == 11

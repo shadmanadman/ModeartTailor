@@ -2,6 +2,7 @@ package org.modeart.tailor.feature.onboarding.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,7 @@ import modearttailor.composeapp.generated.resources.login
 import modearttailor.composeapp.generated.resources.login_title
 import modearttailor.composeapp.generated.resources.logo
 import modearttailor.composeapp.generated.resources.mobile_number
+import modearttailor.composeapp.generated.resources.no_account_signup
 import moe.tlaster.precompose.koin.koinViewModel
 import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.painterResource
@@ -62,7 +64,7 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 210.dp),
+            .padding(top = 250.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -102,6 +104,12 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
                     })
             }
         }
+
+        Text(
+            modifier = Modifier.padding(16.dp).clickable(onClick = viewModel::goToSignUp),
+            text = stringResource(Res.string.no_account_signup),
+            style = appTypography().title16.copy(color = Color.Blue, fontWeight = FontWeight.Bold)
+        )
     }
 }
 

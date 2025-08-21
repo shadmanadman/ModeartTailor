@@ -9,6 +9,7 @@ import org.modeart.tailor.feature.onboarding.onBoardingModule
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.modeart.tailor.feature.onboarding.login.LoginScene
+import org.modeart.tailor.feature.onboarding.signup.SignupScene
 import org.modeart.tailor.feature.onboarding.welcome.WelcomeScene
 import org.modeart.tailor.navigation.OnBoardingNavigation
 
@@ -23,6 +24,7 @@ internal fun App() {
                 navTransition = NavTransition(),
                 initialRoute = "welcome"
             ) {
+                //********************** OnBoarding *********************************//
                 // Welcome
                 scene(route = OnBoardingNavigation.welcome.fullPath) {
                     WelcomeScene(onNavigate = { navigator.navigate(it.fullPath) })
@@ -31,6 +33,12 @@ internal fun App() {
                 scene(route = OnBoardingNavigation.login.fullPath) {
                     LoginScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
+                // Signup
+                scene(route = OnBoardingNavigation.signup.fullPath) {
+                    SignupScene(onNavigate = { navigator.navigate(it.fullPath) })
+                }
+                //************************ Main *********************************//
+
             }
         }
     }
