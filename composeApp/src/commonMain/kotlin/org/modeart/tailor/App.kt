@@ -5,9 +5,10 @@ import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
-import onBoardingModule
+import org.modeart.tailor.feature.onboarding.onBoardingModule
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
+import org.modeart.tailor.feature.onboarding.login.LoginScene
 import org.modeart.tailor.feature.onboarding.welcome.WelcomeScene
 import org.modeart.tailor.navigation.OnBoardingNavigation
 
@@ -22,8 +23,13 @@ internal fun App() {
                 navTransition = NavTransition(),
                 initialRoute = "welcome"
             ) {
+                // Welcome
                 scene(route = OnBoardingNavigation.welcome.fullPath) {
-                    WelcomeScene(goToMain = {}, goToLogin = {}, goToSignup = {})
+                    WelcomeScene(onNavigate = { navigator.navigate(it.fullPath) })
+                }
+                // Login
+                scene(route = OnBoardingNavigation.login.fullPath) {
+                    LoginScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
             }
         }

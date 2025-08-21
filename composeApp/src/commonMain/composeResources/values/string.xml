@@ -4,4 +4,9 @@
     <string name="welcome_page_2">اندازه‌ها را دقیق ثبت کنید، یادداشت بگذارید و تغییرات را در طول زمان پیگیری کنید.</string>
     <string name="welcome_page_3">هر وقت و هر جا،سفارش‌ها را بر اساس اندازه واقعی مشتری آماده کنید.</string>
 
+    <string name="login_title">ورود به مدآرت</string>
+    <string name="mobile_number">شماره موبایل</string>
+    <string name="login">ورود</string>
+    <string name="enter_code">کد ارسال شده رو وارد کن.</string>
+
 </resources>

@@ -1,7 +1,9 @@
+package org.modeart.tailor.feature.onboarding.welcome.contract
+
 import org.modeart.tailor.navigation.OnBoardingNavigation
 import org.modeart.tailor.navigation.Route
 
-internal sealed interface WelcomeScreenUiEffect {
+sealed interface WelcomeScreenUiEffect {
     data class ShowRawNotification(val msg: String) : WelcomeScreenUiEffect
 
     sealed class Navigation(open val screen: Route) : WelcomeScreenUiEffect {

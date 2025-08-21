@@ -42,6 +42,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.shape_welcome_1
 import modearttailor.composeapp.generated.resources.shape_welcome_2
@@ -52,8 +55,12 @@ import modearttailor.composeapp.generated.resources.shape_welcome_6
 import modearttailor.composeapp.generated.resources.welcome_page_1
 import modearttailor.composeapp.generated.resources.welcome_page_2
 import modearttailor.composeapp.generated.resources.welcome_page_3
+import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.modeart.tailor.feature.onboarding.welcome.contract.WelcomeScreenUiEffect
+import org.modeart.tailor.navigation.OnBoardingNavigation
+import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.appTypography
 
 const val WELCOME_PAGE_COUNT = 3
@@ -61,10 +68,21 @@ const val WELCOME_PAGE_COUNT = 3
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WelcomeScene(
-    goToLogin: () -> Unit,
-    goToSignup: () -> Unit,
-    goToMain: () -> Unit
+    onNavigate:(Route)-> Unit
 ) {
+    val viewModel = koinViewModel(WelcomeViewModel::class)
+    val effects = viewModel.effects.receiveAsFlow()
+
+    LaunchedEffect(effects) {
+        effects.onEach { effect ->
+            when (effect) {
+                WelcomeScreenUiEffect.Navigation.Login -> onNavigate(OnBoardingNavigation.login)
+                WelcomeScreenUiEffect.Navigation.SignUp -> onNavigate(OnBoardingNavigation.signup)
+                is WelcomeScreenUiEffect.ShowRawNotification -> {}
+            }
+        }.collect()
+    }
+
     val pagerState = rememberPagerState(pageCount = { WELCOME_PAGE_COUNT })
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
@@ -75,7 +93,7 @@ fun WelcomeScene(
         DoneButton(
             pagerState.currentPage,
             modifier = Modifier.align(Alignment.BottomEnd),
-            onDone = {})
+            onDone = viewModel::onDone)
     }
 
 }
