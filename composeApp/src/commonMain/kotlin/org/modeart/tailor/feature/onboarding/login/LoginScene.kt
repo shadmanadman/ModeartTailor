@@ -1,7 +1,6 @@
 package org.modeart.tailor.feature.onboarding.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,23 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,15 +27,12 @@ import modearttailor.composeapp.generated.resources.logo
 import modearttailor.composeapp.generated.resources.mobile_number
 import modearttailor.composeapp.generated.resources.no_account_signup
 import moe.tlaster.precompose.koin.koinViewModel
-import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinApplicationPreview
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiState
 import org.modeart.tailor.feature.onboarding.login.contract.LoginStep
-import org.modeart.tailor.feature.onboarding.onBoardingModule
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.appTypography
 
