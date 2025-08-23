@@ -11,10 +11,10 @@ data class BottomNavUiState(
 
 data class BottomNavScreensState(
     val id: RootBottomNavId,
-    val name: StringResource? = null,
+    val name: StringResource,
     val openScreen: () -> Unit,
     val isSelected: Boolean,
-    val icon: DrawableResource? = null
+    val icon: DrawableResource
 )
 
 enum class RootBottomNavId {

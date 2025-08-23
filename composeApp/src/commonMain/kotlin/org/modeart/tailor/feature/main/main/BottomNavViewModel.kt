@@ -27,26 +27,16 @@ class BottomNavViewModel : ViewModel() {
     var effect = Channel<BottomNavUiEffect>(Channel.UNLIMITED)
         private set
 
-
-    fun selectedScreen(screen: RootBottomNavId) {
-        _uiState.update { it.copy(selectedScreen = screen) }
-    }
-
-    fun openHome() {
+    fun openScreen(screen: RootBottomNavId) {
         viewModelScope.launch {
-            effect.send(BottomNavUiEffect.Navigation.Home)
+            _uiState.update { it.copy(selectedScreen = screen) }
+            when (screen) {
+                RootBottomNavId.Home -> effect.send(BottomNavUiEffect.Navigation.Home)
+                RootBottomNavId.Measure -> effect.send(BottomNavUiEffect.Navigation.Measure)
+                RootBottomNavId.Note -> effect.send(BottomNavUiEffect.Navigation.Note)
+                RootBottomNavId.Customer -> effect.send(BottomNavUiEffect.Navigation.Customers)
+            }
         }
-    }
 
-    fun openNote() {
-        viewModelScope.launch { effect.send(BottomNavUiEffect.Navigation.Note) }
-    }
-
-    fun openMeasure() {
-        viewModelScope.launch { effect.send(BottomNavUiEffect.Navigation.Measure) }
-    }
-
-    fun openCustomers() {
-        viewModelScope.launch { effect.send(BottomNavUiEffect.Navigation.Customers) }
     }
 }
