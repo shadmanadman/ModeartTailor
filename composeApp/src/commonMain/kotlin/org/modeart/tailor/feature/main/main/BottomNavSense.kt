@@ -82,7 +82,7 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
         BottomNavigationBar(items = bottomNavItems)
     }, content = { innerPadding ->
         NavHost(
-            modifier = Modifier.padding(innerPadding), // Apply the padding from the Scaffold
+            modifier = Modifier.padding(innerPadding),
             navigator = navigator,
             navTransition = NavTransition(),
             initialRoute = MainNavigation.home.name
@@ -122,15 +122,15 @@ fun BottomNavigationBar(items: List<BottomNavScreensState>) {
 fun BottomNavigationItem(item: BottomNavScreensState) {
     val backgroundColor by animateColorAsState(
         targetValue = if (item.isSelected) Color.Black else Color.Transparent,
-        animationSpec = tween(300)
+        animationSpec = tween(500)
     )
     val iconTint by animateColorAsState(
         targetValue = if (item.isSelected) Color.White else Color.Gray,
-        animationSpec = tween(300)
+        animationSpec = tween(500)
     )
     val cornerRadius by animateDpAsState(
         targetValue = if (item.isSelected) 16.dp else 0.dp,
-        animationSpec = tween(300)
+        animationSpec = tween(500)
     )
 
     Box(
