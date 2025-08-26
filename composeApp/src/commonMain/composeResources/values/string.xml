@@ -22,4 +22,6 @@
     <string name="search_in_customers">جستجو در مشتریان</string>
     <string name="all_customer">همه مشتریان</string>
     <string name="this_month_customer">مشتریان این ماه</string>
+    <string name="first_note">اولین یادداشت</string>
+    <string name="first_customer">اولین مشتری</string>
 </resources>

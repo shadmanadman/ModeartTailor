@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,16 +21,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.all_customer
+import modearttailor.composeapp.generated.resources.first_note
+import modearttailor.composeapp.generated.resources.ic_add_button
 import modearttailor.composeapp.generated.resources.ic_add_photo
+import modearttailor.composeapp.generated.resources.ic_calendar
 import modearttailor.composeapp.generated.resources.ic_notification
 import modearttailor.composeapp.generated.resources.ic_target
 import modearttailor.composeapp.generated.resources.ic_user_star
 import modearttailor.composeapp.generated.resources.search_in_customers
+import modearttailor.composeapp.generated.resources.test_avatar
 import modearttailor.composeapp.generated.resources.this_month_customer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -45,7 +53,67 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
 
 
 @Composable
-@Preview
+fun LastNoteItem() {
+    Box(
+        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
+            .background(color = Color.Black, shape = RoundedCornerShape(16.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Title
+                Text(text = "Title", style = appTypography().title17.copy(color = Color.White))
+                // Date
+                Box(
+                    modifier = Modifier.background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.ic_calendar),
+                            contentDescription = null
+                        )
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = "22 Aug",
+                            style = appTypography().body12
+                        )
+                    }
+                }
+            }
+            // Note content
+            Text(text = "Content", style = appTypography().body14.copy(color = Color.White))
+        }
+    }
+}
+
+
+@Composable
+fun EmptyNoteOrCustomer() {
+    Box(
+        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
+            .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
+            .alpha(0.3f)
+            .padding(16.dp), contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(painter = painterResource(Res.drawable.ic_add_button), contentDescription = null)
+            Text(text = stringResource(Res.string.first_note), style = appTypography().title15)
+        }
+
+    }
+}
+
+@Composable
 fun HomeTopBar() {
     Box(modifier = Modifier.fillMaxWidth()) {
 
@@ -133,7 +201,6 @@ fun HomeTopBar() {
 
 
 @Composable
-@Preview
 fun Statistics() {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
         // Customers count
@@ -203,3 +270,41 @@ fun Statistics() {
         }
     }
 }
+
+
+@Composable
+fun CustomerItem() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier.size(68.dp).clip(shape = RoundedCornerShape(16.dp))) {
+            Image(painter = painterResource(Res.drawable.test_avatar), contentDescription = null)
+        }
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = "Name",
+            style = appTypography().body14.copy(fontWeight = FontWeight.Bold)
+        )
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = "LasName",
+            style = appTypography().body14.copy(
+                color = Color.LightGray,
+                fontWeight = FontWeight.Bold
+            )
+        )
+
+    }
+
+}
+
+@Composable
+@Preview
+fun HomePreview() {
+    Column {
+        CustomerItem()
+        Statistics()
+        HomeTopBar()
+        LastNoteItem()
+        EmptyNoteOrCustomer()
+    }
+}
+
