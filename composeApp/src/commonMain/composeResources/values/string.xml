@@ -24,4 +24,12 @@
     <string name="this_month_customer">مشتریان این ماه</string>
     <string name="first_note">اولین یادداشت</string>
     <string name="first_customer">اولین مشتری</string>
+    <string name="new_note">یادداشت جدید</string>
+
+    <string name="work_and_customer">کار و مشتری</string>
+    <string name="personal">شخصی</string>
+    <string name="others">متفرقه</string>
+    <string name="in_category">در دسته</string>
+    <string name="title">عنوان</string>
+    <string name="note_content">متن یادداشت</string>
 </resources>
