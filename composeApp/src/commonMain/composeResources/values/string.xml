@@ -32,4 +32,33 @@
     <string name="in_category">در دسته</string>
     <string name="title">عنوان</string>
     <string name="note_content">متن یادداشت</string>
+    <string name="customer_basic_info">اطلاعات پایه مشتری</string>
+    <string name="choose_gender">انتخاب جنسیت</string>
+    <string name="customer_name_family_name">نام و نام خانوادگی مشتری</string>
+    <string name="mobile_number_customer">شماره موبایل</string>
+    <string name="birth_date">تاریخ تولد</string>
+    <string name="customer_picture">تصویر مشتری</string>
+
+    <string name="title_personal_and_style_features">ویژگی‌های شخصی و سبک پوشش</string>
+    <string name="customer_style">استایل مشتری</string>
+    <string name="fit">فیت پسند</string>
+    <string name="modern">مدرن</string>
+    <string name="classic">کلاسیک</string>
+    <string name="relaxed">راحتی</string>
+    <string name="formal">رسمی</string>
+    <string name="body_type">نوع بدن</string>
+    <string name="shoulder_model">مدل سرشانه</string>
+    <string name="fabric_sensitivity">حساسیت به پارچه</string>
+    <string name="select_fabric">انتخاب پارچه</string>
+
+    <string name="title_supplementary_information">سابقه یا اطلاعات مکمل</string>
+    <string name="customer_preferred_color">رنگ مشتری(دلخواه)</string>
+    <string name="is_old_customer">آیا مشتری قدیمی است؟</string>
+    <string name="yes">بله</string>
+    <string name="no">خیر</string>
+    <string name="referred_by">معرف یا نسبت با</string>
+    <string name="referrer_name">نام مشتری</string>
+    <string name="notes_about_customer">یادداشت کلی درباره مشتری</string>
+    <string name="notes_hint">مانند : رابطه، سلیقه، رفتار، نیازها</string>
+
 </resources>
