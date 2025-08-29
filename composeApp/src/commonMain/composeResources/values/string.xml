@@ -61,4 +61,54 @@
     <string name="notes_about_customer">یادداشت کلی درباره مشتری</string>
     <string name="notes_hint">مانند : رابطه، سلیقه، رفتار، نیازها</string>
 
+    <string name="age">سن</string>
+    <string name="style">سبک</string>
+    <string name="body_shape">فرم بدن</string>
+
+    <string name="top_measurements">بالاتنه</string>
+    <string name="shoulder_width">عرض شانه</string>
+    <string name="small_shoulder">سرشانه کوچک</string>
+    <string name="neck_circumference">دور گردن</string>
+    <string name="chest_height">بلندی سینه</string>
+    <string name="chest_circumference">دور سینه</string>
+    <string name="chest_gap">فاصله سینه</string>
+    <string name="front_waist_length">بلندی تا کمر جلو</string>
+    <string name="waist_circumference">دور کمر</string>
+    <string name="small_hip_circumference">دور باسن کوچک</string>
+    <string name="large_hip_circumference">دور باسن بزرگ</string>
+    <string name="hip_length">بلندی باسن</string>
+    <string name="front_armhole">کارور جلو</string>
+    <string name="back_armhole">کارور پشت</string>
+    <string name="back_neck_to_waist_length">بلندی گردن تا کمر پشت</string>
+
+    <string name="lower_body">پایین تنه</string>
+    <string name="waist_and_skirt_or_pants">دور کمر / بستن کمر شلوار یا دامن</string>
+    <string name="hip_circumference">دور باسن</string>
+    <string name="waist_to_hip_length">بلندی کمر تا باسن</string>
+    <string name="thigh_circumference">دور ران</string>
+    <string name="knee_circumference">دور زانو</string>
+    <string name="calf_circumference">دور ساق</string>
+    <string name="ankle_circumference">دور مچ پا</string>
+    <string name="inseam">قد داخلی پا</string>
+    <string name="outseam">قد خارجی پا</string>
+    <string name="waist_to_knee_length">بلندی کمر تا زانو</string>
+
+    <string name="sleeve">آستین</string>
+    <string name="full_sleeve_length">قد آستین کامل</string>
+    <string name="forearm_circumference">دور ساعد</string>
+    <string name="bicep_circumference">دور بازو</string>
+    <string name="wrist_circumference">دور مچ دست</string>
+    <string name="armhole">حلقه آستین</string>
+    <string name="sleeve_length_to_elbow">قد آستین تا آرنج</string>
+
+    <string name="title_measurement_source">منبع اندازه گیری</string>
+    <string name="body_dress_pattern_measurement">بدن / لباس / الگو / از راه دور</string>
+    <string name="title_measurement_freedom_level">سطح آزادی اندازه گیری</string>
+    <string name="seam_allowance">با جای دوخت</string>
+    <string name="loose_fit">آزاد</string>
+    <string name="fit_fit">فیت</string>
+    <string name="add_photo">افزودن عکس</string>
+    <string name="important_note">نکته مهم</string>
+    <string name="notes_example">مثلا: افتادگی در شانه، بلندی نهایی لباس</string>
+    <string name="submit">ثبت</string>
 </resources>
