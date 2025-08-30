@@ -111,4 +111,10 @@
     <string name="important_note">نکته مهم</string>
     <string name="notes_example">مثلا: افتادگی در شانه، بلندی نهایی لباس</string>
     <string name="submit">ثبت</string>
+
+    <string name="view_profile">مشاهده پروفایل</string>
+    <string name="size">سایز</string>
+
+    <string name="compare_with_prev_size">مقایسه با اندازه قبلی</string>
+    <string name="prev_size">اندازه قبلی</string>
 </resources>
