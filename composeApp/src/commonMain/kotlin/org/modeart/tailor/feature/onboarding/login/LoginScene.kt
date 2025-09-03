@@ -1,8 +1,10 @@
 package org.modeart.tailor.feature.onboarding.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,14 +28,17 @@ import modearttailor.composeapp.generated.resources.login_title
 import modearttailor.composeapp.generated.resources.logo
 import modearttailor.composeapp.generated.resources.mobile_number
 import modearttailor.composeapp.generated.resources.no_account_signup
+import modearttailor.composeapp.generated.resources.vector_login
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiState
 import org.modeart.tailor.feature.onboarding.login.contract.LoginStep
 import org.modeart.tailor.navigation.Route
+import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,55 +53,72 @@ fun LoginScene(
 
 @Composable
 fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 250.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(painter = painterResource(Res.drawable.logo), contentDescription = null)
-        Text(
-            modifier = Modifier.padding(top = 16.dp),
-            text = stringResource(Res.string.login_title),
-            style = appTypography().title16.copy(color = Color.Black, fontWeight = FontWeight.Bold)
+    Box(modifier = Modifier.fillMaxSize().background(Background)) {
+        Image(
+            modifier = Modifier.align(Alignment.BottomStart),
+            painter = painterResource(Res.drawable.vector_login),
+            contentDescription = null
         )
-        when (state.currentStep) {
-            LoginStep.EnterPhoneNumber -> {
-                OutlinedTextField(
-                    value = state.number,
-                    onValueChange = viewModel::verifyPhoneNumber,
-                    label = { Text(text = stringResource(Res.string.mobile_number)) }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                RoundedCornerButton(
-                    isEnabled = state.enableContinue,
-                    text = stringResource(Res.string.login),
-                    onClick = {
 
-                    })
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = Modifier.padding(top = 130.dp),
+                painter = painterResource(Res.drawable.logo),
+                contentDescription = null
+            )
+            Text(
+                modifier = Modifier.weight(1f).padding(top = 16.dp),
+                text = stringResource(Res.string.login_title),
+                style = appTypography().title16.copy(
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            when (state.currentStep) {
+                LoginStep.EnterPhoneNumber -> {
+                    OutlinedTextFieldModeArt(
+                        value = state.number,
+                        hint = stringResource(Res.string.mobile_number),
+                        onValueChange = viewModel::verifyPhoneNumber
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    RoundedCornerButton(
+                        isEnabled = state.enableContinue,
+                        text = stringResource(Res.string.login),
+                        onClick = {
+
+                        })
+                }
+
+                LoginStep.EnterVerificationCode -> {
+                    OutlinedTextFieldModeArt(
+                        value = state.code,
+                        hint = stringResource(Res.string.enter_code),
+                        onValueChange = {}
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    RoundedCornerButton(
+                        isEnabled = state.enableContinue,
+                        text = stringResource(Res.string.login),
+                        onClick = {
+                        })
+                }
             }
 
-            LoginStep.EnterVerificationCode -> {
-                OutlinedTextField(
-                    value = state.code,
-                    onValueChange = { },
-                    label = { Text(text = stringResource(Res.string.enter_code)) }
+            Text(
+                modifier = Modifier.weight(1f).padding(16.dp)
+                    .clickable(onClick = viewModel::goToSignUp),
+                text = stringResource(Res.string.no_account_signup),
+                style = appTypography().title16.copy(
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                RoundedCornerButton(
-                    isEnabled = state.enableContinue,
-                    text = stringResource(Res.string.login),
-                    onClick = {
-                    })
-            }
+            )
         }
-
-        Text(
-            modifier = Modifier.padding(16.dp).clickable(onClick = viewModel::goToSignUp),
-            text = stringResource(Res.string.no_account_signup),
-            style = appTypography().title16.copy(color = Color.Blue, fontWeight = FontWeight.Bold)
-        )
     }
 }
 

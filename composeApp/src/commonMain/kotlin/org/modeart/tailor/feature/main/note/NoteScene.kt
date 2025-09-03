@@ -39,6 +39,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.navigation.Route
+import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.appTypography
 
 @Composable
@@ -70,7 +71,7 @@ fun NoteTabs() {
 
     Box(
         modifier = Modifier.width(360.dp).height(tabHeight)
-            .background(color = Color.LightGray, shape = RoundedCornerShape(12.dp))
+            .background(color = AccentLight, shape = RoundedCornerShape(12.dp))
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -120,8 +121,7 @@ fun NoteTabs() {
 fun EmptyNote() {
     Box(
         modifier = Modifier.width(241.dp).defaultMinSize(minHeight = 296.dp)
-            .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
-            .alpha(0.3f)
+            .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
             .padding(16.dp), contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -137,8 +137,7 @@ fun EmptyNote() {
 fun NewNote() {
     Box(
         modifier = Modifier.size(172.dp)
-            .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
-            .alpha(0.3f)
+            .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
             .padding(16.dp), contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

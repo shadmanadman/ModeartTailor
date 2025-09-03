@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -34,6 +35,7 @@ import modearttailor.composeapp.generated.resources.ic_add_button
 import modearttailor.composeapp.generated.resources.ic_add_photo
 import modearttailor.composeapp.generated.resources.ic_calendar
 import modearttailor.composeapp.generated.resources.ic_notification
+import modearttailor.composeapp.generated.resources.ic_search
 import modearttailor.composeapp.generated.resources.ic_target
 import modearttailor.composeapp.generated.resources.ic_user_star
 import modearttailor.composeapp.generated.resources.search_in_customers
@@ -43,7 +45,10 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.navigation.Route
+import org.modeart.tailor.theme.Accent
+import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.appTypography
 
 @Composable
@@ -101,8 +106,7 @@ fun LastNoteItem() {
 fun EmptyNoteOrCustomer() {
     Box(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
-            .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp))
-            .alpha(0.3f)
+            .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
             .padding(16.dp), contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -173,30 +177,17 @@ fun HomeTopBar() {
             }
         }
 
-        Box(
-            modifier = Modifier.padding(top = 100.dp, start = 30.dp, end = 30.dp)
-                .align(Alignment.BottomCenter).fillMaxWidth().height(40.dp)
-                .background(color = Color.White, RoundedCornerShape(16.dp)).padding(6.dp),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Notifications"
-                )
-                BasicTextField(
-                    value = "",
-                    onValueChange = { /* Handle text change */ },
-                    textStyle = appTypography().body12
-                ) {
-                    Text(
-                        text = stringResource(Res.string.search_in_customers),
-                        style = appTypography().body12
-                    )
-                }
-            }
-        }
+        OutlinedTextFieldModeArt(
+            width = 318.dp,
+            modifier = Modifier.offset(y = 30.dp).align(Alignment.BottomCenter),
+            value = "",
+            leadingIcon = Res.drawable.ic_search,
+            onValueChange = { /* Handle text change */ },
+            hint = stringResource(Res.string.search_in_customers)
+        )
     }
+
+
 }
 
 
@@ -239,7 +230,7 @@ fun Statistics() {
         // This month customer
         Box(
             modifier = Modifier.size(154.dp, 137.dp)
-                .background(Color(0xffebedf3), RoundedCornerShape(12.dp))
+                .background(Accent, RoundedCornerShape(12.dp))
         ) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Box(

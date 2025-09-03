@@ -9,6 +9,7 @@
     <string name="mobile_number">شماره موبایل</string>
     <string name="login">ورود</string>
     <string name="signup">ثبت نام</string>
+    <string name="name_family_name">نام و نام خانوادگی</string>
 
     <string name="send_code">ارسال کد</string>
     <string name="enter_code">کد ارسال شده رو وارد کن.</string>
@@ -117,4 +118,6 @@
 
     <string name="compare_with_prev_size">مقایسه با اندازه قبلی</string>
     <string name="prev_size">اندازه قبلی</string>
+
+    <string name="next">ادامه</string>
 </resources>

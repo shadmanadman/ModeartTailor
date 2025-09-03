@@ -28,6 +28,7 @@ import modearttailor.composeapp.generated.resources.title
 import modearttailor.composeapp.generated.resources.work_and_customer
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.theme.appTypography
 
 @Composable
@@ -66,34 +67,18 @@ fun NoteCategory() {
 @Preview
 fun AddNewNote() {
     Column(modifier = Modifier.fillMaxWidth()) {
-        TextField(
-            value = "", onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp).background(color = Color.White, shape = RoundedCornerShape(8.dp))
-                .border(width = 1.dp, color = Color.Gray, shape = RoundedCornerShape(8.dp)),
-            label = {
-                Text(
-                    stringResource(Res.string.title),
-                    style = appTypography().body13
-                )
-            },
-            textStyle = appTypography().body13,
+        OutlinedTextFieldModeArt(
+            modifier = Modifier.fillMaxWidth(),
+            value = "",
+            onValueChange = {},
+            hint = stringResource(Res.string.title)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        TextField(
+        OutlinedTextFieldModeArt(
+            modifier = Modifier.fillMaxWidth(),
             value = "", onValueChange = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(451.dp).background(color = Color.White, shape = RoundedCornerShape(8.dp))
-                .border(width = 1.dp, color = Color.Gray, shape = RoundedCornerShape(8.dp)),
-            label = {
-                Text(
-                    stringResource(Res.string.note_content),
-                    style = appTypography().body13
-                )
-            },
-            textStyle = appTypography().body13,
+            height = 440.dp,
+            hint = stringResource(Res.string.note_content)
         )
     }
 }

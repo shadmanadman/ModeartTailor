@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.login
 import org.jetbrains.compose.resources.stringResource
+import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
 
 @Composable
@@ -20,9 +21,9 @@ fun RoundedCornerButton(
     isEnabled: Boolean,
     text: String,
     textColor: Color = Color.White,
-    width: Int = 208,
-    height: Int = 48,
-    backgroundColor: Color = Color.Black,
+    width: Int = 265,
+    height: Int = 54,
+    backgroundColor: Color = Primary,
     onClick: () -> Unit
 ) {
     Button(

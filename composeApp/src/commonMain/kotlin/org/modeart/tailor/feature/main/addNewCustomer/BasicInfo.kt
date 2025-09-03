@@ -39,22 +39,35 @@ import modearttailor.composeapp.generated.resources.ic_add_photo
 import modearttailor.composeapp.generated.resources.ic_man
 import modearttailor.composeapp.generated.resources.ic_upload
 import modearttailor.composeapp.generated.resources.ic_woman
+import modearttailor.composeapp.generated.resources.login
 import modearttailor.composeapp.generated.resources.mobile_number_customer
+import modearttailor.composeapp.generated.resources.next
+import modearttailor.composeapp.generated.resources.vector_register_new_customer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.appTypography
 
 
 @Composable
 @Preview
 fun BasicInfo() {
-    Column {
-        Text(text = stringResource(Res.string.customer_basic_info), style = appTypography().title15)
+    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painter = painterResource(Res.drawable.vector_register_new_customer),
+            contentDescription = null
+        )
+        Text(
+            text = stringResource(Res.string.customer_basic_info),
+            style = appTypography().headline20
+        )
 
         // Select Gender
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 150.dp, start = 16.dp, end = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -72,7 +85,7 @@ fun BasicInfo() {
             Text(text = stringResource(Res.string.choose_gender), style = appTypography().body13)
             Box(
                 modifier = Modifier.width(140.dp).height(tabHeight)
-                    .background(color = Color.LightGray, shape = RoundedCornerShape(12.dp))
+                    .background(color = AccentLight, shape = RoundedCornerShape(12.dp))
             ) {
                 Box(
                     modifier = Modifier
@@ -96,56 +109,25 @@ fun BasicInfo() {
         }
 
         // Name, mobile and birthday
-        Column(modifier = Modifier.padding(top = 18.dp)) {
-            TextField(
-                value = "", onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
-                    .height(64.dp)
-                    .clip(shape = RoundedCornerShape(18.dp))
-                    .background(color = Color.LightGray),
-                label = {
-                    Text(
-                        stringResource(Res.string.customer_name_family_name),
-                        style = appTypography().body13
-                    )
-                },
-                textStyle = appTypography().body13,
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(top = 18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            OutlinedTextFieldModeArt(
+                value = "",
+                onValueChange = {},
+                hint = stringResource(Res.string.customer_name_family_name)
             )
-
-            TextField(
-                value = "", onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
-                    .height(64.dp)
-                    .clip(shape = RoundedCornerShape(18.dp))
-                    .background(color = Color.LightGray),
-                label = {
-                    Text(
-                        stringResource(Res.string.mobile_number_customer),
-                        style = appTypography().body13
-                    )
-                },
-                textStyle = appTypography().body13,
+            OutlinedTextFieldModeArt(
+                value = "",
+                onValueChange = {},
+                hint = stringResource(Res.string.mobile_number_customer)
             )
-
-            TextField(
-                value = "", onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 16.dp)
-                    .height(64.dp)
-                    .clip(shape = RoundedCornerShape(18.dp))
-                    .background(color = Color.LightGray),
-                label = {
-                    Text(
-                        stringResource(Res.string.birth_date),
-                        style = appTypography().body13
-                    )
-                },
-                textStyle = appTypography().body13,
+            OutlinedTextFieldModeArt(
+                value = "",
+                onValueChange = {},
+                hint = stringResource(Res.string.birth_date)
             )
         }
 
@@ -163,7 +145,7 @@ fun BasicInfo() {
             // Upload
             Box(
                 modifier = Modifier.padding(end = 16.dp).size(64.dp)
-                    .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
+                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(painter = painterResource(Res.drawable.ic_upload), contentDescription = null)
@@ -171,7 +153,7 @@ fun BasicInfo() {
             // Take picture
             Box(
                 modifier = Modifier.size(64.dp)
-                    .background(color = Color.LightGray, shape = RoundedCornerShape(16.dp)),
+                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -180,5 +162,12 @@ fun BasicInfo() {
                 )
             }
         }
+
+        RoundedCornerButton(
+            width = 332,
+            isEnabled = true,
+            text = stringResource(Res.string.next),
+            onClick = {
+            })
     }
 }
