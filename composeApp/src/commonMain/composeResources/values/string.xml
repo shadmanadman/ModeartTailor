@@ -47,10 +47,11 @@
     <string name="classic">کلاسیک</string>
     <string name="relaxed">راحتی</string>
     <string name="formal">رسمی</string>
+    <string name="loose_style">گشاد پسند</string>
     <string name="body_type">نوع بدن</string>
     <string name="shoulder_model">مدل سرشانه</string>
     <string name="fabric_sensitivity">حساسیت به پارچه</string>
-    <string name="select_fabric">انتخاب پارچه</string>
+    <string name="fabric_name">نام پارچه</string>
 
     <string name="title_supplementary_information">سابقه یا اطلاعات مکمل</string>
     <string name="customer_preferred_color">رنگ مشتری(دلخواه)</string>

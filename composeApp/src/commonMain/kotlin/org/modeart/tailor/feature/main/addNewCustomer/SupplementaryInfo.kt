@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,24 +39,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.customer_preferred_color
+import modearttailor.composeapp.generated.resources.ic_color
+import modearttailor.composeapp.generated.resources.ic_fabric
+import modearttailor.composeapp.generated.resources.ic_note
+import modearttailor.composeapp.generated.resources.ic_search
+import modearttailor.composeapp.generated.resources.ic_user_star
 import modearttailor.composeapp.generated.resources.is_old_customer
 import modearttailor.composeapp.generated.resources.no
 import modearttailor.composeapp.generated.resources.notes_about_customer
 import modearttailor.composeapp.generated.resources.notes_hint
 import modearttailor.composeapp.generated.resources.referred_by
-import modearttailor.composeapp.generated.resources.referrer_name
+import modearttailor.composeapp.generated.resources.search_in_customers
 import modearttailor.composeapp.generated.resources.title_supplementary_information
 import modearttailor.composeapp.generated.resources.yes
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.theme.AccentLight
+import org.modeart.tailor.theme.Hint
 import org.modeart.tailor.theme.appTypography
 
 @Composable
 fun SupplementaryInformationScreen() {
     var selectedColor by remember { mutableStateOf(Color.Unspecified) }
     var isOldCustomer by remember { mutableStateOf<Boolean?>(null) }
-    var referrerName by remember { mutableStateOf("") }
-    var notes by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -75,15 +83,24 @@ fun SupplementaryInformationScreen() {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Customer Preferred Color Section
-        Text(
-            text = stringResource(Res.string.customer_preferred_color),
-            style = appTypography().title18,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Row(
+            Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
+                .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+                .padding(start = 12.dp, end = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(painter = painterResource(Res.drawable.ic_color), contentDescription = null)
+
+            Text(
+                text = stringResource(Res.string.customer_preferred_color),
+                style = appTypography().title15,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End)
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
         ) {
             val colors = listOf(
                 Color(0xFFB3B3F0),
@@ -104,15 +121,23 @@ fun SupplementaryInformationScreen() {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Is Old Customer Section
-        Text(
-            text = stringResource(Res.string.is_old_customer),
-            style = appTypography().title18,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        Row(
+            Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
+                .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+                .padding(start = 12.dp, end = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(painter = painterResource(Res.drawable.ic_user_star), contentDescription = null)
+            Text(
+                text = stringResource(Res.string.is_old_customer),
+                style = appTypography().title15,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
             YesNoButton(
                 text = stringResource(Res.string.no),
@@ -129,33 +154,49 @@ fun SupplementaryInformationScreen() {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Referred By Section
-        Text(
-            text = stringResource(Res.string.referred_by),
-            style = appTypography().title18,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        SimpleTextField(
-            value = referrerName,
-            onValueChange = { referrerName = it },
-            hint = stringResource(Res.string.referrer_name)
-        )
+        Row(
+            Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
+                .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+                .padding(start = 12.dp, end = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(painter = painterResource(Res.drawable.ic_fabric), contentDescription = null)
+            Text(
+                text = stringResource(Res.string.referred_by),
+                style = appTypography().title15,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+        OutlinedTextFieldModeArt(
+            modifier = Modifier.fillMaxWidth(),
+            hint = stringResource(Res.string.search_in_customers),
+            value = "",
+            leadingIcon = Res.drawable.ic_search,
+            onValueChange = {})
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Notes Section
-        Text(
-            text = stringResource(Res.string.notes_about_customer),
-            style = appTypography().title18,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        SimpleTextField(
-            value = notes,
-            onValueChange = { notes = it },
+        Row(
+            Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
+                .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+                .padding(start = 12.dp, end = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(painter = painterResource(Res.drawable.ic_note), contentDescription = null)
+            Text(
+                text = stringResource(Res.string.notes_about_customer),
+                style = appTypography().title15,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        OutlinedTextFieldModeArt(
+            modifier = Modifier.fillMaxWidth().height(180.dp),
             hint = stringResource(Res.string.notes_hint),
-            isMultiLine = true
-        )
+            value = "",
+            onValueChange = {})
     }
 }
 
@@ -163,7 +204,7 @@ fun SupplementaryInformationScreen() {
 fun ColorSelectionBox(color: Color, isSelected: Boolean, onClick: () -> Unit) {
     val borderColor by animateColorAsState(
         targetValue = if (isSelected) Color.Black else Color.Transparent,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 500)
     )
     Box(
         modifier = Modifier
@@ -181,13 +222,13 @@ fun ColorSelectionBox(color: Color, isSelected: Boolean, onClick: () -> Unit) {
 
 @Composable
 fun YesNoButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
-    val borderColor by animateColorAsState(
-        targetValue = if (isSelected) Color.Black else Color.Transparent,
-        animationSpec = tween(durationMillis = 300)
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isSelected) Color.Black else AccentLight,
+        animationSpec = tween(durationMillis = 500)
     )
     val shadowElevation by animateDpAsState(
         targetValue = if (isSelected) 8.dp else 0.dp,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 500)
     )
 
     Box(
@@ -197,18 +238,13 @@ fun YesNoButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
                 shape = RoundedCornerShape(12.dp)
             )
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .border(
-                width = 2.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(12.dp)
-            )
+            .background(backgroundColor)
             .width(120.dp)
             .height(60.dp)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = text, fontSize = 16.sp)
+        Text(text = text, fontSize = 16.sp, style = appTypography().title15)
     }
 }
 

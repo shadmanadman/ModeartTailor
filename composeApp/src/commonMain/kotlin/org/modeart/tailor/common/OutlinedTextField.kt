@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -35,13 +34,15 @@ fun OutlinedTextFieldModeArt(
             .border(1.dp, borderColor, RoundedCornerShape(roundedCorner)),
         value = value,
         textStyle = appTypography().body13,
-        leadingIcon = {
-            if (leadingIcon != null) {
+        leadingIcon = if (leadingIcon != null) {
+            {
                 androidx.compose.material3.Icon(
                     painter = painterResource(leadingIcon),
                     contentDescription = null
                 )
             }
+        } else {
+            null
         },
         onValueChange = onValueChange,
         shape = RoundedCornerShape(roundedCorner),

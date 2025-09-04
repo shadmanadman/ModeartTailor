@@ -17,7 +17,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,19 +40,25 @@ import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.body_type
 import modearttailor.composeapp.generated.resources.classic
 import modearttailor.composeapp.generated.resources.customer_style
+import modearttailor.composeapp.generated.resources.fabric_name
 import modearttailor.composeapp.generated.resources.fabric_sensitivity
 import modearttailor.composeapp.generated.resources.fit
 import modearttailor.composeapp.generated.resources.formal
-import modearttailor.composeapp.generated.resources.ic_body_type_1
-import modearttailor.composeapp.generated.resources.ic_body_type_2
-import modearttailor.composeapp.generated.resources.ic_body_type_3
-import modearttailor.composeapp.generated.resources.ic_body_type_4
+import modearttailor.composeapp.generated.resources.ic_body_form
+import modearttailor.composeapp.generated.resources.ic_body_form_1
+import modearttailor.composeapp.generated.resources.ic_body_form_2
+import modearttailor.composeapp.generated.resources.ic_body_form_5
+import modearttailor.composeapp.generated.resources.ic_body_from_3
+import modearttailor.composeapp.generated.resources.ic_dody_form_4
+import modearttailor.composeapp.generated.resources.ic_fabric
+import modearttailor.composeapp.generated.resources.ic_sholder_size
 import modearttailor.composeapp.generated.resources.ic_sholder_type_1
 import modearttailor.composeapp.generated.resources.ic_sholder_type_2
 import modearttailor.composeapp.generated.resources.ic_sholder_type_3
+import modearttailor.composeapp.generated.resources.ic_style
+import modearttailor.composeapp.generated.resources.loose_style
 import modearttailor.composeapp.generated.resources.modern
 import modearttailor.composeapp.generated.resources.relaxed
-import modearttailor.composeapp.generated.resources.select_fabric
 import modearttailor.composeapp.generated.resources.shoulder_model
 import modearttailor.composeapp.generated.resources.title_personal_and_style_features
 import org.jetbrains.compose.resources.DrawableResource
@@ -57,6 +66,10 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.theme.AccentLight
+import org.modeart.tailor.theme.Background
+import org.modeart.tailor.theme.Hint
 import org.modeart.tailor.theme.appTypography
 
 object StyleRes {
@@ -65,10 +78,13 @@ object StyleRes {
     val style_modern = Res.string.modern
     val style_fit = Res.string.fit
     val style_formal = Res.string.formal
-    val body_type_1 = Res.drawable.ic_body_type_1
-    val body_type_2 = Res.drawable.ic_body_type_2
-    val body_type_3 = Res.drawable.ic_body_type_3
-    val body_type_4 = Res.drawable.ic_body_type_4
+    val style_loos = Res.string.loose_style
+    val body_type_1 = Res.drawable.ic_body_form_1
+    val body_type_2 = Res.drawable.ic_body_form_2
+    val body_type_3 = Res.drawable.ic_body_from_3
+    val body_type_4 = Res.drawable.ic_dody_form_4
+    val body_type_5 = Res.drawable.ic_body_form_5
+
     val shoulder_1 = Res.drawable.ic_sholder_type_1
     val shoulder_2 = Res.drawable.ic_sholder_type_2
     val shoulder_3 = Res.drawable.ic_sholder_type_3
@@ -90,14 +106,19 @@ fun PersonalizationScreen() {
         SelectionItem(id = 2, name = StyleRes.style_relaxed),
         SelectionItem(id = 3, name = StyleRes.style_modern),
         SelectionItem(id = 4, name = StyleRes.style_fit),
-        SelectionItem(id = 5, name = StyleRes.style_formal)
+        SelectionItem(id = 5, name = StyleRes.style_formal),
+        SelectionItem(
+            id = 6,
+            name = StyleRes.style_loos
+        )
     )
 
     val bodyTypes = listOf(
         SelectionItem(id = 1, imageResId = StyleRes.body_type_1),
         SelectionItem(id = 2, imageResId = StyleRes.body_type_2),
         SelectionItem(id = 3, imageResId = StyleRes.body_type_3),
-        SelectionItem(id = 4, imageResId = StyleRes.body_type_4)
+        SelectionItem(id = 4, imageResId = StyleRes.body_type_4),
+        SelectionItem(id = 4, imageResId = StyleRes.body_type_5)
     )
 
     val shoulderModels = listOf(
@@ -113,7 +134,7 @@ fun PersonalizationScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF0F0F0))
+            .background(Background)
             .padding(16.dp)
     ) {
         HeaderSection(title = stringResource(Res.string.title_personal_and_style_features))
@@ -123,6 +144,7 @@ fun PersonalizationScreen() {
         // Customer Style Section
         SelectionSection(
             title = stringResource(Res.string.customer_style),
+            titleIcon = Res.drawable.ic_style,
             items = customerStyles,
             selectedItem = selectedStyle,
             onItemSelected = { selectedStyle = it },
@@ -134,6 +156,7 @@ fun PersonalizationScreen() {
         // Body Type Section
         SelectionSection(
             title = stringResource(Res.string.body_type),
+            titleIcon = Res.drawable.ic_body_form,
             items = bodyTypes,
             selectedItem = selectedBodyType,
             onItemSelected = { selectedBodyType = it },
@@ -145,6 +168,7 @@ fun PersonalizationScreen() {
         // Shoulder Model Section
         SelectionSection(
             title = stringResource(Res.string.shoulder_model),
+            titleIcon = Res.drawable.ic_sholder_size,
             items = shoulderModels,
             selectedItem = selectedShoulder,
             onItemSelected = { selectedShoulder = it },
@@ -172,33 +196,63 @@ fun HeaderSection(title: String) {
 @Composable
 fun SelectionSection(
     title: String,
+    titleIcon: DrawableResource,
     items: List<SelectionItem>,
     selectedItem: SelectionItem?,
     onItemSelected: (SelectionItem) -> Unit,
     isTextOnly: Boolean = false,
     isImageOnly: Boolean = false
 ) {
-    Text(
-        text = title,
-        style = appTypography().title18,
-        fontWeight = FontWeight.SemiBold,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-        verticalAlignment = Alignment.CenterVertically
+        Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
+            .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+            .padding(start = 12.dp, end = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items.forEach { item ->
-            SelectionBox(
-                item = item,
-                isSelected = item == selectedItem,
-                onClick = { onItemSelected(item) },
-                isTextOnly = isTextOnly,
-                isImageOnly = isImageOnly
-            )
-        }
+        Icon(painter = painterResource(titleIcon), contentDescription = null)
+        Text(
+            text = title,
+            style = appTypography().title15,
+            fontWeight = FontWeight.SemiBold,
+        )
     }
+
+    if (isTextOnly)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(items.size) { index ->
+                val item = items[index]
+                SelectionBox(
+                    item = item,
+                    isSelected = item == selectedItem,
+                    onClick = { onItemSelected(item) },
+                    isTextOnly = isTextOnly,
+                    isImageOnly = isImageOnly
+                )
+            }
+        }
+    else
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            items.forEach { item ->
+                SelectionBox(
+                    item = item,
+                    isSelected = item == selectedItem,
+                    onClick = { onItemSelected(item) },
+                    isTextOnly = isTextOnly,
+                    isImageOnly = isImageOnly
+                )
+            }
+        }
+        
 }
 
 @Composable
@@ -210,13 +264,15 @@ fun SelectionBox(
     isImageOnly: Boolean
 ) {
     val borderColor by animateColorAsState(
-        targetValue = if (isSelected) Color.Black else Color.Transparent,
-        animationSpec = tween(durationMillis = 300)
+        targetValue = if (isSelected) Color.Black else AccentLight,
+        animationSpec = tween(durationMillis = 500)
     )
     val shadowElevation by animateDpAsState(
         targetValue = if (isSelected) 8.dp else 0.dp,
-        animationSpec = tween(durationMillis = 300)
+        animationSpec = tween(durationMillis = 500)
     )
+
+    val boxBackgroundColor = if (isTextOnly) AccentLight else Color.White
 
     Box(
         modifier = Modifier
@@ -225,7 +281,7 @@ fun SelectionBox(
                 shape = RoundedCornerShape(12.dp)
             )
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
+            .background(boxBackgroundColor)
             .border(
                 width = 2.dp,
                 color = borderColor,
@@ -235,7 +291,7 @@ fun SelectionBox(
             .then(
                 when {
                     isTextOnly -> Modifier.size(120.dp, 60.dp)
-                    isImageOnly -> Modifier.size(80.dp, 120.dp)
+                    isImageOnly -> Modifier.size(58.dp, 92.dp)
                     else -> Modifier
                 }
             ),
@@ -245,6 +301,7 @@ fun SelectionBox(
             Text(
                 text = stringResource(item.name),
                 fontSize = 16.sp,
+                style = appTypography().title15,
                 textAlign = TextAlign.Center
             )
         } else if (isImageOnly && item.imageResId != null) {
@@ -259,28 +316,29 @@ fun SelectionBox(
 
 @Composable
 fun FabricSensitivitySection() {
-    Text(
-        text = stringResource(Res.string.fabric_sensitivity),
-        style = appTypography().title18,
-        fontWeight = FontWeight.SemiBold,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
-            .padding(16.dp),
-        contentAlignment = Alignment.CenterEnd
+    Row(
+        Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
+            .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+            .padding(start = 12.dp, end = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        Icon(painter = painterResource(Res.drawable.ic_fabric), contentDescription = null)
+
         Text(
-            text = stringResource(Res.string.select_fabric),
-            color = Color.Gray,
-            style = appTypography().title16,
+            text = stringResource(Res.string.fabric_sensitivity),
+            style = appTypography().title15,
+            fontWeight = FontWeight.SemiBold,
         )
     }
+
+    OutlinedTextFieldModeArt(
+        modifier = Modifier.fillMaxWidth(),
+        value = "",
+        onValueChange = {},
+        hint = stringResource(Res.string.fabric_name)
+    )
+
 }
 
 @Preview()

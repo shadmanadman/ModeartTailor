@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
@@ -39,7 +37,6 @@ import modearttailor.composeapp.generated.resources.ic_add_photo
 import modearttailor.composeapp.generated.resources.ic_man
 import modearttailor.composeapp.generated.resources.ic_upload
 import modearttailor.composeapp.generated.resources.ic_woman
-import modearttailor.composeapp.generated.resources.login
 import modearttailor.composeapp.generated.resources.mobile_number_customer
 import modearttailor.composeapp.generated.resources.next
 import modearttailor.composeapp.generated.resources.vector_register_new_customer
@@ -49,13 +46,17 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.theme.AccentLight
+import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
 
 
 @Composable
 @Preview
 fun BasicInfo() {
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxWidth().background(Background),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             painter = painterResource(Res.drawable.vector_register_new_customer),
             contentDescription = null

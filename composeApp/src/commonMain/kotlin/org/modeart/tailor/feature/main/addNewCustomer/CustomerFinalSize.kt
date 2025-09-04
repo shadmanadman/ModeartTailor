@@ -36,7 +36,7 @@ import modearttailor.composeapp.generated.resources.fit
 import modearttailor.composeapp.generated.resources.front_armhole
 import modearttailor.composeapp.generated.resources.front_waist_length
 import modearttailor.composeapp.generated.resources.hip_length
-import modearttailor.composeapp.generated.resources.ic_body_type_1
+import modearttailor.composeapp.generated.resources.ic_body_form_1
 import modearttailor.composeapp.generated.resources.knee_circumference
 import modearttailor.composeapp.generated.resources.large_hip_circumference
 import modearttailor.composeapp.generated.resources.neck_circumference
@@ -105,7 +105,7 @@ fun CustomerFinalSizeScene() {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(Res.drawable.ic_body_type_1),
+                    painter = painterResource(Res.drawable.ic_body_form_1),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier.fillMaxSize()
