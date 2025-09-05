@@ -2,9 +2,11 @@ package org.modeart.tailor.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.sp
+import modearttailor.composeapp.generated.resources.AdobeArabicSHINTypoBold
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.regular
 import org.jetbrains.compose.resources.Font
@@ -27,8 +29,13 @@ data class MyApplicationTypography(
 )
 
 @Composable
+fun getArabicShinFont(): FontFamily {
+    return Font(Res.font.AdobeArabicSHINTypoBold).toFontFamily()
+}
+@Composable
 fun appTypography(): MyApplicationTypography {
     val appFontRegular = Font(Res.font.regular).toFontFamily()
+
     return MyApplicationTypography(
         body12 = TextStyle(
             fontFamily = appFontRegular,
