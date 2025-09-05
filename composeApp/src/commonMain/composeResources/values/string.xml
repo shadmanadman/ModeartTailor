@@ -121,4 +121,23 @@
     <string name="prev_size">اندازه قبلی</string>
 
     <string name="next">ادامه</string>
+
+    // Main titles and subtitles
+    <string name="select_subscription">انتخاب پلن اشتراک</string>
+    <string name="subtitle_digital_notebook">دسترسی به دفترچه دیجیتال اندازه‌گیری</string>
+
+    // Monthly Plan
+    <string name="monthly_plan_title">اشتراک ماهیانه</string>
+    <string name="monthly_plan_access">دسترسی ۳۰ روزه به برنامه</string>
+    <string name="monthly_plan_customers">حداکثر ثبت ۵۰ مشتری</string>
+    <string name="monthly_plan_notes">حداکثر ثبت ۵۰ یادداشت</string>
+    <string name="monthly_plan_price">۹۹ تومان</string>
+
+    // Yearly Plan
+    <string name="yearly_plan_title">اشتراک سالیانه</string>
+    <string name="yearly_plan_access">دسترسی ۳۶۵ روزه به برنامه</string>
+    <string name="yearly_plan_customers">حداکثر ثبت ۱۰۰۰ مشتری</string>
+    <string name="yearly_plan_notes">حداکثر ثبت ۵۰۰۰ یادداشت</string>
+    <string name="yearly_plan_price">۲۹۹ تومان</string>
+    <string name="pay">پرداخت</string>
 </resources>
