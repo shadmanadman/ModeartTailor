@@ -20,4 +20,8 @@ dependencies {
     implementation(libs.ktor.serverNetty)
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
+
+    // MongoDB
+    implementation(libs.mongodb.driver)
+    implementation(libs.graphql.kotlin.server)
 }
