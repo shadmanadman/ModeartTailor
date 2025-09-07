@@ -1,10 +1,10 @@
-package org.modeart.tailor.model.user
+package org.modeart.tailor.model.business
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserProfile(
+data class BusinessProfile(
     @SerialName("_id")
     val id: String,
     val fullName: String,
@@ -24,6 +24,8 @@ data class UserProfile(
 ) {
     @Serializable
     data class Notes(
+        @SerialName("_id")
+        val id: String,
         val title: String,
         val content: String,
         val createdAt: String,

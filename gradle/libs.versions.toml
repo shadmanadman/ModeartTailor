@@ -42,9 +42,13 @@ ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.re
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
+
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+
 
 precompose-core = { module = "moe.tlaster:precompose", version.ref = "precompose" }
 precompose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "precompose" }

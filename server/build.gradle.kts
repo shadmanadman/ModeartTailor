@@ -16,8 +16,11 @@ application {
 dependencies {
     implementation(projects.shared)
     implementation(libs.logback)
+
     implementation(libs.ktor.serverCore)
     implementation(libs.ktor.serverNetty)
+    implementation(libs.ktor.auth)
+    implementation(libs.ktor.auth.jwt)
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 

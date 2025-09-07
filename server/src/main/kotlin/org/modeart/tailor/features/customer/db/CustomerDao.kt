@@ -11,9 +11,13 @@ interface CustomerDao {
 
     suspend fun findById(objectId: ObjectId): CustomerProfile?
 
+    suspend fun findByPhone(phone: String): CustomerProfile?
+
     suspend fun insertOne(customer: CustomerProfile): BsonValue?
 
     suspend fun deleteById(objectId: ObjectId): Long
 
     suspend fun updateOne(objectId: ObjectId, customer: CustomerProfile): Long
+
+    suspend fun findByBusiness(businessId: String): List<CustomerProfile>?
 }

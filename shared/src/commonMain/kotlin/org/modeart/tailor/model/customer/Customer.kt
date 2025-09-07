@@ -9,7 +9,7 @@ data class CustomerProfile(
     val id: String,
     val name: String,
     val email: String,
-    val phone: String,
+    val phoneNumber: String,
     val address: String,
     val gender: CustomerGender,
     val birthday: String,
