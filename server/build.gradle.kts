@@ -21,6 +21,11 @@ dependencies {
     implementation(libs.ktor.serverNetty)
     implementation(libs.ktor.auth)
     implementation(libs.ktor.auth.jwt)
+    implementation(libs.ktor.client.contentNegotiation)
+    implementation(libs.ktor.client.serialization)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
     testImplementation(libs.ktor.serverTestHost)
     testImplementation(libs.kotlin.testJunit)
 
