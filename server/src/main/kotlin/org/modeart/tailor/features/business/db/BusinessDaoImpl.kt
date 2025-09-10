@@ -157,4 +157,20 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
             0L
         }
     }
+
+    override suspend fun getAllNotes(businessId: String): List<BusinessProfile.Notes>? {
+        return try {
+            val business = findById(ObjectId(businessId))
+            business?.notes
+        } catch (e: MongoException) {
+            System.err.println("Error fetching notes for business $businessId: $e")
+            null
+        } catch (e: IllegalArgumentException) {
+            System.err.println("Invalid businessId format: $businessId. Error: $e")
+            null
+        }
+    }
+
+    
+    
 }

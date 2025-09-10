@@ -7,20 +7,20 @@ import kotlinx.serialization.Serializable
 data class BusinessProfile(
     @SerialName("_id")
     val id: String,
-    val fullName: String = "",
-    val email: String = "",
-    val phoneNumber: String = "",
-    val profilePictureUrl: String = "",
-    val businessName: String = "",
-    val city: String = "",
-    val state: String = "",
-    val plan: Plan = Plan.NONE,
-    val notes: List<Notes> = emptyList(),
-    val createdAt: String = "",
-    val updatedAt: String = "",
-    val deletedAt: String = "",
-    val deleted: Boolean = false,
-    val planEndDate: String = ""
+    val fullName: String? = null,
+    val email: String? = null,
+    val phoneNumber: String? = null,
+    val profilePictureUrl: String? = null,
+    val businessName: String? = null,
+    val city: String? = null,
+    val state: String? = null,
+    val plan: Plan? = null,
+    val notes: List<Notes>? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null,
+    val deletedAt: String? = null,
+    val deleted: Boolean? = null,
+    val planEndDate: String? = null
 ) {
     @Serializable
     data class Notes(

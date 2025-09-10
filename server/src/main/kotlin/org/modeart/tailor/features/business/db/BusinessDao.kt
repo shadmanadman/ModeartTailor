@@ -21,4 +21,6 @@ interface BusinessDao {
     suspend fun insertNote(businessId: String, note: BusinessProfile.Notes): Long?
 
     suspend fun deleteNote(businessId: String, noteId: String): Long?
+
+    suspend fun getAllNotes(businessId: String): List<BusinessProfile.Notes>?
 }

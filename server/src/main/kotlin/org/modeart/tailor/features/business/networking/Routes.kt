@@ -89,6 +89,28 @@ fun Route.businessRouting() {
             call.respond(HttpStatusCode.Created, "Created note with id $insertedId")
         }
 
+        get("/{businessId?}/notes") {
+            val businessId = call.parameters["businessId"] ?: return@get call.respondText(
+                text = "Missing businessId",
+                status = HttpStatusCode.BadRequest
+            )
+            repository.getAllNotes(businessId)?.let { notes ->
+                if (notes.isNotEmpty()) {
+                    call.respond(notes)
+                } else {
+                    call.respondText(
+                        "No notes found for businessId $businessId",
+                        status = HttpStatusCode.NotFound
+                    )
+                }
+            } ?: call.respondText(
+                "Business not found for id $businessId",
+                status = HttpStatusCode.NotFound
+            )
+        }
+
+        
+
         delete("/{businessId?}/note/{noteId?}") {
             val businessId = call.parameters["businessId"] ?: return@delete call.respondText(
                 text = "Missing businessId",
