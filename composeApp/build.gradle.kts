@@ -33,6 +33,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
+            implementation(libs.androidx.startup)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -62,7 +63,8 @@ kotlin {
             implementation(libs.precompose.core)
             implementation(libs.precompose.viewmodel)
 
-            implementation(libs.androidx.datastore)
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

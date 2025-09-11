@@ -44,6 +44,7 @@ data class PhoneCheckResponse(val exists: Boolean)
 data class OtpRequest(val phoneNumber: String)
 data class OtpResponse(val success: Boolean, val message: String)
 
+data class RefreshTokenRequest(val refreshToken: String, val phoneNumber: String)
 
 @Serializable
 data class Tokens(

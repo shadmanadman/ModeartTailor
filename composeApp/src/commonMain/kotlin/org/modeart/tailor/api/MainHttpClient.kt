@@ -3,7 +3,6 @@ package org.modeart.tailor.api
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -11,7 +10,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 
-class MainHttpClient() {
+class MainHttpClient(private val tokenService: TokenService) {
     operator fun invoke() =
         HttpClient(CIO) {
             install(ContentNegotiation) {
@@ -23,9 +22,11 @@ class MainHttpClient() {
             install(Auth) {
                 bearer {
                     loadTokens {
-                        BearerTokens("your-access-token", "your-refresh-token")
+                        tokenService.getToken()
                     }
-                    refreshTokens { BearerTokens("new-access-token", "new-refresh-token") }
+                    refreshTokens {
+                        tokenService.refreshToken()
+                    }
                 }
             }
             defaultRequest {

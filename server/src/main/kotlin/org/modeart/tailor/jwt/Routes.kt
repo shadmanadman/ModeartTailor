@@ -23,6 +23,7 @@ import org.modeart.tailor.model.business.OtpRequest
 import org.modeart.tailor.model.business.OtpResponse
 import org.modeart.tailor.model.business.PhoneCheckRequest
 import org.modeart.tailor.model.business.PhoneCheckResponse
+import org.modeart.tailor.model.business.RefreshTokenRequest
 import org.modeart.tailor.model.business.SmsIrRequest
 import org.modeart.tailor.model.business.Tokens
 import java.util.UUID
@@ -84,6 +85,27 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
         val refreshToken = JwtConfig.generateRefreshToken(user.id, tokenConfig)
         call.respond(HttpStatusCode.OK, Tokens(accessToken, refreshToken))
     }
+
+    post("/refresh-token") {
+        val request = call.receive<RefreshTokenRequest>()
+        try {
+            JwtConfig.verifyToken(request.refreshToken, tokenConfig)
+        } catch (e: Exception) {
+            return@post call.respond(HttpStatusCode.Unauthorized, "Invalid refresh token")
+        }
+        val user = repository.findByPhone(request.phoneNumber) ?: return@post call.respond(
+            HttpStatusCode.Unauthorized,
+            "Invalid credentials"
+        )
+        val newAccessToken = JwtConfig.generateAccessToken(user.id, tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(user.id, tokenConfig)
+
+        call.respond(
+            HttpStatusCode.OK,
+            Tokens(accessToken = newAccessToken, refreshToken = refreshToken)
+        )
+    }
+    
 
     post("/check-phone-exists") {
         val request = call.receive<PhoneCheckRequest>()

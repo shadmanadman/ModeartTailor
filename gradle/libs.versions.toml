@@ -22,6 +22,8 @@ androidx-datastore = "1.1.7"
 mongodb-driver = "4.10.1"
 gson = "2.10.1"
 graphql-kotlin = "7.1.0"
+datastore = "1.1.7"
+startup = "1.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -55,11 +57,12 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 
 
+datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
 precompose-core = { module = "moe.tlaster:precompose", version.ref = "precompose" }
 precompose-koin = { module = "moe.tlaster:precompose-koin", version.ref = "precompose" }
 precompose-viewmodel = { module = "moe.tlaster:precompose-viewmodel", version.ref = "precompose" }
-
-androidx-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 
 #MongoDB
 mongodb-driver = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb-driver" }
@@ -68,6 +71,7 @@ graphql-kotlin-server = { module = "com.expediagroup:graphql-kotlin-server", ver
 
 # Gson
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
