@@ -5,6 +5,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import org.modeart.tailor.api.ApiResult
 import org.modeart.tailor.api.safeRequest
+import org.modeart.tailor.model.business.AuthRequest
 import org.modeart.tailor.model.business.OtpRequest
 import org.modeart.tailor.model.business.PhoneCheckRequest
 import org.modeart.tailor.model.business.PhoneCheckResponse
@@ -12,17 +13,17 @@ import org.modeart.tailor.model.business.RefreshTokenRequest
 import org.modeart.tailor.model.business.Tokens
 
 class OnBoardingRepo(private val client: HttpClient) : OnBoardingService {
-    override suspend fun login(otpRequest: OtpRequest): ApiResult<Tokens> = safeRequest {
+    override suspend fun login(authRequest: AuthRequest): ApiResult<Tokens> = safeRequest {
         client.post(urlString = "login") {
-            setBody(otpRequest)
+            setBody(authRequest)
         }
     }
 
 
-    override suspend fun register(otpRequest: OtpRequest): ApiResult<Tokens> =
+    override suspend fun register(authRequest: AuthRequest): ApiResult<Tokens> =
         safeRequest {
             client.post(urlString = "register") {
-                setBody(otpRequest)
+                setBody(authRequest)
             }
         }
 
@@ -37,6 +38,13 @@ class OnBoardingRepo(private val client: HttpClient) : OnBoardingService {
         safeRequest {
             client.post(urlString = "refresh-token") {
                 setBody(refreshTokenRequest)
+            }
+        }
+
+    override suspend fun sendOtp(phoneNumber: String): ApiResult<Unit> =
+        safeRequest {
+            client.post(urlString = "send-otp") {
+                setBody(OtpRequest(phoneNumber))
             }
         }
 }

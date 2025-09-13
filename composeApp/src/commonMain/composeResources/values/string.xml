@@ -164,4 +164,5 @@
     <string name="how_can_we_help">چطور می‌تونیم کمک کنیم؟</string>
     <string name="send">ارسال</string>
     <string name="contact_ways">راه‌های ارتباطی</string>
+    <string name="network_error">مشکلی در برقرای ارتباط وجود دارد.</string>
 </resources>

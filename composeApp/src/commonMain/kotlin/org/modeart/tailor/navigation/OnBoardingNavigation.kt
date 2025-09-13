@@ -9,6 +9,7 @@ object OnBoardingNavigation : Navigation {
     val welcome = Route(name = "welcome")
     val login = Route(name = "login", fullPath = "login/{mode}")
     val signup = Route(name = "signup", fullPath = "signup/{mode}")
+    val main = Route(name = "main", fullPath = "main/{mode}")
 
     val forgotPassword = Route(
         name = "forgot_password",

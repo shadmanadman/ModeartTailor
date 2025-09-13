@@ -3,7 +3,6 @@ package org.modeart.tailor.feature.onboarding.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,16 +10,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.enter_code
 import modearttailor.composeapp.generated.resources.login
@@ -33,10 +38,13 @@ import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiEffect
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiState
 import org.modeart.tailor.feature.onboarding.login.contract.LoginStep
+import org.modeart.tailor.navigation.OnBoardingNavigation
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
@@ -48,6 +56,25 @@ fun LoginScene(
 ) {
     val viewModel = koinViewModel(LoginViewModel::class)
     val state by viewModel.uiState.collectAsState()
+    val effects = viewModel.effects.receiveAsFlow()
+    var notification by remember { mutableStateOf<LoginScreenUiEffect.ShowRawNotification?>(null) }
+
+    LaunchedEffect(effects) {
+        effects.onEach { effect ->
+            when (effect) {
+                LoginScreenUiEffect.Navigation.Main -> onNavigate(OnBoardingNavigation.main)
+                LoginScreenUiEffect.Navigation.SignUp -> onNavigate(OnBoardingNavigation.signup)
+                is LoginScreenUiEffect.ShowRawNotification -> {
+                    notification = effect
+                }
+            }
+        }.collect()
+    }
+    notification?.let { notif ->
+        InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
+            notification = null
+        }
+    }
     LoginSceneContent(state, viewModel)
 }
 
@@ -89,23 +116,22 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
                     RoundedCornerButton(
                         isEnabled = state.enableContinue,
                         text = stringResource(Res.string.login),
-                        onClick = {
-
-                        })
+                        onClick = viewModel::login
+                    )
                 }
 
                 LoginStep.EnterVerificationCode -> {
                     OutlinedTextFieldModeArt(
                         value = state.code,
                         hint = stringResource(Res.string.enter_code),
-                        onValueChange = {}
+                        onValueChange = viewModel::onCodeUpdated
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     RoundedCornerButton(
                         isEnabled = state.enableContinue,
                         text = stringResource(Res.string.login),
-                        onClick = {
-                        })
+                        onClick = viewModel::login
+                    )
                 }
             }
 
@@ -125,6 +151,6 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
 @Preview
 @Composable
 fun LoginScenePreview() {
-    LoginSceneContent(state = LoginScreenUiState(), viewModel = LoginViewModel())
+    //LoginSceneContent(state = LoginScreenUiState(), viewModel = LoginViewModel())
 }
 

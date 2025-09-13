@@ -9,9 +9,21 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+import org.modeart.tailor.prefs.PrefsDataStore
+import org.modeart.tailor.prefs.rememberDataStore
 
-class MainHttpClient(private val tokenService: TokenService) {
-    operator fun invoke() =
+val networkModule = module {
+
+    single<PrefsDataStore> { rememberDataStore() }
+
+    singleOf(::TokenRepo).bind<TokenService>()
+
+    single {
+        val tokenService: TokenService by inject()
+
         HttpClient(CIO) {
             install(ContentNegotiation) {
                 json()
@@ -33,4 +45,5 @@ class MainHttpClient(private val tokenService: TokenService) {
                 url("https://your-base-url.com/api/")
             }
         }
+    }
 }

@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import org.modeart.tailor.api.auth.OnBoardingRepo
+import org.modeart.tailor.api.auth.OnBoardingService
 import org.modeart.tailor.model.business.RefreshTokenRequest
 import org.modeart.tailor.prefs.PrefsDataStore
 import kotlin.coroutines.cancellation.CancellationException
@@ -28,7 +28,10 @@ interface TokenService {
 private const val ACCESS_TOKEN = "access_token"
 private const val REFRESH_TOKEN = "refresh_token"
 
-class TokenRepo(private val dataStore: PrefsDataStore, private val onBoardingRepo: OnBoardingRepo) :
+class TokenRepo(
+    private val dataStore: PrefsDataStore,
+    private val onBoardingRepo: OnBoardingService
+) :
     TokenService {
     override suspend fun saveToken(accessToken: String, refreshToken: String) {
         return withContext(Dispatchers.IO) {
