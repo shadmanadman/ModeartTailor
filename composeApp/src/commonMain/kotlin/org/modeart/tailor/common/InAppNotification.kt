@@ -48,7 +48,7 @@ fun InAppNotification(
     if (isNotificationVisible) {
         Box(
             modifier = Modifier
-                .padding(top = 18.dp)
+                .padding(top = 32.dp)
                 .padding(8.dp)
                 .zIndex(2f)
                 .fillMaxWidth()

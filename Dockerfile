@@ -30,4 +30,4 @@ COPY --from=build /app/server/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar","-config=/server/src/resources/application.conf"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

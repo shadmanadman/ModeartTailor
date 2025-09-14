@@ -1,5 +1,10 @@
 package org.modeart.tailor.jwt
 
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -10,12 +15,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.append
 import io.ktor.http.headers
 import io.ktor.http.isSuccess
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import kotlinx.serialization.json.Json
 import org.modeart.tailor.features.business.di.BusinessModule
-import org.modeart.tailor.httpClient
 import org.modeart.tailor.model.business.AuthRequest
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.business.OtpData
@@ -33,6 +39,19 @@ val otpStore = ConcurrentHashMap<String, OtpData>()
 const val OTP_EXPIRY_SECONDS = 300
 const val SMS_IR_API_KEY = "YOUR_API_KEY"
 const val SMS_IR_TEMPLATE_ID = 123456
+
+val httpClient = HttpClient(CIO) {
+    defaultRequest {
+        header(HttpHeaders.ContentType, ContentType.Application.Json)
+    }
+    install(ContentNegotiation) {
+        json(Json {
+            prettyPrint = true
+            isLenient = true
+            ignoreUnknownKeys = true
+        })
+    }
+}
 fun Route.authRoute(tokenConfig: TokenConfig) {
     val repository = BusinessModule.businessDao()
 

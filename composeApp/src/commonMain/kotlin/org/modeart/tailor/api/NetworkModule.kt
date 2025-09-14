@@ -8,12 +8,20 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.serialization.kotlinx.json.json
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.modeart.tailor.prefs.PrefsDataStore
 import org.modeart.tailor.prefs.rememberDataStore
+import kotlinx.serialization.json.Json
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.client.request.header
+
+const val BASE_URL = "http://10.0.2.2:8080/"
+private const val LOG_HTTP = "HTTP call"
 
 val networkModule = module {
 
@@ -25,11 +33,23 @@ val networkModule = module {
         val tokenService: TokenService by inject()
 
         HttpClient(CIO) {
+            defaultRequest {
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
+            }
             install(ContentNegotiation) {
-                json()
+                json(Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
             }
             install(Logging) {
-                level = LogLevel.ALL
+                logger = object : Logger {
+                    override fun log(message: String) {
+                        println("$LOG_HTTP $message")
+                    }
+                }
+                level = LogLevel.BODY
             }
             install(Auth) {
                 bearer {
@@ -42,7 +62,7 @@ val networkModule = module {
                 }
             }
             defaultRequest {
-                url("https://your-base-url.com/api/")
+                url(BASE_URL)
             }
         }
     }

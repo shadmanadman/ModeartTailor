@@ -39,11 +39,15 @@ enum class Plan { MONTHLY, YEARLY, NONE }
 enum class NoteCategory { PERSONAL, OTHERS, WORK }
 
 
+@Serializable
 data class PhoneCheckRequest(val phoneNumber: String)
+@Serializable
 data class PhoneCheckResponse(val exists: Boolean)
+@Serializable
 data class OtpRequest(val phoneNumber: String)
+@Serializable
 data class OtpResponse(val success: Boolean, val message: String)
-
+@Serializable
 data class RefreshTokenRequest(val refreshToken: String, val phoneNumber: String)
 
 @Serializable

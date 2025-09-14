@@ -12,7 +12,6 @@ class AppStartup : Application(), KoinComponent {
         initKoin {
             androidContext(this@AppStartup)
             androidLogger()
-            modules()
         }
     }
 }
