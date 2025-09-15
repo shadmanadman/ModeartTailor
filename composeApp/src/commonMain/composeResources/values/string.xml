@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Modeart</string>
+    <string name="each_body_has_its_own_story">هر بدن داستان خودش را دارد</string>
+    <string name="app_subtitle">مدیریت هوشمند اندازه‌گیری برای خیاطان</string>
     <string name="welcome_page_1">با دفترچه اندازه‌گیری دیجیتال، تمام اطلاعات مشتریان‌تان همیشه در دسترس شماست</string>
     <string name="welcome_page_2">اندازه‌ها را دقیق ثبت کنید، یادداشت بگذارید و تغییرات را در طول زمان پیگیری کنید.</string>
     <string name="welcome_page_3">هر وقت و هر جا،سفارش‌ها را بر اساس اندازه واقعی مشتری آماده کنید.</string>
@@ -9,6 +11,7 @@
     <string name="mobile_number">شماره موبایل</string>
     <string name="login">ورود</string>
     <string name="signup">ثبت نام</string>
+    <string name="name_family_name">نام و نام خانوادگی</string>
 
     <string name="send_code">ارسال کد</string>
     <string name="enter_code">کد ارسال شده رو وارد کن.</string>
@@ -19,4 +22,147 @@
     <string name="measure">اندازه‌ها</string>
     <string name="customer">مشتری</string>
     <string name="note">یادداشت</string>
+    <string name="search_in_customers">جستجو در مشتریان</string>
+    <string name="all_customer">همه مشتریان</string>
+    <string name="this_month_customer">مشتریان این ماه</string>
+    <string name="first_note">اولین یادداشت</string>
+    <string name="first_customer">اولین مشتری</string>
+    <string name="new_note">یادداشت جدید</string>
+
+    <string name="work_and_customer">کار و مشتری</string>
+    <string name="personal">شخصی</string>
+    <string name="others">متفرقه</string>
+    <string name="in_category">در دسته</string>
+    <string name="title">عنوان</string>
+    <string name="note_content">متن یادداشت</string>
+    <string name="customer_basic_info">اطلاعات پایه مشتری</string>
+    <string name="choose_gender">انتخاب جنسیت</string>
+    <string name="customer_name_family_name">نام و نام خانوادگی مشتری</string>
+    <string name="mobile_number_customer">شماره موبایل</string>
+    <string name="birth_date">تاریخ تولد</string>
+    <string name="customer_picture">تصویر مشتری</string>
+
+    <string name="title_personal_and_style_features">ویژگی‌های شخصی و سبک پوشش</string>
+    <string name="customer_style">استایل مشتری</string>
+    <string name="fit">فیت پسند</string>
+    <string name="modern">مدرن</string>
+    <string name="classic">کلاسیک</string>
+    <string name="relaxed">راحتی</string>
+    <string name="formal">رسمی</string>
+    <string name="loose_style">گشاد پسند</string>
+    <string name="body_type">نوع بدن</string>
+    <string name="shoulder_model">مدل سرشانه</string>
+    <string name="fabric_sensitivity">حساسیت به پارچه</string>
+    <string name="fabric_name">نام پارچه</string>
+
+    <string name="title_supplementary_information">سابقه یا اطلاعات مکمل</string>
+    <string name="customer_preferred_color">رنگ مشتری(دلخواه)</string>
+    <string name="is_old_customer">آیا مشتری قدیمی است؟</string>
+    <string name="yes">بله</string>
+    <string name="no">خیر</string>
+    <string name="referred_by">معرف یا نسبت با</string>
+    <string name="referrer_name">نام مشتری</string>
+    <string name="notes_about_customer">یادداشت کلی درباره مشتری</string>
+    <string name="notes_hint">مانند : رابطه، سلیقه، رفتار، نیازها</string>
+
+    <string name="age">سن</string>
+    <string name="style">سبک</string>
+    <string name="body_shape">فرم بدن</string>
+
+    <string name="top_measurements">بالاتنه</string>
+    <string name="shoulder_width">عرض شانه</string>
+    <string name="small_shoulder">سرشانه کوچک</string>
+    <string name="neck_circumference">دور گردن</string>
+    <string name="chest_height">بلندی سینه</string>
+    <string name="chest_circumference">دور سینه</string>
+    <string name="chest_gap">فاصله سینه</string>
+    <string name="front_waist_length">بلندی تا کمر جلو</string>
+    <string name="waist_circumference">دور کمر</string>
+    <string name="small_hip_circumference">دور باسن کوچک</string>
+    <string name="large_hip_circumference">دور باسن بزرگ</string>
+    <string name="hip_length">بلندی باسن</string>
+    <string name="front_armhole">کارور جلو</string>
+    <string name="back_armhole">کارور پشت</string>
+    <string name="back_neck_to_waist_length">بلندی گردن تا کمر پشت</string>
+
+    <string name="lower_body">پایین تنه</string>
+    <string name="waist_and_skirt_or_pants">دور کمر / بستن کمر شلوار یا دامن</string>
+    <string name="hip_circumference">دور باسن</string>
+    <string name="waist_to_hip_length">بلندی کمر تا باسن</string>
+    <string name="thigh_circumference">دور ران</string>
+    <string name="knee_circumference">دور زانو</string>
+    <string name="calf_circumference">دور ساق</string>
+    <string name="ankle_circumference">دور مچ پا</string>
+    <string name="inseam">قد داخلی پا</string>
+    <string name="outseam">قد خارجی پا</string>
+    <string name="waist_to_knee_length">بلندی کمر تا زانو</string>
+
+    <string name="sleeve">آستین</string>
+    <string name="full_sleeve_length">قد آستین کامل</string>
+    <string name="forearm_circumference">دور ساعد</string>
+    <string name="bicep_circumference">دور بازو</string>
+    <string name="wrist_circumference">دور مچ دست</string>
+    <string name="armhole">حلقه آستین</string>
+    <string name="sleeve_length_to_elbow">قد آستین تا آرنج</string>
+
+    <string name="title_measurement_source">منبع اندازه گیری</string>
+    <string name="body_dress_pattern_measurement">بدن / لباس / الگو / از راه دور</string>
+    <string name="title_measurement_freedom_level">سطح آزادی اندازه گیری</string>
+    <string name="seam_allowance">با جای دوخت</string>
+    <string name="loose_fit">آزاد</string>
+    <string name="fit_fit">فیت</string>
+    <string name="add_photo">افزودن عکس</string>
+    <string name="important_note">نکته مهم</string>
+    <string name="notes_example">مثلا: افتادگی در شانه، بلندی نهایی لباس</string>
+    <string name="submit">ثبت</string>
+
+    <string name="view_profile">مشاهده پروفایل</string>
+    <string name="size">سایز</string>
+
+    <string name="compare_with_prev_size">مقایسه با اندازه قبلی</string>
+    <string name="prev_size">اندازه قبلی</string>
+
+    <string name="next">ادامه</string>
+
+    // Main titles and subtitles
+    <string name="select_subscription">انتخاب پلن اشتراک</string>
+    <string name="subtitle_digital_notebook">دسترسی به دفترچه دیجیتال اندازه‌گیری</string>
+
+    // Monthly Plan
+    <string name="monthly_plan_title">اشتراک ماهیانه</string>
+    <string name="monthly_plan_access">دسترسی ۳۰ روزه به برنامه</string>
+    <string name="monthly_plan_customers">حداکثر ثبت ۵۰ مشتری</string>
+    <string name="monthly_plan_notes">حداکثر ثبت ۵۰ یادداشت</string>
+    <string name="monthly_plan_price">۹۹ تومان</string>
+
+    // Yearly Plan
+    <string name="yearly_plan_title">اشتراک سالیانه</string>
+    <string name="yearly_plan_access">دسترسی ۳۶۵ روزه به برنامه</string>
+    <string name="yearly_plan_customers">حداکثر ثبت ۱۰۰۰ مشتری</string>
+    <string name="yearly_plan_notes">حداکثر ثبت ۵۰۰۰ یادداشت</string>
+    <string name="yearly_plan_price">۲۹۹ تومان</string>
+    <string name="pay">پرداخت</string>
+
+
+    <string name="label_validity">اعتبار</string>
+    <string name="label_customers">مشتری ها</string>
+    <string name="label_business">کسب و کار</string>
+    <string name="edit_profile">ویرایش پروفایل</string>
+    <string name="update_plan">به‌روزرسانی پلن</string>
+    <string name="about_modart">درباره مدآرت</string>
+    <string name="contact_modart">تماس با مدآرت</string>
+    <string name="logout">خروج از برنامه</string>
+
+    <string name="business_city">شهر محل فعالیت</string>
+    <string name="save">ذخیره</string>
+
+    <string name="about_us_content">ما این اپ رو ساختیم تا هم خیاط‌ها و هم مشتری‌ها دیگه دغدغه‌ی یادداشت و گم شدن اندازه‌ها رو نداشته باشن. اینجا دفترچه‌ی دیجیتال اندازه‌گیری شماست؛ ساده، دقیق و همیشه در دسترس.
+و این تازه شروع کار ماست! در نسخه‌های بعدی، امکانات و فیچرهای جدیدی اضافه می‌کنیم تا کار شما راحت‌تر و لذت‌بخش‌تر بشه.</string>
+    <string name="about_us">درباره ما</string>
+
+    <string name="message_title">موضوع پیام</string>
+    <string name="how_can_we_help">چطور می‌تونیم کمک کنیم؟</string>
+    <string name="send">ارسال</string>
+    <string name="contact_ways">راه‌های ارتباطی</string>
+    <string name="network_error">مشکلی در برقرای ارتباط وجود دارد.</string>
 </resources>

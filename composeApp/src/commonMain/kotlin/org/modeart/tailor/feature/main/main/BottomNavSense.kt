@@ -50,6 +50,9 @@ import org.modeart.tailor.feature.main.main.contract.RootBottomNavId
 import org.modeart.tailor.feature.main.note.NoteScene
 import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.Route
+import org.modeart.tailor.theme.Background
+import org.modeart.tailor.theme.OnBackground
+import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
 
 @Composable
@@ -82,18 +85,18 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
         BottomNavigationBar(items = bottomNavItems)
     }, content = { innerPadding ->
         NavHost(
-            modifier = Modifier.padding(innerPadding), // Apply the padding from the Scaffold
+            modifier = Modifier.padding(innerPadding),
             navigator = navigator,
             navTransition = NavTransition(),
             initialRoute = MainNavigation.home.name
         ) {
-            scene(route = MainNavigation.home.fullPath){
+            scene(route = MainNavigation.home.fullPath) {
                 HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
             }
-            scene(route = MainNavigation.measure.fullPath){
+            scene(route = MainNavigation.measure.fullPath) {
                 HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
             }
-            scene(route = MainNavigation.note.fullPath){
+            scene(route = MainNavigation.note.fullPath) {
                 NoteScene(onNavigate = { navigator.navigate(it.fullPath) })
             }
         }
@@ -107,7 +110,7 @@ fun BottomNavigationBar(items: List<BottomNavScreensState>) {
             .fillMaxWidth()
             .height(80.dp)
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-            .background(Color.White)
+            .background(Primary)
             .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
@@ -121,16 +124,16 @@ fun BottomNavigationBar(items: List<BottomNavScreensState>) {
 @Composable
 fun BottomNavigationItem(item: BottomNavScreensState) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (item.isSelected) Color.Black else Color.Transparent,
-        animationSpec = tween(300)
+        targetValue = if (item.isSelected) Background else Color.Transparent,
+        animationSpec = tween(500)
     )
     val iconTint by animateColorAsState(
-        targetValue = if (item.isSelected) Color.White else Color.Gray,
-        animationSpec = tween(300)
+        targetValue = if (item.isSelected) Primary else Background,
+        animationSpec = tween(500)
     )
     val cornerRadius by animateDpAsState(
-        targetValue = if (item.isSelected) 16.dp else 0.dp,
-        animationSpec = tween(300)
+        targetValue = if (item.isSelected) 18.dp else 0.dp,
+        animationSpec = tween(500)
     )
 
     Box(
@@ -166,11 +169,11 @@ fun bottomNavItems(
             isSelected = currentSelected == RootBottomNavId.Home,
             openScreen = { openScreen(RootBottomNavId.Home) }),
         BottomNavScreensState(
-            id = RootBottomNavId.Note,
-            name = Res.string.note,
+            id = RootBottomNavId.Measure,
+            name = Res.string.measure,
             icon = Res.drawable.ic_note_add,
-            isSelected = currentSelected == RootBottomNavId.Note,
-            openScreen = { openScreen(RootBottomNavId.Note) }),
+            isSelected = currentSelected == RootBottomNavId.Measure,
+            openScreen = { openScreen(RootBottomNavId.Measure) }),
         BottomNavScreensState(
             id = RootBottomNavId.Customer,
             name = Res.string.customer,
@@ -178,12 +181,11 @@ fun bottomNavItems(
             isSelected = currentSelected == RootBottomNavId.Customer,
             openScreen = { openScreen(RootBottomNavId.Customer) }),
         BottomNavScreensState(
-            id = RootBottomNavId.Measure,
-            name = Res.string.measure,
+            id = RootBottomNavId.Note,
+            name = Res.string.note,
             icon = Res.drawable.ic_note_add,
-            isSelected = currentSelected == RootBottomNavId.Measure,
-            openScreen = { openScreen(RootBottomNavId.Measure) })
-
+            isSelected = currentSelected == RootBottomNavId.Note,
+            openScreen = { openScreen(RootBottomNavId.Note) })
     )
 }
 

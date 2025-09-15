@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -26,6 +25,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            binaryOption("bundleId", "org.modeart.tailor")
         }
     }
 
@@ -34,10 +34,12 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
+            implementation(libs.androidx.startup)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
+            implementation(compose.animation)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
             implementation(compose.ui)
@@ -52,6 +54,9 @@ kotlin {
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.contentNegotiation)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.serialization)
+            implementation(libs.ktor.client.auth)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -60,10 +65,17 @@ kotlin {
             implementation(libs.precompose.core)
             implementation(libs.precompose.viewmodel)
 
-            implementation(libs.androidx.datastore)
+            implementation(libs.datastore)
+            implementation(libs.datastore.preferences)
+
+            implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
     }
 }
