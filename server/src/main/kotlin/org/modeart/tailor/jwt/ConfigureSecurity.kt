@@ -20,6 +20,7 @@ fun Application.configureSecurity(tokenConfig: TokenConfig) {
                     .build()
             )
             validate { credential ->
+                val userId = credential.payload.getClaim("userId").asString()
                 if (credential.payload.audience.contains(tokenConfig.audience)) {
                     JWTPrincipal(credential.payload)
                 } else {

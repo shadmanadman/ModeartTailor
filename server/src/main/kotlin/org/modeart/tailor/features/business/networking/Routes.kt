@@ -1,6 +1,9 @@
 package org.modeart.tailor.features.business.networking
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -17,7 +20,7 @@ import org.modeart.tailor.model.business.BusinessProfile
 fun Route.businessRouting() {
     val repository = BusinessModule.businessDao()
 
-    route("/business") {
+    route("/all-business") {
 
         get {
             repository.findAll()?.let { list ->
@@ -25,19 +28,25 @@ fun Route.businessRouting() {
             } ?: call.respondText("No records found")
         }
 
+        authenticate {
+            get("/business") {
+                // Get the principal from the call object
+                val principal = call.principal<JWTPrincipal>()
 
-        get("/{id?}") {
-            val id = call.parameters["id"]
-            if (id.isNullOrEmpty()) {
-                return@get call.respondText(
-                    text = "Missing id",
-                    status = HttpStatusCode.BadRequest
-                )
+                // Check if the principal exists and get the userId
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+
+                if (userId.isNullOrEmpty()) {
+                    return@get call.respondText(
+                        text = "Missing id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
+
+                repository.findById(ObjectId(userId))?.let {
+                    call.respond(it)
+                } ?: call.respondText("No records found for id $userId")
             }
-
-            repository.findById(ObjectId(id))?.let {
-                call.respond(it)
-            } ?: call.respondText("No records found for id $id")
         }
 
 

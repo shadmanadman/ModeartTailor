@@ -14,26 +14,29 @@ import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
 
 class BusinessRepo(private val client: HttpClient) : BusinessService {
-    override suspend fun businessProfile(businessId: String): ApiResult<BusinessProfile> =
-        safeRequest { client.get("/business/$businessId").body() }
+    override suspend fun businessProfile(): ApiResult<BusinessProfile> =
+        safeRequest { client.get("/business").body() }
 
-    override suspend fun updateBusinessProfile(businessProfile: BusinessProfile): HttpResponse =
+    override suspend fun updateBusinessProfile(businessProfile: BusinessProfile) : ApiResult<Unit> = safeRequest {
         client.patch("/business/${businessProfile.id}").body()
+    }
 
     override suspend fun createNote(
         businessId: String,
         notes: BusinessProfile.Notes
-    ): HttpResponse =
+    ) : ApiResult<Unit> = safeRequest {
         client.post("/business/${businessId}/note") { setBody(notes) }.body()
-
+    }
     override suspend fun updateNote(
         businessId: String,
         notes: BusinessProfile.Notes
-    ): HttpResponse =
+    ) : ApiResult<Unit> = safeRequest {
         client.patch("/business/${businessId}/note/${notes.id}") { setBody(notes) }.body()
-
-    override suspend fun deleteNote(noteId: String): HttpResponse =
+    }
+    override suspend fun deleteNote(noteId: String) : ApiResult<Unit> = safeRequest {
         client.delete("/business/note/$noteId")
+    }
+
 
     override suspend fun getBusinessNotes(businessId: String): ApiResult<List<BusinessProfile.Notes>> =
         safeRequest {

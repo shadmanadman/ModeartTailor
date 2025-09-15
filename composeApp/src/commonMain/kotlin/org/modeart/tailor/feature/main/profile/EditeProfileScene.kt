@@ -3,6 +3,7 @@ package org.modeart.tailor.feature.main.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +16,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.business_city
 import modearttailor.composeapp.generated.resources.ic_add_photo
@@ -28,23 +38,54 @@ import modearttailor.composeapp.generated.resources.mobile_number
 import modearttailor.composeapp.generated.resources.name_family_name
 import modearttailor.composeapp.generated.resources.save
 import modearttailor.composeapp.generated.resources.test_avatar
+import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
+import org.modeart.tailor.feature.main.profile.contract.ProfileUiState
+import org.modeart.tailor.feature.onboarding.login.LoginViewModel
+import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiEffect
+import org.modeart.tailor.navigation.OnBoardingNavigation
+import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Primary
 
 @Composable
-fun EditeProfileScene() {
+fun EditeProfileScene(onNavigate: (Route) -> Unit) {
+    val viewModel = koinViewModel(ProfileViewModel::class)
+    val state by viewModel.uiState.collectAsState()
+    val effects = viewModel.effects.receiveAsFlow()
+    var notification by remember { mutableStateOf<ProfileUiEffect.ShowRawNotification?>(null) }
+
+    LaunchedEffect(effects) {
+        effects.onEach { effect ->
+            when (effect) {
+                is ProfileUiEffect.Navigation -> onNavigate(effect.screen)
+                is ProfileUiEffect.ShowRawNotification -> {
+                    notification = effect
+                }
+            }
+        }.collect()
+    }
+    notification?.let { notif ->
+        InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
+            notification = null
+        }
+    }
+
+    EditeProfileContent(state,viewModel)
 }
 
 
 @Composable
-fun EditeProfileContent() {
+fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,33 +133,33 @@ fun EditeProfileContent() {
 
 
         OutlinedTextFieldModeArt(
-            value = "",
-            onValueChange = {},
+            value = state.fullName,
+            onValueChange = viewmodel::onFullNameUpdated,
             hint = stringResource(Res.string.name_family_name)
         )
 
         OutlinedTextFieldModeArt(
-            value = "",
-            onValueChange = {},
+            value = state.phone,
+            onValueChange = viewmodel::onPhoneNumberUpdated,
             hint = stringResource(Res.string.mobile_number)
         )
 
         OutlinedTextFieldModeArt(
-            value = "",
-            onValueChange = {},
+            value = state.businessName,
+            onValueChange = viewmodel::onBusinessNameUpdated,
             hint = stringResource(Res.string.label_business)
         )
 
         OutlinedTextFieldModeArt(
-            value = "",
-            onValueChange = {},
+            value = state.address,
+            onValueChange = viewmodel::onBusinessAddressUpdated,
             hint = stringResource(Res.string.business_city)
         )
 
         RoundedCornerButton(
             isEnabled = true,
             text = stringResource(Res.string.save),
-            onClick = { /*TODO*/ },
+            onClick = viewmodel::updateProfile,
             backgroundColor = Primary
         )
     }
@@ -128,5 +169,5 @@ fun EditeProfileContent() {
 @Composable
 @Preview
 fun EditeProfilePreview() {
-    EditeProfileContent()
+    //EditeProfileContent()
 }

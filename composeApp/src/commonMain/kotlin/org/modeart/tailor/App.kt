@@ -8,6 +8,7 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.modeart.tailor.feature.main.main.BottomNavScene
+import org.modeart.tailor.feature.main.profile.EditeProfileScene
 import org.modeart.tailor.feature.onboarding.login.LoginScene
 import org.modeart.tailor.feature.onboarding.signup.SignupScene
 import org.modeart.tailor.feature.onboarding.welcome.WelcomeScene
@@ -42,6 +43,9 @@ internal fun App() {
                 //************************ Main *********************************//
                 scene(route = MainNavigation.main.fullPath) {
                     BottomNavScene(onNavigate = { navigator.navigate(it.fullPath) })
+                }
+                scene(route = MainNavigation.editProfile.fullPath) {
+                    EditeProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
 
             }
