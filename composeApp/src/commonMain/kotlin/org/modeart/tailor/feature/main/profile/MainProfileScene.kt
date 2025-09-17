@@ -3,6 +3,7 @@ package org.modeart.tailor.feature.main.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +39,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.about_modart
 import modearttailor.composeapp.generated.resources.contact_modart
@@ -46,10 +56,15 @@ import modearttailor.composeapp.generated.resources.label_validity
 import modearttailor.composeapp.generated.resources.logout
 import modearttailor.composeapp.generated.resources.test_avatar
 import modearttailor.composeapp.generated.resources.update_plan
+import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.InAppNotification
+import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
+import org.modeart.tailor.feature.main.profile.contract.ProfileUiState
+import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
@@ -57,12 +72,34 @@ import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun MainProfileScene() {
+fun MainProfileScene(onNavigate: (Route) -> Unit) {
+    val viewModel = koinViewModel(ProfileViewModel::class)
+    val state by viewModel.uiState.collectAsState()
+    val effects = viewModel.effects.receiveAsFlow()
+    var notification by remember { mutableStateOf<ProfileUiEffect.ShowRawNotification?>(null) }
+
+    LaunchedEffect(effects) {
+        effects.onEach { effect ->
+            when (effect) {
+                is ProfileUiEffect.Navigation -> onNavigate(effect.screen)
+                is ProfileUiEffect.ShowRawNotification -> {
+                    notification = effect
+                }
+            }
+        }.collect()
+    }
+    notification?.let { notif ->
+        InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
+            notification = null
+        }
+    }
+
+    MainProfileContent(state,viewModel)
 }
 
 
 @Composable
-fun MainProfileContent() {
+fun MainProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -104,7 +141,7 @@ fun MainProfileContent() {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "TEST",
+                text = state.fullName,
                 style = appTypography().title18,
                 fontWeight = FontWeight.Bold,
                 color = Primary
@@ -120,11 +157,11 @@ fun MainProfileContent() {
                 )
                 InfoCard(
                     label = stringResource(Res.string.label_customers),
-                    value = "32"
+                    value = state.customerCount.toString()
                 )
                 InfoCard(
                     label = stringResource(Res.string.label_business),
-                    value = "TEST"
+                    value = state.businessName
                 )
             }
         }
@@ -140,19 +177,27 @@ fun MainProfileContent() {
             MenuItem(
                 text = stringResource(Res.string.edit_profile),
                 icon = vectorResource(Res.drawable.ic_pencil)
-            )
+            ){
+                viewmodel.navigateToEditProfile()
+            }
             MenuItem(
                 text = stringResource(Res.string.update_plan),
                 icon = vectorResource(Res.drawable.ic_credit_card)
-            )
+            ){
+                viewmodel.navigateToEditProfile()
+            }
             MenuItem(
                 text = stringResource(Res.string.about_modart),
                 icon = Icons.Default.Info
-            )
+            ){
+                viewmodel.navigateToAbout()
+            }
             MenuItem(
                 text = stringResource(Res.string.contact_modart),
                 icon = Icons.Default.Message
-            )
+            ){
+                viewmodel.navigateToContact()
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -162,7 +207,7 @@ fun MainProfileContent() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 52.dp, vertical = 8.dp)
+                .padding(horizontal = 52.dp, vertical = 8.dp).clickable(onClick = viewmodel::logout)
         ) {
             MenuItem(
                 text = stringResource(Res.string.logout),
@@ -198,7 +243,7 @@ fun InfoCard(label: String, value: String) {
 }
 
 @Composable
-fun MenuItem(text: String, icon: ImageVector, hideArrow: Boolean = false) {
+fun MenuItem(text: String, icon: ImageVector, hideArrow: Boolean = false,onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -236,5 +281,5 @@ fun MenuItem(text: String, icon: ImageVector, hideArrow: Boolean = false) {
 @Preview
 @Composable
 fun ProfileScreenPreview() {
-    MainProfileContent()
+    //MainProfileContent()
 }

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BusinessProfile(
     @SerialName("_id")
-    val id: String?=null,
+    val id: String? = null,
     val fullName: String? = null,
     val email: String? = null,
     val phoneNumber: String? = null,
@@ -25,12 +25,12 @@ data class BusinessProfile(
     @Serializable
     data class Notes(
         @SerialName("_id")
-        val id: String,
+        val id: String? = null,
         val title: String,
         val content: String,
-        val createdAt: String,
-        val updatedAt: String,
-        val deletedAt: String,
+        val createdAt: String? = null,
+        val updatedAt: String? = null,
+        val deletedAt: String? = null,
         val category: NoteCategory,
     )
 }
@@ -41,12 +41,16 @@ enum class NoteCategory { PERSONAL, OTHERS, WORK }
 
 @Serializable
 data class PhoneCheckRequest(val phoneNumber: String)
+
 @Serializable
 data class PhoneCheckResponse(val exists: Boolean)
+
 @Serializable
 data class OtpRequest(val phoneNumber: String)
+
 @Serializable
 data class OtpResponse(val success: Boolean, val message: String)
+
 @Serializable
 data class RefreshTokenRequest(val refreshToken: String, val phoneNumber: String)
 
