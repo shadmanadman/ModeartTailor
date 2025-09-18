@@ -165,4 +165,7 @@
     <string name="send">ارسال</string>
     <string name="contact_ways">راه‌های ارتباطی</string>
     <string name="network_error">مشکلی در برقرای ارتباط وجود دارد.</string>
+    <string name="alphabetic">همه‌الفبایی</string>
+    <string name="newest">جدیدترین</string>
+    <string name="oldest">قدیمی‌ترین</string>
 </resources>

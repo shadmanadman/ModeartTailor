@@ -12,11 +12,13 @@ import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
 import org.modeart.tailor.api.business.BusinessService
+import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
 import org.modeart.tailor.feature.main.note.contract.NoteUiEffect
 import org.modeart.tailor.feature.main.note.contract.NoteUiState
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.business.NoteCategory
+import org.modeart.tailor.navigation.MainNavigation
 import kotlin.toString
 
 class NoteViewModel(private val businessService: BusinessService) : ViewModel() {
@@ -34,6 +36,18 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
 
     fun noteCategorySelected(category: NoteCategory) {
         _uiState.update { it.copy(currentCategory = category) }
+    }
+
+    fun navigateToProfile() {
+        effects.trySend(NoteUiEffect.Navigation(MainNavigation.profile))
+    }
+
+    fun navigateToSearch() {
+        effects.trySend(NoteUiEffect.Navigation(MainNavigation.editProfile))
+    }
+
+    fun navigateToNavigation() {
+        effects.trySend(NoteUiEffect.Navigation(MainNavigation.editProfile))
     }
 
 

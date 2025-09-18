@@ -50,6 +50,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.InAppNotification
+import org.modeart.tailor.feature.main.home.HomeTopBar
 import org.modeart.tailor.feature.main.note.contract.NoteUiEffect
 import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
@@ -84,6 +85,11 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
     }
 
     Column {
+        HomeTopBar(
+            onNavigateToProfile = viewModel::navigateToProfile,
+            onSearchQueryCompleted = viewModel::navigateToSearch,
+            onNavigateToNotification = viewModel::navigateToNavigation
+        )
         NoteTabs(onSelectedTab = viewModel::noteCategorySelected)
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -95,7 +101,7 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
                 NewNote(onNewNote = { onNavigate(MainNavigation.newNote) })
             }
             items(2) {
-                NoteItem(title = "",content = "")
+                NoteItem(title = "", content = "")
             }
         }
     }
