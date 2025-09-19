@@ -1,13 +1,16 @@
-package org.modeart.tailor.feature.main.addNewCustomer
+package org.modeart.tailor.feature.main.addNewCustomer.size
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,11 +23,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,6 +52,7 @@ import modearttailor.composeapp.generated.resources.ic_upper_body_icon
 import modearttailor.composeapp.generated.resources.large_hip_circumference
 import modearttailor.composeapp.generated.resources.neck_circumference
 import modearttailor.composeapp.generated.resources.shoulder_width
+import modearttailor.composeapp.generated.resources.size
 import modearttailor.composeapp.generated.resources.small_hip_circumference
 import modearttailor.composeapp.generated.resources.small_shoulder
 import modearttailor.composeapp.generated.resources.style
@@ -59,6 +62,9 @@ import modearttailor.composeapp.generated.resources.waist_circumference
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.theme.Accent
+import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.appTypography
 
 
@@ -67,6 +73,7 @@ fun HeaderSection() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(16.dp)
             .background(Color.Black, shape = RoundedCornerShape(16.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -75,12 +82,12 @@ fun HeaderSection() {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 "۳۸",
-                color = Color.White,
+                color = Color.Black,
                 style = appTypography().body14,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .background(color = Color(0xFFFF76EF), shape = RoundedCornerShape(16.dp))
-                    .padding(8.dp)
+                    .background(color = Accent, shape = RoundedCornerShape(8.dp))
+                    .padding(6.dp)
             )
             Text(
                 stringResource(Res.string.age),
@@ -90,12 +97,12 @@ fun HeaderSection() {
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                "مدرن", color = Color.White, style = appTypography().body14,
+                "مدرن", color = Color.Black, style = appTypography().body14,
                 textAlign = TextAlign.Center,
 
                 modifier = Modifier
-                    .background(color = Color(0xFFFF76EF), shape = RoundedCornerShape(16.dp))
-                    .padding(8.dp)
+                    .background(color = Accent, shape = RoundedCornerShape(8.dp))
+                    .padding(6.dp)
             )
             Text(
                 stringResource(Res.string.style),
@@ -107,11 +114,27 @@ fun HeaderSection() {
             Icon(
                 painter = painterResource(Res.drawable.ic_nerrow_down_body_type),
                 contentDescription = null,
-                tint = Color.Magenta,
+                tint = Accent,
                 modifier = Modifier.size(24.dp)
             )
             Text(
                 stringResource(Res.string.body_shape),
+                color = Color.White,
+                style = appTypography().body14
+            )
+        }
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                "۳۸",
+                color = Color.Black,
+                style = appTypography().body14,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .background(color = Accent, shape = RoundedCornerShape(8.dp))
+                    .padding(6.dp)
+            )
+            Text(
+                stringResource(Res.string.size),
                 color = Color.White,
                 style = appTypography().body14
             )
@@ -138,16 +161,20 @@ fun HeaderSection() {
 }
 
 @Composable
-fun UpperBodyMeasurementScreen() {
+fun UpperBodyMeasurementScreen(
+    isSelected: Boolean = false,
+    onBodyPartSelected: (BodyPart) -> Unit
+) {
+    val animatedHeight by animateDpAsState(
+        targetValue = if (isSelected) 800.dp else 60.dp,
+        animationSpec = tween(durationMillis = 500)
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF8F8F8))
-            .padding(16.dp)
+            .padding(8.dp)
     ) {
-
-        HeaderSection()
-
         Spacer(modifier = Modifier.height(16.dp))
 
         val fields = listOf(
@@ -166,10 +193,12 @@ fun UpperBodyMeasurementScreen() {
             stringResource(Res.string.back_armhole),
             stringResource(Res.string.back_neck_to_waist_length)
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable(onClick = {
+            onBodyPartSelected(BodyPart.UPPER)
+        })) {
             Box(
                 Modifier.size(64.dp)
-                    .background(color = Color(0xFFF2F2F2), shape = RoundedCornerShape(24.dp)),
+                    .background(color = AccentLight, shape = RoundedCornerShape(24.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -192,38 +221,26 @@ fun UpperBodyMeasurementScreen() {
         Row {
 
             VerticalDivider(
-                modifier = Modifier.fillMaxHeight().padding(start = 28.dp).offset(y = (-20).dp),
-                color = Color(0xFFF2F2F2),
+                modifier = Modifier.height(animatedHeight)
+                    .padding(start = 28.dp).offset(y = (-20).dp),
+                color = AccentLight,
                 thickness = 4.dp
             )
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(start = 38.dp, end = 12.dp)
-            ) {
-                items(fields) { label ->
-                    OutlinedTextField(
-                        value = values[label] ?: "",
-                        onValueChange = { values[label] = it },
-                        label = {
-                            Text(
-                                label,
-                                textAlign = TextAlign.End,
-                                style = appTypography().body13,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFF2F2F2),
-                            unfocusedContainerColor = Color(0xFFF2F2F2),
-                            focusedBorderColor = Color(0xFFF2F2F2),
-                            unfocusedBorderColor = Color(0xFFF2F2F2)
+            AnimatedVisibility(visible = isSelected) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().padding(start = 38.dp, end = 12.dp)
+                ) {
+                    items(fields) { label ->
+                        OutlinedTextFieldModeArt(
+                            modifier = Modifier.padding(top = 12.dp),
+                            value = values[label] ?: "",
+                            onValueChange = { values[label] = it },
+                            isNumberOnly = true,
+                            hint = label
                         )
-                    )
+                    }
+
                 }
             }
         }
@@ -234,5 +251,5 @@ fun UpperBodyMeasurementScreen() {
 @Preview
 @Composable
 fun UpperMeasurementScreenPreview() {
-    UpperBodyMeasurementScreen()
+    UpperBodyMeasurementScreen(isSelected = true) {}
 }

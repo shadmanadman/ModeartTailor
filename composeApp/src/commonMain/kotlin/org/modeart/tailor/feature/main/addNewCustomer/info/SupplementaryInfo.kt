@@ -1,4 +1,4 @@
-package org.modeart.tailor.feature.main.addNewCustomer
+package org.modeart.tailor.feature.main.addNewCustomer.info
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState

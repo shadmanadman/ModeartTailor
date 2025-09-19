@@ -1,4 +1,4 @@
-package org.modeart.tailor.feature.main.addNewCustomer
+package org.modeart.tailor.feature.main.addNewCustomer.info
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -32,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import modearttailor.composeapp.generated.resources.Res
@@ -41,6 +40,9 @@ import modearttailor.composeapp.generated.resources.body_dress_pattern_measureme
 import modearttailor.composeapp.generated.resources.fit_fit
 import modearttailor.composeapp.generated.resources.ic_add_photo
 import modearttailor.composeapp.generated.resources.ic_arrow_down
+import modearttailor.composeapp.generated.resources.ic_meaure_size
+import modearttailor.composeapp.generated.resources.ic_meaure_source
+import modearttailor.composeapp.generated.resources.ic_note
 import modearttailor.composeapp.generated.resources.ic_upload
 import modearttailor.composeapp.generated.resources.important_note
 import modearttailor.composeapp.generated.resources.loose_fit
@@ -53,6 +55,10 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.feature.main.addNewCustomer.size.HeaderSection
+import org.modeart.tailor.theme.AccentLight
+import org.modeart.tailor.theme.Background
+import org.modeart.tailor.theme.Hint
 import org.modeart.tailor.theme.appTypography
 
 @Composable
@@ -62,18 +68,26 @@ fun MeasurementFormScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF0F0F0))
+            .background(Background)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        HeaderSection()
         // Measurement Source Section
-        FormSectionTitle(title = stringResource(Res.string.title_measurement_source))
+        FormSectionTitle(
+            title = stringResource(Res.string.title_measurement_source),
+            Res.drawable.ic_meaure_source
+        )
         DropdownField(hint = stringResource(Res.string.body_dress_pattern_measurement))
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Measurement Freedom Level Section
-        FormSectionTitle(title = stringResource(Res.string.title_measurement_freedom_level))
+        FormSectionTitle(
+            title = stringResource(Res.string.title_measurement_freedom_level),
+            Res.drawable.ic_meaure_size
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
@@ -103,7 +117,7 @@ fun MeasurementFormScreen() {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Important Note Section
-        FormSectionTitle(title = stringResource(Res.string.important_note))
+        FormSectionTitle(title = stringResource(Res.string.important_note), Res.drawable.ic_note)
         NoteTextField(hint = stringResource(Res.string.notes_example))
 
         Spacer(modifier = Modifier.weight(1f))
@@ -114,16 +128,25 @@ fun MeasurementFormScreen() {
 }
 
 @Composable
-fun FormSectionTitle(title: String) {
-    Text(
-        text = title,
-        style = appTypography().title16,
-        fontWeight = FontWeight.SemiBold,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
-        textAlign = TextAlign.Center
-    )
+fun FormSectionTitle(title: String, iconRes: DrawableResource) {
+    Row(
+        Modifier.padding(bottom = 12.dp, top = 32.dp).fillMaxWidth().height(32.dp)
+            .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
+            .padding(start = 12.dp, end = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null
+        )
+
+        Text(
+            text = title,
+            style = appTypography().title15,
+            fontWeight = FontWeight.SemiBold,
+        )
+    }
 }
 
 @Composable
@@ -151,7 +174,11 @@ fun DropdownField(hint: String) {
 @Composable
 fun SelectableButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Color.White else Color(0xFFE0E0E0),
+        targetValue = if (isSelected) Color.Black else AccentLight,
+        animationSpec = tween(durationMillis = 500)
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (isSelected) Color.White else Color.Black,
         animationSpec = tween(durationMillis = 500)
     )
     val borderColor by animateColorAsState(
@@ -183,7 +210,7 @@ fun SelectableButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
         Text(
             text = text,
             style = appTypography().body14,
-            color = Color.Black,
+            color = textColor,
             modifier = Modifier.padding(16.dp)
         )
     }
@@ -199,7 +226,7 @@ fun AddPhotoSection() {
         Text(
             text = stringResource(Res.string.add_photo),
             style = appTypography().title16,
-            modifier = Modifier.padding(end = 16.dp)
+            modifier = Modifier.weight(1f).padding(end = 16.dp)
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -215,7 +242,7 @@ fun AddPhotoButton(iconRes: DrawableResource) {
         modifier = Modifier
             .size(50.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
+            .background(AccentLight)
             .clickable { /* Handle photo click */ },
         contentAlignment = Alignment.Center
     ) {

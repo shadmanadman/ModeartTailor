@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
@@ -31,9 +32,11 @@ fun OutlinedTextFieldModeArt(
     hint: String,
     hintColor: Color = Hint,
     isSearch: Boolean = false,
+    isNumberOnly: Boolean = false,
     leadingIcon: DrawableResource? = null,
     onValueChange: (String) -> Unit,
-    onSearchCompleted:(String)-> Unit = {}
+    onSearchCompleted: (String) -> Unit = {},
+    onDone: () -> Unit = {}
 ) {
     TextField(
         modifier = modifier.size(width, height)
@@ -52,12 +55,26 @@ fun OutlinedTextFieldModeArt(
         },
         onValueChange = onValueChange,
         shape = RoundedCornerShape(roundedCorner),
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Search
-        ),
+        keyboardOptions = when {
+            isSearch -> KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search
+            )
+
+            isNumberOnly -> KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            else -> KeyboardOptions.Default
+        },
         keyboardActions = KeyboardActions(
             onSearch = {
                 onSearchCompleted(value)
+            },
+            onGo = {
+                onDone()
+            },
+            onDone = {
+                onDone()
+            },
+            onNext = {
+                onDone()
             }
         ),
         colors = TextFieldDefaults.colors(
