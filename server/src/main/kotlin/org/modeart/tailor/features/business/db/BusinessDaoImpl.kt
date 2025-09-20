@@ -91,7 +91,7 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
             addUpdateIfNotNull(
                 BusinessProfile::notes,
                 businessProfile.notes
-            ) // For lists, this will update the entire list if 'businessProfile.notes' is not null.
+            )
             // If you need to update individual items within the list, that's a more complex scenario.
             addUpdateIfNotNull(BusinessProfile::createdAt, businessProfile.createdAt)
             addUpdateIfNotNull(BusinessProfile::updatedAt, businessProfile.updatedAt)
