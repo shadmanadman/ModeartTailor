@@ -54,7 +54,7 @@ import org.modeart.tailor.theme.appTypography
 @Preview
 fun BasicInfo() {
     Column(
-        modifier = Modifier.fillMaxWidth().background(Background),
+        modifier = Modifier.fillMaxSize().background(Background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

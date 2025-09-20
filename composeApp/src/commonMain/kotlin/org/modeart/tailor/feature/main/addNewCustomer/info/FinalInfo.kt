@@ -55,7 +55,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.modeart.tailor.feature.main.addNewCustomer.size.HeaderSection
+import org.modeart.tailor.feature.main.addNewCustomer.customSize.HeaderSection
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Hint
@@ -172,7 +172,12 @@ fun DropdownField(hint: String) {
 }
 
 @Composable
-fun SelectableButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
+fun SelectableButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected) Color.Black else AccentLight,
         animationSpec = tween(durationMillis = 500)
@@ -191,8 +196,7 @@ fun SelectableButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
     )
 
     Box(
-        modifier = Modifier
-            .height(60.dp)
+        modifier = modifier
             .shadow(
                 elevation = shadowElevation,
                 shape = RoundedCornerShape(12.dp)

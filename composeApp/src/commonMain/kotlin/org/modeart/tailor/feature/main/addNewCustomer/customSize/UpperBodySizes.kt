@@ -1,4 +1,4 @@
-package org.modeart.tailor.feature.main.addNewCustomer.size
+package org.modeart.tailor.feature.main.addNewCustomer.customSize
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState

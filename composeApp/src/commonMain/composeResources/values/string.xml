@@ -168,4 +168,7 @@
     <string name="alphabetic">همه‌الفبایی</string>
     <string name="newest">جدیدترین</string>
     <string name="oldest">قدیمی‌ترین</string>
+
+    <string name="select_customer_size">انتخاب سایز مشتری</string>
+    <string name="register_new_customer">ثبت مشتری جدید</string>
 </resources>

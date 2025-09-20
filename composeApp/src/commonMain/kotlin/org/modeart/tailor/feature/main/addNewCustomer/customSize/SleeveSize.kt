@@ -1,4 +1,4 @@
-package org.modeart.tailor.feature.main.addNewCustomer.size
+package org.modeart.tailor.feature.main.addNewCustomer.customSize
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,63 +29,50 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
-import modearttailor.composeapp.generated.resources.ankle_circumference
-import modearttailor.composeapp.generated.resources.calf_circumference
-import modearttailor.composeapp.generated.resources.hip_circumference
-import modearttailor.composeapp.generated.resources.ic_lower_body_icon
-import modearttailor.composeapp.generated.resources.inseam
-import modearttailor.composeapp.generated.resources.knee_circumference
-import modearttailor.composeapp.generated.resources.lower_body
-import modearttailor.composeapp.generated.resources.outseam
-import modearttailor.composeapp.generated.resources.thigh_circumference
-import modearttailor.composeapp.generated.resources.waist_and_skirt_or_pants
-import modearttailor.composeapp.generated.resources.waist_to_hip_length
-import modearttailor.composeapp.generated.resources.waist_to_knee_length
+import modearttailor.composeapp.generated.resources.armhole
+import modearttailor.composeapp.generated.resources.bicep_circumference
+import modearttailor.composeapp.generated.resources.forearm_circumference
+import modearttailor.composeapp.generated.resources.full_sleeve_length
+import modearttailor.composeapp.generated.resources.ic_sleeve
+import modearttailor.composeapp.generated.resources.sleeve
+import modearttailor.composeapp.generated.resources.sleeve_length_to_elbow
+import modearttailor.composeapp.generated.resources.wrist_circumference
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.theme.AccentLight
-import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
 
-
 @Composable
-fun LowerBodyMeasurementScreen(
-    isSelected: Boolean = false,
-    onBodyPartSelected: (BodyPart) -> Unit = {}
-) {
+fun SleeveSizes(isSelected: Boolean = false, onBodyPartSelected: (BodyPart) -> Unit = {}) {
     val animatedHeight by animateDpAsState(
-        targetValue = if (isSelected) 800.dp else 60.dp,
+        targetValue = if (isSelected) 400.dp else 0.dp,
         animationSpec = tween(durationMillis = 500)
     )
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
-            .padding(8.dp)
+            .background(Color(0xFFF8F8F8))
+            .padding(16.dp)
     ) {
-
         Spacer(modifier = Modifier.height(16.dp))
 
         val fields = listOf(
-            stringResource(Res.string.waist_and_skirt_or_pants),
-            stringResource(Res.string.hip_circumference),
-            stringResource(Res.string.waist_to_hip_length),
-            stringResource(Res.string.thigh_circumference),
-            stringResource(Res.string.knee_circumference),
-            stringResource(Res.string.calf_circumference),
-            stringResource(Res.string.ankle_circumference),
-            stringResource(Res.string.inseam),
-            stringResource(Res.string.outseam),
-            stringResource(Res.string.waist_to_knee_length)
+            stringResource(Res.string.full_sleeve_length),
+            stringResource(Res.string.forearm_circumference),
+            stringResource(Res.string.bicep_circumference),
+            stringResource(Res.string.wrist_circumference),
+            stringResource(Res.string.armhole),
+            stringResource(Res.string.sleeve_length_to_elbow)
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable(onClick = { onBodyPartSelected(BodyPart.LOWER) })
+            modifier = Modifier.clickable(onClick = { onBodyPartSelected(BodyPart.SLEEVES) })
         ) {
             Box(
                 Modifier.size(64.dp)
@@ -91,14 +80,14 @@ fun LowerBodyMeasurementScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.ic_lower_body_icon),
+                    painter = painterResource(Res.drawable.ic_sleeve),
                     contentDescription = null,
                     modifier = Modifier.size(32.dp)
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                stringResource(Res.string.lower_body),
+                stringResource(Res.string.sleeve),
                 style = appTypography().headline20,
                 fontWeight = FontWeight.Bold
             )
@@ -107,7 +96,7 @@ fun LowerBodyMeasurementScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         val values = remember { mutableStateMapOf<String, String>() }
-        Row {
+        Row(modifier = Modifier.fillMaxWidth()) {
 
             VerticalDivider(
                 modifier = Modifier.height(animatedHeight).padding(start = 28.dp)
@@ -116,9 +105,10 @@ fun LowerBodyMeasurementScreen(
                 thickness = 4.dp
             )
 
-            AnimatedVisibility(isSelected) {
+            AnimatedVisibility(visible = isSelected) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize().padding(start = 38.dp, end = 12.dp)
+                    modifier = Modifier.wrapContentHeight()
+                        .padding(start = 38.dp, end = 12.dp)
                 ) {
                     items(fields) { label ->
                         OutlinedTextFieldModeArt(
@@ -135,8 +125,9 @@ fun LowerBodyMeasurementScreen(
     }
 }
 
+
 @Composable
 @Preview
-fun LowerMeasurementScreenPreview() {
-    LowerBodyMeasurementScreen()
+fun SleeveSizesPreview() {
+    SleeveSizes()
 }

@@ -13,6 +13,9 @@ data class CustomerProfile(
     val address: String? = null,
     val gender: CustomerGender? = null,
     val birthday: String? = null,
+    val sizeSource: CustomerSizeSource? = null,
+    val sizeFreedom: CustomerSizeFreedom? = null,
+    val extraPhoto: String? = null,
     val customerStyle: CustomerStyle? = null,
     val customerBodyType: CustomerBodyForm? = null,
     val customerShoulderType: CustomerShoulder? = null,
@@ -24,6 +27,7 @@ data class CustomerProfile(
     val lowerBodySizes: LowerBodySizes? = null,
     val sleevesSizes: SleevesSizes? = null,
     val overallNote: String? = null,
+    val importantNote: String? = null,
     val createdAt: String? = null,
     val updatedAt: String? = null,
     val deletedAt: String? = null,
@@ -65,12 +69,12 @@ data class CustomerProfile(
 
     @Serializable
     data class SleevesSizes(
-        val fullSleeveLength:  Double = 0.0,
-        val forearmCircumference:  Double = 0.0,
-        val armCircumference:  Double = 0.0,
-        val wristCircumference:  Double = 0.0,
-        val sleeveHole:  Double = 0.0,
-        val sleeveLengthToElbow:  Double = 0.0
+        val fullSleeveLength: Double = 0.0,
+        val forearmCircumference: Double = 0.0,
+        val armCircumference: Double = 0.0,
+        val wristCircumference: Double = 0.0,
+        val sleeveHole: Double = 0.0,
+        val sleeveLengthToElbow: Double = 0.0
     )
 }
 
@@ -79,3 +83,6 @@ enum class CustomerStyle { CLASSIC, MODERN, FIT, CASUAL, FORMAL, LOOSE }
 enum class CustomerBodyForm { InvertedTriangle, Hourglass, Rectangle, Pear, Circle }
 enum class CustomerShoulder { Straight, Sloping, Rounded }
 enum class CustomerColor { White, Yellow, Red, Purple, Black }
+
+enum class CustomerSizeSource { Body, Dress, Pattern, Distance }
+enum class CustomerSizeFreedom { Fit, Free, WithAllowance }

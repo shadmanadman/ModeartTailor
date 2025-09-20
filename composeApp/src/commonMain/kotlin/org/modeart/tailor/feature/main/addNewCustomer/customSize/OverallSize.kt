@@ -1,4 +1,4 @@
-package org.modeart.tailor.feature.main.addNewCustomer.size
+package org.modeart.tailor.feature.main.addNewCustomer.customSize
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
