@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,9 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.model.customer.CustomerGender
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
@@ -52,7 +56,13 @@ import org.modeart.tailor.theme.appTypography
 
 @Composable
 @Preview
-fun BasicInfo() {
+fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
+    var selectedGender by remember { mutableStateOf(state.customer.gender) }
+    var customerName by remember { mutableStateOf(state.customer.name) }
+    var customerPhoneNumber by remember { mutableStateOf(state.customer.phoneNumber) }
+    var customerBirthday by remember { mutableStateOf(state.customer.birthday) }
+    var customerAvatar by remember { mutableStateOf(state.customer.avatar) }
+
     Column(
         modifier = Modifier.fillMaxSize().background(Background),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -72,13 +82,12 @@ fun BasicInfo() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            var selectedTabIndex by remember { mutableStateOf(0) }
             val tabWidth = 70.dp
             val tabHeight = 64.dp
             val animatedOffset by animateDpAsState(
-                targetValue = when (selectedTabIndex) {
-                    0 -> 0.dp
-                    1 -> tabWidth
+                targetValue = when (selectedGender) {
+                    CustomerGender.MALE -> 0.dp
+                    CustomerGender.FEMALE -> tabWidth
                     else -> 0.dp
                 },
                 animationSpec = tween(durationMillis = 500)
@@ -93,6 +102,12 @@ fun BasicInfo() {
                         .offset(x = animatedOffset)
                         .width(tabWidth)
                         .height(tabHeight)
+                        .clickable(onClick = {
+                            selectedGender = if (animatedOffset == 0.dp)
+                                CustomerGender.MALE
+                            else
+                                CustomerGender.FEMALE
+                        })
                         .background(color = Color.Black, shape = RoundedCornerShape(12.dp))
                 )
                 Row(
@@ -116,17 +131,17 @@ fun BasicInfo() {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             OutlinedTextFieldModeArt(
-                value = "",
+                value = state.customer.name.toString(),
                 onValueChange = {},
                 hint = stringResource(Res.string.customer_name_family_name)
             )
             OutlinedTextFieldModeArt(
-                value = "",
+                value = state.customer.phoneNumber.toString(),
                 onValueChange = {},
                 hint = stringResource(Res.string.mobile_number_customer)
             )
             OutlinedTextFieldModeArt(
-                value = "",
+                value = state.customer.birthday.toString(),
                 onValueChange = {},
                 hint = stringResource(Res.string.birth_date)
             )
@@ -169,6 +184,13 @@ fun BasicInfo() {
             isEnabled = true,
             text = stringResource(Res.string.next),
             onClick = {
+                viewModel.basicInfoChanged(
+                    gender = selectedGender ?: CustomerGender.MALE,
+                    fullName = customerName ?: "",
+                    phoneNumber = customerPhoneNumber ?: "",
+                    birth = customerBirthday ?: "",
+                    customerAvatar = customerAvatar ?: ""
+                )
             })
     }
 }

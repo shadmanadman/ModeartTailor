@@ -6,10 +6,15 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import org.modeart.tailor.api.ApiResult
+import org.modeart.tailor.api.customer.CustomerService
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiEffect
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
 import org.modeart.tailor.model.customer.CustomerBodyForm
 import org.modeart.tailor.model.customer.CustomerColor
 import org.modeart.tailor.model.customer.CustomerGender
@@ -18,8 +23,9 @@ import org.modeart.tailor.model.customer.CustomerShoulder
 import org.modeart.tailor.model.customer.CustomerSizeFreedom
 import org.modeart.tailor.model.customer.CustomerSizeSource
 import org.modeart.tailor.model.customer.CustomerStyle
+import kotlin.toString
 
-class NewCustomerViewModel : ViewModel() {
+class NewCustomerViewModel(private val customerService: CustomerService) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NewCustomerUiState())
 
@@ -32,27 +38,28 @@ class NewCustomerViewModel : ViewModel() {
     var effects = Channel<NewCustomerUiEffect>(Channel.UNLIMITED)
         private set
 
+    fun updateStep(step: NewCustomerSteps) {
+        _uiState.update { it.copy(step = step) }
+    }
+
     fun basicInfoChanged(
-        gender: Int,
+        gender: CustomerGender,
         fullName: String,
         phoneNumber: String,
         birth: String,
         customerAvatar: String
     ) {
-        val customerGender = if (gender == 0)
-            CustomerGender.MALE
-        else
-            CustomerGender.FEMALE
 
         _uiState.update {
             it.copy(
                 customer = it.customer.copy(
-                    gender = customerGender,
+                    gender = gender,
                     name = fullName,
                     phoneNumber = phoneNumber,
                     birthday = birth,
                     avatar = customerAvatar
-                )
+                ),
+                step = NewCustomerSteps.StyleFeature
             )
         }
     }
@@ -70,7 +77,8 @@ class NewCustomerViewModel : ViewModel() {
                     customerBodyType = customerBodyType,
                     customerShoulderType = customerShoulderType,
                     fabricSensitivity = fabricSensitivity
-                )
+                ),
+                step = NewCustomerSteps.SupplementaryInfo
             )
         }
     }
@@ -88,7 +96,8 @@ class NewCustomerViewModel : ViewModel() {
                     isOldCustomer = isOldCustomer,
                     referredBy = referredBy,
                     overallNote = overallNote
-                )
+                ),
+                step = NewCustomerSteps.FinalInfo
             )
         }
     }
@@ -106,16 +115,54 @@ class NewCustomerViewModel : ViewModel() {
                     sizeFreedom = sizeFreedom,
                     extraPhoto = extraPhoto,
                     importantNote = importantNote
-                )
+                ),
+                step = NewCustomerSteps.OverallSize
             )
         }
     }
 
-    fun upperSizeChanged() {
-
+    fun upperSizeChanged(upperBodySizes: CustomerProfile.UpperBodySizes) {
+        _uiState.update { it.copy(customer = it.customer.copy(upperBodySizes = upperBodySizes)) }
     }
 
-    fun lowerSizeChanged() {
+    fun lowerSizeChanged(lowerBodySizes: CustomerProfile.LowerBodySizes) {
+        _uiState.update { it.copy(customer = it.customer.copy(lowerBodySizes = lowerBodySizes)) }
+    }
 
+    fun sleevesSizeChanged(sleevesSizes: CustomerProfile.SleevesSizes) {
+        _uiState.update { it.copy(customer = it.customer.copy(sleevesSizes = sleevesSizes)) }
+    }
+
+
+    fun updateCustomer(customerId: Int, sizeId: Int) {
+        viewModelScope.launch {
+            val response = customerService.updateCustomer(_uiState.value.customer)
+            when (response) {
+                is ApiResult.Error -> effects.send(
+                    NewCustomerUiEffect.ShowRawNotification(
+                        msg = response.message, errorCode = response.code.toString()
+                    )
+                )
+
+                is ApiResult.Success -> {
+                }
+            }
+        }
+    }
+
+    fun newCustomer() {
+        viewModelScope.launch {
+            val response = customerService.createCustomer(_uiState.value.customer)
+            when (response) {
+                is ApiResult.Error -> effects.send(
+                    NewCustomerUiEffect.ShowRawNotification(
+                        msg = response.message, errorCode = response.code.toString()
+                    )
+                )
+
+                is ApiResult.Success -> {
+                }
+            }
+        }
     }
 }

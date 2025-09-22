@@ -36,11 +36,31 @@ import org.modeart.tailor.feature.main.addNewCustomer.info.SelectableButton
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
 
+enum class CustomerSize(val value: Int) {
+    SIZE_32(32),
+    SIZE_34(34),
+    SIZE_36(36),
+    SIZE_38(38),
+    SIZE_40(40),
+    SIZE_42(42),
+    SIZE_44(44),
+    SIZE_46(46),
+    SIZE_48(48),
+    SIZE_50(50),
+    SIZE_52(52),
+    SIZE_54(54),
+    SIZE_56(56),
+    SIZE_58(58),
+    SIZE_60(60);
+
+    override fun toString(): String {
+        return value.toString()
+    }
+}
 @Composable
 fun SizeSelectionScreen() {
 
 }
-
 @Composable
 @Preview
 fun SizeSelectionContent() {
@@ -66,25 +86,7 @@ fun SizeSelectionContent() {
             style = appTypography().body13
         )
 
-
-        val sizeList =
-            listOf(
-                32,
-                34,
-                36,
-                38,
-                40,
-                42,
-                44,
-                46,
-                48,
-                50,
-                52,
-                54,
-                56,
-                58,
-                60
-            )
+        val sizeList = CustomerSize.entries.toList()
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(4),
@@ -92,13 +94,13 @@ fun SizeSelectionContent() {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(sizeList.size) {
+            items(sizeList.size) { index ->
                 SelectableButton(
                     modifier = Modifier.size(50.dp),
-                    text = sizeList[it].toString(),
-                    isSelected = selectedSize == sizeList[it],
+                    text = sizeList[index].toString(),
+                    isSelected = selectedSize == sizeList[index].value,
                     onClick = {
-                        selectedSize = sizeList[it]
+                        selectedSize = sizeList[index].value
                     })
             }
         }

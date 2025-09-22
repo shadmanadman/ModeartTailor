@@ -45,6 +45,7 @@ import modearttailor.composeapp.generated.resources.ic_note
 import modearttailor.composeapp.generated.resources.ic_search
 import modearttailor.composeapp.generated.resources.ic_user_star
 import modearttailor.composeapp.generated.resources.is_old_customer
+import modearttailor.composeapp.generated.resources.next
 import modearttailor.composeapp.generated.resources.no
 import modearttailor.composeapp.generated.resources.notes_about_customer
 import modearttailor.composeapp.generated.resources.notes_hint
@@ -56,15 +57,20 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.model.customer.CustomerColor
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Hint
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun SupplementaryInformationScreen() {
-    var selectedColor by remember { mutableStateOf(Color.Unspecified) }
+fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
+    var selectedColor by remember { mutableStateOf(state.customer.customerColor) }
     var isOldCustomer by remember { mutableStateOf<Boolean?>(null) }
-
+    var customerNotes by remember { mutableStateOf(state.customer.overallNote) }
+    var referredBy by remember { mutableStateOf(state.customer.referredBy) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,17 +109,17 @@ fun SupplementaryInformationScreen() {
             horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
         ) {
             val colors = listOf(
-                Color(0xFFB3B3F0),
-                Color(0xFFD6A0E3),
-                Color(0xFFB7E2B0),
-                Color(0xFFF2EF9E),
-                Color(0xFFFFB75F)
+                Color(0xFF000000),
+                Color(0xFF382CD0),
+                Color(0xFFFF4A4A),
+                Color(0xFFFBBC05),
+                Color(0xFFFFFFFF)
             )
-            colors.forEach { color ->
+            colors.forEachIndexed { index, color ->
                 ColorSelectionBox(
                     color = color,
-                    isSelected = selectedColor == color,
-                    onClick = { selectedColor = color }
+                    isSelected = selectedColor == index.mapToCustomerColor(),
+                    onClick = { selectedColor = index.mapToCustomerColor() }
                 )
             }
         }
@@ -171,9 +177,11 @@ fun SupplementaryInformationScreen() {
         OutlinedTextFieldModeArt(
             modifier = Modifier.fillMaxWidth(),
             hint = stringResource(Res.string.search_in_customers),
-            value = "",
+            value = state.customer.referredBy ?: "",
             leadingIcon = Res.drawable.ic_search,
-            onValueChange = {})
+            onValueChange = {
+                referredBy = it
+            })
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -195,8 +203,23 @@ fun SupplementaryInformationScreen() {
         OutlinedTextFieldModeArt(
             modifier = Modifier.fillMaxWidth().height(180.dp),
             hint = stringResource(Res.string.notes_hint),
-            value = "",
-            onValueChange = {})
+            value = customerNotes ?: "",
+            onValueChange = {
+                customerNotes = it
+            })
+
+        RoundedCornerButton(
+            width = 332,
+            isEnabled = true,
+            text = stringResource(Res.string.next),
+            onClick = {
+                viewModel.supplementaryInfoChanged(
+                    customerColor = selectedColor ?: CustomerColor.Black,
+                    isOldCustomer = isOldCustomer ?: false,
+                    referredBy = referredBy ?: "",
+                    overallNote = customerNotes ?: ""
+                )
+            })
     }
 }
 
@@ -284,5 +307,16 @@ fun SimpleTextField(
 @Preview()
 @Composable
 fun SupplementaryInformationScreenPreview() {
-    SupplementaryInformationScreen()
+    //SupplementaryInformationScreen()
+}
+
+fun Int.mapToCustomerColor(): CustomerColor {
+    return when (this) {
+        0 -> CustomerColor.Black
+        1 -> CustomerColor.White
+        2 -> CustomerColor.Red
+        3 -> CustomerColor.Yellow
+        4 -> CustomerColor.Purple
+        else -> CustomerColor.White
+    }
 }

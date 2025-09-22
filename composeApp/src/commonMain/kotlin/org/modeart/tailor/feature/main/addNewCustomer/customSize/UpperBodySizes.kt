@@ -27,9 +27,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -63,7 +65,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.theme.Accent
+import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.appTypography
 
@@ -162,8 +166,10 @@ fun HeaderSection() {
 
 @Composable
 fun UpperBodyMeasurementScreen(
+    state: NewCustomerUiState,
     isSelected: Boolean = false,
-    onBodyPartSelected: (BodyPart) -> Unit
+    onBodyPartSelected: (BodyPart) -> Unit,
+    onUpperBodySizeChanged: (CustomerProfile.UpperBodySizes) -> Unit
 ) {
     val animatedHeight by animateDpAsState(
         targetValue = if (isSelected) 800.dp else 60.dp,
@@ -193,9 +199,15 @@ fun UpperBodyMeasurementScreen(
             stringResource(Res.string.back_armhole),
             stringResource(Res.string.back_neck_to_waist_length)
         )
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable(onClick = {
-            onBodyPartSelected(BodyPart.UPPER)
-        })) {
+
+        var upperBodySize by remember { mutableStateOf(CustomerProfile.UpperBodySizes()) }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable(onClick = {
+                onBodyPartSelected(BodyPart.UPPER)
+            })
+        ) {
             Box(
                 Modifier.size(64.dp)
                     .background(color = AccentLight, shape = RoundedCornerShape(24.dp)),
@@ -217,7 +229,7 @@ fun UpperBodyMeasurementScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        val values = remember { mutableStateMapOf<String, String>() }
+        val values = state.customer.upperBodySizes
         Row {
 
             VerticalDivider(
@@ -234,8 +246,43 @@ fun UpperBodyMeasurementScreen(
                     items(fields) { label ->
                         OutlinedTextFieldModeArt(
                             modifier = Modifier.padding(top = 12.dp),
-                            value = values[label] ?: "",
-                            onValueChange = { values[label] = it },
+                            value = when(label){
+                                fields[0] -> values?.shoulderWidth?:""
+                                fields[1] -> values?.smallShoulder?:""
+                                fields[2] -> values?.neckCircumference?:""
+                                fields[3] -> values?.chestHeight?:""
+                                fields[4] -> values?.chestCircumference?:""
+                                fields[5] -> values?.chestDistance?:""
+                                fields[6] -> values?.frontLengthToWaist?:""
+                                fields[7] -> values?.waistCircumference?:""
+                                fields[8] -> values?.smallHipCircumference?:""
+                                fields[9] -> values?.largeHipCircumference?:""
+                                fields[10] -> values?.hipHeight?:""
+                                fields[11] -> values?.frontShoulderWidth?:""
+                                fields[12] -> values?.backShoulderWidth?:""
+                                fields[13] -> values?.backLengthNeckToWaist?:""
+                                else -> ""
+                            },
+                            onValueChange = { newValue ->
+                                upperBodySize = when (label) {
+                                    fields[0] -> upperBodySize.copy(shoulderWidth = newValue)
+                                    fields[1] -> upperBodySize.copy(smallShoulder = newValue)
+                                    fields[2] -> upperBodySize.copy(neckCircumference = newValue)
+                                    fields[3] -> upperBodySize.copy(chestHeight = newValue)
+                                    fields[4] -> upperBodySize.copy(chestCircumference = newValue)
+                                    fields[5] -> upperBodySize.copy(chestDistance = newValue)
+                                    fields[6] -> upperBodySize.copy(frontLengthToWaist = newValue)
+                                    fields[7] -> upperBodySize.copy(waistCircumference = newValue)
+                                    fields[8] -> upperBodySize.copy(smallHipCircumference = newValue)
+                                    fields[9] -> upperBodySize.copy(largeHipCircumference = newValue)
+                                    fields[10] -> upperBodySize.copy(hipHeight = newValue)
+                                    fields[11] -> upperBodySize.copy(frontShoulderWidth = newValue)
+                                    fields[12] -> upperBodySize.copy(backShoulderWidth = newValue)
+                                    fields[13] -> upperBodySize.copy(backLengthNeckToWaist = newValue)
+                                    else -> upperBodySize
+                                }
+                                onUpperBodySizeChanged(upperBodySize)
+                            },
                             isNumberOnly = true,
                             hint = label
                         )
@@ -251,5 +298,8 @@ fun UpperBodyMeasurementScreen(
 @Preview
 @Composable
 fun UpperMeasurementScreenPreview() {
-    UpperBodyMeasurementScreen(isSelected = true) {}
+//    UpperBodyMeasurementScreen(
+//        isSelected = true,
+//        onBodyPartSelected = {},
+//        onUpperBodySizeChanged = {})
 }

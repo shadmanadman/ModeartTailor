@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.add_photo
 import modearttailor.composeapp.generated.resources.body_dress_pattern_measurement
+import modearttailor.composeapp.generated.resources.fabric_name
 import modearttailor.composeapp.generated.resources.fit_fit
 import modearttailor.composeapp.generated.resources.ic_add_photo
 import modearttailor.composeapp.generated.resources.ic_arrow_down
@@ -46,7 +47,10 @@ import modearttailor.composeapp.generated.resources.ic_note
 import modearttailor.composeapp.generated.resources.ic_upload
 import modearttailor.composeapp.generated.resources.important_note
 import modearttailor.composeapp.generated.resources.loose_fit
+import modearttailor.composeapp.generated.resources.next
+import modearttailor.composeapp.generated.resources.notes_about_customer
 import modearttailor.composeapp.generated.resources.notes_example
+import modearttailor.composeapp.generated.resources.notes_hint
 import modearttailor.composeapp.generated.resources.register_title
 import modearttailor.composeapp.generated.resources.seam_allowance
 import modearttailor.composeapp.generated.resources.title_measurement_freedom_level
@@ -55,16 +59,23 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.feature.main.addNewCustomer.customSize.HeaderSection
+import org.modeart.tailor.model.customer.CustomerSizeFreedom
+import org.modeart.tailor.model.customer.CustomerSizeSource
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Hint
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun MeasurementFormScreen() {
-    var selectedFit by remember { mutableStateOf<String?>("فیت") }
-
+fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
+    var selectedFit by remember { mutableStateOf(state.customer.sizeFreedom) }
+    var customerSizeSource by remember { mutableStateOf(state.customer.sizeSource) }
+    var importantNote by remember { mutableStateOf(state.customer.importantNote) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -94,18 +105,18 @@ fun MeasurementFormScreen() {
         ) {
             SelectableButton(
                 text = stringResource(Res.string.seam_allowance),
-                isSelected = selectedFit == "با جای دوخت",
-                onClick = { selectedFit = "با جای دوخت" }
+                isSelected = selectedFit == CustomerSizeFreedom.WithAllowance,
+                onClick = { selectedFit = CustomerSizeFreedom.WithAllowance }
             )
             SelectableButton(
                 text = stringResource(Res.string.loose_fit),
-                isSelected = selectedFit == "آزاد",
-                onClick = { selectedFit = "آزاد" }
+                isSelected = selectedFit == CustomerSizeFreedom.Free,
+                onClick = { selectedFit = CustomerSizeFreedom.Free }
             )
             SelectableButton(
                 text = stringResource(Res.string.fit_fit),
-                isSelected = selectedFit == "فیت",
-                onClick = { selectedFit = "فیت" }
+                isSelected = selectedFit == CustomerSizeFreedom.Fit,
+                onClick = { selectedFit = CustomerSizeFreedom.Fit }
             )
         }
 
@@ -118,12 +129,30 @@ fun MeasurementFormScreen() {
 
         // Important Note Section
         FormSectionTitle(title = stringResource(Res.string.important_note), Res.drawable.ic_note)
-        NoteTextField(hint = stringResource(Res.string.notes_example))
+        OutlinedTextFieldModeArt(
+            modifier = Modifier.fillMaxWidth().height(150.dp),
+            value = importantNote ?: "",
+            onValueChange = {
+                importantNote = it
+            },
+            hint = stringResource(Res.string.notes_hint)
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
         // Submit Button
-        SubmitButton()
+        RoundedCornerButton(
+            width = 332,
+            isEnabled = true,
+            text = stringResource(Res.string.next),
+            onClick = {
+                viewModel.finalInfoChanged(
+                    sizeSource = customerSizeSource ?: CustomerSizeSource.Body,
+                    sizeFreedom = selectedFit ?: CustomerSizeFreedom.WithAllowance,
+                    extraPhoto = "",
+                    importantNote = importantNote ?: ""
+                )
+            })
     }
 }
 
@@ -260,7 +289,7 @@ fun AddPhotoButton(iconRes: DrawableResource) {
 }
 
 @Composable
-fun NoteTextField(hint: String) {
+fun NoteTextField(hint: String, importantNote: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -295,5 +324,5 @@ fun SubmitButton() {
 @Preview
 @Composable
 fun MeasurementFormScreenPreview() {
-    MeasurementFormScreen()
+    //FinalInfo(NewCustomerUiState())
 }

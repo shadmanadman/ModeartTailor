@@ -1,6 +1,7 @@
 package org.modeart.tailor.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,9 +29,9 @@ import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun MainToolbar(title: String) {
+fun MainToolbar(title: String, onBack: () -> Unit) {
     Box(
-        modifier = Modifier.fillMaxWidth().height(94.dp)
+        modifier = Modifier.fillMaxWidth().height(84.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxSize().padding(start = 18.dp, end = 18.dp),
@@ -38,7 +39,7 @@ fun MainToolbar(title: String) {
         ) {
             Icon(
                 modifier = Modifier.size(40.dp).background(color = Accent, shape = CircleShape)
-                    .padding(8.dp),
+                    .padding(8.dp).clickable(onClick = onBack),
                 painter = painterResource(Res.drawable.ic_arrow_narrow_right),
                 tint = Color.White,
                 contentDescription = null
@@ -59,5 +60,5 @@ fun MainToolbar(title: String) {
 @Composable
 @Preview
 fun ToolbarPreview() {
-    MainToolbar("Test")
+    MainToolbar("Test"){}
 }

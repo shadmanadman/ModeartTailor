@@ -13,6 +13,7 @@ data class CustomerProfile(
     val address: String? = null,
     val gender: CustomerGender? = null,
     val birthday: String? = null,
+    val sizes: Sizes? = null,
     val sizeSource: CustomerSizeSource? = null,
     val sizeFreedom: CustomerSizeFreedom? = null,
     val extraPhoto: String? = null,
@@ -36,45 +37,51 @@ data class CustomerProfile(
     val customerOf: List<String>? = null
 ) {
     @Serializable
+    data class Sizes(
+        @SerialName("_id")
+        val id: String? = null,
+
+    )
+    @Serializable
     data class UpperBodySizes(
-        val shoulderWidth: Double = 0.0,
-        val smallShoulder: Double = 0.0,
-        val neckCircumference: Double = 0.0,
-        val chestHeight: Double = 0.0,
-        val chestCircumference: Double = 0.0,
-        val chestDistance: Double = 0.0,
-        val frontLengthToWaist: Double = 0.0,
-        val waistCircumference: Double = 0.0,
-        val smallHipCircumference: Double = 0.0,
-        val largeHipCircumference: Double = 0.0,
-        val hipHeight: Double = 0.0,
-        val frontShoulderWidth: Double = 0.0,
-        val backShoulderWidth: Double = 0.0,
-        val backLengthNeckToWaist: Double = 0.0
+        val shoulderWidth: String = "0",
+        val smallShoulder: String = "0",
+        val neckCircumference: String = "0",
+        val chestHeight: String = "0",
+        val chestCircumference: String = "0",
+        val chestDistance: String = "0",
+        val frontLengthToWaist: String = "0",
+        val waistCircumference: String = "0",
+        val smallHipCircumference: String = "0",
+        val largeHipCircumference: String = "0",
+        val hipHeight: String = "0",
+        val frontShoulderWidth: String = "0",
+        val backShoulderWidth: String = "0",
+        val backLengthNeckToWaist: String = "0"
     )
 
     @Serializable
     data class LowerBodySizes(
-        val waistbandCircumference: Double = 0.0,
-        val hipCircumference: Double = 0.0,
-        val waistToHipLength: Double = 0.0,
-        val thighCircumference: Double = 0.0,
-        val kneeCircumference: Double = 0.0,
-        val calfCircumference: Double = 0.0,
-        val ankleCircumference: Double = 0.0,
-        val inseamLength: Double = 0.0,
-        val outseamLength: Double = 0.0,
-        val waistToKneeLength: Double = 0.0
+        val waistbandCircumference: String = "0",
+        val hipCircumference: String = "0",
+        val waistToHipLength: String = "0",
+        val thighCircumference: String = "0",
+        val kneeCircumference: String = "0",
+        val calfCircumference: String = "0",
+        val ankleCircumference: String = "0",
+        val inseamLength: String = "0",
+        val outseamLength: String = "0",
+        val waistToKneeLength: String = "0"
     )
 
     @Serializable
     data class SleevesSizes(
-        val fullSleeveLength: Double = 0.0,
-        val forearmCircumference: Double = 0.0,
-        val armCircumference: Double = 0.0,
-        val wristCircumference: Double = 0.0,
-        val sleeveHole: Double = 0.0,
-        val sleeveLengthToElbow: Double = 0.0
+        val fullSleeveLength: String = "0",
+        val forearmCircumference: String = "0",
+        val armCircumference: String = "0",
+        val wristCircumference: String = "0",
+        val sleeveHole: String = "0",
+        val sleeveLengthToElbow: String = "0"
     )
 }
 

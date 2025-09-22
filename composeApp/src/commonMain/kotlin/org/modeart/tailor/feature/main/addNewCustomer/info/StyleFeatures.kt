@@ -58,6 +58,7 @@ import modearttailor.composeapp.generated.resources.ic_sholder_type_3
 import modearttailor.composeapp.generated.resources.ic_style
 import modearttailor.composeapp.generated.resources.loose_style
 import modearttailor.composeapp.generated.resources.modern
+import modearttailor.composeapp.generated.resources.next
 import modearttailor.composeapp.generated.resources.relaxed
 import modearttailor.composeapp.generated.resources.shoulder_model
 import modearttailor.composeapp.generated.resources.title_personal_and_style_features
@@ -67,6 +68,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.model.customer.CustomerBodyForm
+import org.modeart.tailor.model.customer.CustomerGender
+import org.modeart.tailor.model.customer.CustomerShoulder
+import org.modeart.tailor.model.customer.CustomerStyle
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Hint
@@ -93,44 +101,51 @@ object StyleRes {
 data class SelectionItem(
     val id: Int,
     val name: StringResource = Res.string.classic,
-    val imageResId: DrawableResource? = null
+    val imageResId: DrawableResource? = null,
+    val type: Any? = null
 )
 
 @Composable
-fun PersonalizationScreen() {
+fun StyleFeatures(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     val customerStyles = listOf(
         SelectionItem(
             id = 1,
-            name = StyleRes.style_classic
+            name = StyleRes.style_classic,
+            type = CustomerStyle.CLASSIC
         ),
-        SelectionItem(id = 2, name = StyleRes.style_relaxed),
-        SelectionItem(id = 3, name = StyleRes.style_modern),
-        SelectionItem(id = 4, name = StyleRes.style_fit),
-        SelectionItem(id = 5, name = StyleRes.style_formal),
+        SelectionItem(id = 2, name = StyleRes.style_relaxed, type = CustomerStyle.CASUAL),
+        SelectionItem(id = 3, name = StyleRes.style_modern, type = CustomerStyle.MODERN),
+        SelectionItem(id = 4, name = StyleRes.style_fit, type = CustomerStyle.FIT),
+        SelectionItem(id = 5, name = StyleRes.style_formal, type = CustomerStyle.FORMAL),
         SelectionItem(
             id = 6,
-            name = StyleRes.style_loos
+            name = StyleRes.style_loos,
+            type = CustomerStyle.LOOSE
         )
     )
 
     val bodyTypes = listOf(
-        SelectionItem(id = 1, imageResId = StyleRes.body_type_1),
-        SelectionItem(id = 2, imageResId = StyleRes.body_type_2),
-        SelectionItem(id = 3, imageResId = StyleRes.body_type_3),
-        SelectionItem(id = 4, imageResId = StyleRes.body_type_4),
-        SelectionItem(id = 4, imageResId = StyleRes.body_type_5)
+        SelectionItem(
+            id = 1,
+            imageResId = StyleRes.body_type_1,
+            type = CustomerBodyForm.InvertedTriangle
+        ),
+        SelectionItem(id = 2, imageResId = StyleRes.body_type_2, type = CustomerBodyForm.Hourglass),
+        SelectionItem(id = 3, imageResId = StyleRes.body_type_3, type = CustomerBodyForm.Rectangle),
+        SelectionItem(id = 4, imageResId = StyleRes.body_type_4, type = CustomerBodyForm.Pear),
+        SelectionItem(id = 4, imageResId = StyleRes.body_type_5, type = CustomerBodyForm.Circle)
     )
 
     val shoulderModels = listOf(
-        SelectionItem(id = 1, imageResId = StyleRes.shoulder_1),
-        SelectionItem(id = 2, imageResId = StyleRes.shoulder_2),
-        SelectionItem(id = 3, imageResId = StyleRes.shoulder_3)
+        SelectionItem(id = 1, imageResId = StyleRes.shoulder_1, type = CustomerShoulder.Straight),
+        SelectionItem(id = 2, imageResId = StyleRes.shoulder_2, type = CustomerShoulder.Rounded),
+        SelectionItem(id = 3, imageResId = StyleRes.shoulder_3, type = CustomerShoulder.Sloping)
     )
 
     var selectedStyle by remember { mutableStateOf<SelectionItem?>(customerStyles.first()) }
     var selectedBodyType by remember { mutableStateOf<SelectionItem?>(bodyTypes.first()) }
     var selectedShoulder by remember { mutableStateOf<SelectionItem?>(shoulderModels.first()) }
-
+    var fabricSensitivity by remember { mutableStateOf(state.customer.fabricSensitivity) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -178,7 +193,23 @@ fun PersonalizationScreen() {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Fabric Sensitivity Section
-        FabricSensitivitySection()
+        FabricSensitivitySection(state.customer.fabricSensitivity ?: "") {
+            fabricSensitivity = it
+        }
+
+
+        RoundedCornerButton(
+            width = 332,
+            isEnabled = true,
+            text = stringResource(Res.string.next),
+            onClick = {
+                viewModel.styleInfoChanged(
+                    customerStyle = selectedStyle?.type as CustomerStyle,
+                    customerBodyType = selectedBodyType?.type as CustomerBodyForm,
+                    customerShoulderType = selectedShoulder?.type as CustomerShoulder,
+                    fabricSensitivity = fabricSensitivity ?: ""
+                )
+            })
     }
 }
 
@@ -252,7 +283,7 @@ fun SelectionSection(
                 )
             }
         }
-        
+
 }
 
 @Composable
@@ -315,7 +346,10 @@ fun SelectionBox(
 }
 
 @Composable
-fun FabricSensitivitySection() {
+fun FabricSensitivitySection(
+    fabricSensitivity: String = "",
+    onFabricSensitivityChanged: (String) -> Unit
+) {
     Row(
         Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
             .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
@@ -334,8 +368,8 @@ fun FabricSensitivitySection() {
 
     OutlinedTextFieldModeArt(
         modifier = Modifier.fillMaxWidth(),
-        value = "",
-        onValueChange = {},
+        value = fabricSensitivity,
+        onValueChange = onFabricSensitivityChanged,
         hint = stringResource(Res.string.fabric_name)
     )
 
@@ -344,5 +378,5 @@ fun FabricSensitivitySection() {
 @Preview()
 @Composable
 fun PersonalizationScreenPreview() {
-    PersonalizationScreen()
+    //StyleFeatures(state = NewCustomerUiState())
 }

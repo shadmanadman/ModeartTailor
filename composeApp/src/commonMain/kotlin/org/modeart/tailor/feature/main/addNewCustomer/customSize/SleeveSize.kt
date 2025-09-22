@@ -25,8 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,15 +46,22 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun SleeveSizes(isSelected: Boolean = false, onBodyPartSelected: (BodyPart) -> Unit = {}) {
+fun SleeveSizes(
+    state: NewCustomerUiState,
+    isSelected: Boolean = false, onBodyPartSelected: (BodyPart) -> Unit = {},
+    onSleevesSizeChanged: (CustomerProfile.SleevesSizes) -> Unit
+) {
     val animatedHeight by animateDpAsState(
         targetValue = if (isSelected) 400.dp else 0.dp,
         animationSpec = tween(durationMillis = 500)
     )
+    var sleevesSize by remember { mutableStateOf(CustomerProfile.SleevesSizes()) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +103,7 @@ fun SleeveSizes(isSelected: Boolean = false, onBodyPartSelected: (BodyPart) -> U
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        val values = remember { mutableStateMapOf<String, String>() }
+        val values = state.customer.sleevesSizes
         Row(modifier = Modifier.fillMaxWidth()) {
 
             VerticalDivider(
@@ -113,8 +121,19 @@ fun SleeveSizes(isSelected: Boolean = false, onBodyPartSelected: (BodyPart) -> U
                     items(fields) { label ->
                         OutlinedTextFieldModeArt(
                             modifier = Modifier.padding(top = 12.dp),
-                            value = values[label] ?: "",
-                            onValueChange = { values[label] = it },
+                            value = when (label) {
+                                fields[0] -> values?.fullSleeveLength?:""
+                                fields[1] -> values?.forearmCircumference?:""
+                                fields[2] -> values?.armCircumference?:""
+                                fields[3] -> values?.wristCircumference?:""
+                                fields[4] -> values?.sleeveHole?:""
+                                fields[5] -> values?.sleeveLengthToElbow?:""
+                                else -> ""
+                            },
+                            onValueChange = {
+                                sleevesSize = getUpdatedSleevesSize(label, it, fields, sleevesSize)
+                                onSleevesSizeChanged(sleevesSize)
+                            },
                             isNumberOnly = true,
                             hint = label
                         )
@@ -125,9 +144,25 @@ fun SleeveSizes(isSelected: Boolean = false, onBodyPartSelected: (BodyPart) -> U
     }
 }
 
+private fun getUpdatedSleevesSize(
+    label: String,
+    value: String,
+    fields: List<String>,
+    currentSleevesSize: CustomerProfile.SleevesSizes
+): CustomerProfile.SleevesSizes {
+    return when (label) {
+        fields[0] -> currentSleevesSize.copy(fullSleeveLength = value)
+        fields[1] -> currentSleevesSize.copy(forearmCircumference = value)
+        fields[2] -> currentSleevesSize.copy(armCircumference = value)
+        fields[3] -> currentSleevesSize.copy(wristCircumference = value)
+        fields[4] -> currentSleevesSize.copy(sleeveHole = value)
+        fields[5] -> currentSleevesSize.copy(sleeveLengthToElbow = value)
+        else -> currentSleevesSize
+    }
+}
 
 @Composable
 @Preview
 fun SleeveSizesPreview() {
-    SleeveSizes()
+    //SleeveSizes()
 }

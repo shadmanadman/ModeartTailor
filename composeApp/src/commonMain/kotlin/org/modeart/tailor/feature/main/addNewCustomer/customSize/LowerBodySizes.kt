@@ -23,8 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +47,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
@@ -53,13 +56,18 @@ import org.modeart.tailor.theme.appTypography
 
 @Composable
 fun LowerBodyMeasurementScreen(
+    state: NewCustomerUiState,
     isSelected: Boolean = false,
-    onBodyPartSelected: (BodyPart) -> Unit = {}
+    onBodyPartSelected: (BodyPart) -> Unit = {},
+    onLowerBodySizeChanged: (CustomerProfile.LowerBodySizes) -> Unit
+
 ) {
     val animatedHeight by animateDpAsState(
         targetValue = if (isSelected) 800.dp else 60.dp,
         animationSpec = tween(durationMillis = 500)
     )
+    var lowerBodySize by remember { mutableStateOf(CustomerProfile.LowerBodySizes()) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -106,7 +114,7 @@ fun LowerBodyMeasurementScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        val values = remember { mutableStateMapOf<String, String>() }
+        val values = state.customer.lowerBodySizes
         Row {
 
             VerticalDivider(
@@ -123,8 +131,35 @@ fun LowerBodyMeasurementScreen(
                     items(fields) { label ->
                         OutlinedTextFieldModeArt(
                             modifier = Modifier.padding(top = 12.dp),
-                            value = values[label] ?: "",
-                            onValueChange = { values[label] = it },
+                            value = when(label){
+                                fields[0] -> values?.waistbandCircumference?:""
+                                fields[1] -> values?.hipCircumference?:""
+                                fields[2] -> values?.waistToHipLength?:""
+                                fields[3] -> values?.thighCircumference?:""
+                                fields[4] -> values?.kneeCircumference?:""
+                                fields[5] -> values?.calfCircumference?:""
+                                fields[6] -> values?.ankleCircumference?:""
+                                fields[7] -> values?.inseamLength?:""
+                                fields[8] -> values?.outseamLength?:""
+                                fields[9] -> values?.waistToKneeLength?:""
+                                else -> ""
+                            },
+                            onValueChange = {
+                                lowerBodySize = when (label) {
+                                    fields[0] -> lowerBodySize.copy(waistbandCircumference = it)
+                                    fields[1] -> lowerBodySize.copy(hipCircumference = it)
+                                    fields[2] -> lowerBodySize.copy(waistToHipLength = it)
+                                    fields[3] -> lowerBodySize.copy(thighCircumference = it)
+                                    fields[4] -> lowerBodySize.copy(kneeCircumference = it)
+                                    fields[5] -> lowerBodySize.copy(calfCircumference = it)
+                                    fields[6] -> lowerBodySize.copy(ankleCircumference = it)
+                                    fields[7] -> lowerBodySize.copy(inseamLength = it)
+                                    fields[8] -> lowerBodySize.copy(outseamLength = it)
+                                    fields[9] -> lowerBodySize.copy(waistToKneeLength = it)
+                                    else -> lowerBodySize
+                                }
+                                onLowerBodySizeChanged(lowerBodySize)
+                            },
                             isNumberOnly = true,
                             hint = label
                         )
@@ -138,5 +173,5 @@ fun LowerBodyMeasurementScreen(
 @Composable
 @Preview
 fun LowerMeasurementScreenPreview() {
-    LowerBodyMeasurementScreen()
+    //LowerBodyMeasurementScreen()
 }
