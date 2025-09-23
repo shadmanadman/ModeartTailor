@@ -28,7 +28,7 @@ fun Route.businessRouting() {
             } ?: call.respondText("No records found")
         }
 
-        authenticate {
+        authenticate("auth-jwt") {
             get("/business") {
                 // Get the principal from the call object
                 val principal = call.principal<JWTPrincipal>()

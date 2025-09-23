@@ -47,4 +47,10 @@ class OnBoardingRepo(private val client: HttpClient) : OnBoardingService {
                 setBody(OtpRequest(phoneNumber))
             }
         }
+
+    override suspend fun sendOtpTest(phoneNumber: String): ApiResult<AuthRequest> = safeRequest {
+        client.post(urlString = "send-otp-test") {
+            setBody(OtpRequest(phoneNumber))
+        }
+    }
 }

@@ -15,4 +15,6 @@ interface OnBoardingService {
     suspend fun refreshToken(refreshTokenRequest: RefreshTokenRequest): ApiResult<Tokens>
 
     suspend fun sendOtp(phoneNumber: String): ApiResult<Unit>
+    suspend fun sendOtpTest(phoneNumber: String): ApiResult<AuthRequest>
+
 }

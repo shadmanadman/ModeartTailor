@@ -119,7 +119,7 @@ fun SignupSceneContent(viewModel: SignupViewModel, state: SignupScreenUiState) {
                     RoundedCornerButton(
                         isEnabled = state.enableContinue,
                         text = stringResource(Res.string.send_code),
-                        onClick = viewModel::login
+                        onClick = viewModel::register
                     )
                 }
 
@@ -133,7 +133,7 @@ fun SignupSceneContent(viewModel: SignupViewModel, state: SignupScreenUiState) {
                     RoundedCornerButton(
                         isEnabled = state.enableContinue,
                         text = stringResource(Res.string.signup),
-                        onClick = viewModel::login
+                        onClick = viewModel::register
                     )
                 }
             }

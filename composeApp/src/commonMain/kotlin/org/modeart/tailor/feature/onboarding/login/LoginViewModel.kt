@@ -63,7 +63,7 @@ class LoginViewModel(private val onBoardingService: OnBoardingService) : ViewMod
             when (currentStage) {
                 LoginStep.EnterPhoneNumber -> {
                     val response =
-                        _uiState.value.run { onBoardingService.sendOtp(phoneNumber = number) }
+                        _uiState.value.run { onBoardingService.sendOtpTest(phoneNumber = number) }
                     when (response) {
                         is ApiResult.Error ->
                             effects.send(
@@ -72,11 +72,12 @@ class LoginViewModel(private val onBoardingService: OnBoardingService) : ViewMod
                                 )
                             )
 
-                        is ApiResult.Success<*> -> {
+                        is ApiResult.Success -> {
                             _uiState.update {
                                 it.copy(
                                     currentStep = LoginStep.EnterVerificationCode,
-                                    enableContinue = false
+                                    enableContinue = false,
+                                    code = response.data.otp
                                 )
                             }
                         }
@@ -93,7 +94,7 @@ class LoginViewModel(private val onBoardingService: OnBoardingService) : ViewMod
                             )
                         )
 
-                        is ApiResult.Success<*> -> {
+                        is ApiResult.Success -> {
                             effects.send(LoginScreenUiEffect.Navigation.Main)
                         }
                     }

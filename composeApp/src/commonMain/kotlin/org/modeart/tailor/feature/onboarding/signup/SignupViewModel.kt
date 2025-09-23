@@ -54,14 +54,14 @@ class SignupViewModel(private val onBoardingService: OnBoardingService) : ViewMo
     }
 
 
-    fun login() {
+    fun register() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             val currentStage = _uiState.value.currentStep
             when (currentStage) {
                 SignupStep.EnterPhoneNumber -> {
                     val response =
-                        _uiState.value.run { onBoardingService.sendOtp(phoneNumber = number) }
+                        _uiState.value.run { onBoardingService.sendOtpTest(phoneNumber = number) }
                     when (response) {
                         is ApiResult.Error -> effects.send(
                             SignupScreenUiEffect.ShowRawNotification(
@@ -69,15 +69,20 @@ class SignupViewModel(private val onBoardingService: OnBoardingService) : ViewMo
                             )
                         )
 
-                        is ApiResult.Success<*> -> {
-                            _uiState.update { it.copy(currentStep = SignupStep.EnterVerificationCode) }
+                        is ApiResult.Success -> {
+                            _uiState.update {
+                                it.copy(
+                                    currentStep = SignupStep.EnterVerificationCode,
+                                    code = response.data.otp
+                                )
+                            }
                         }
                     }
                 }
 
                 SignupStep.EnterVerificationCode -> {
                     val response =
-                        _uiState.value.run { onBoardingService.login(AuthRequest(number, code)) }
+                        _uiState.value.run { onBoardingService.register(AuthRequest(number, code)) }
                     when (response) {
                         is ApiResult.Error ->
                             effects.send(

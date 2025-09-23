@@ -100,8 +100,8 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
         // 2. Clear the OTP from the store after successful verification
         otpStore.remove(request.phoneNumber)
 
-        val accessToken = JwtConfig.generateAccessToken(user.id, tokenConfig)
-        val refreshToken = JwtConfig.generateRefreshToken(user.id, tokenConfig)
+        val accessToken = JwtConfig.generateAccessToken(user.id?:"", tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(user.id?:"", tokenConfig)
         call.respond(HttpStatusCode.OK, Tokens(accessToken, refreshToken))
     }
 
@@ -116,8 +116,8 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
             HttpStatusCode.Unauthorized,
             "Invalid credentials"
         )
-        val newAccessToken = JwtConfig.generateAccessToken(user.id, tokenConfig)
-        val refreshToken = JwtConfig.generateRefreshToken(user.id, tokenConfig)
+        val newAccessToken = JwtConfig.generateAccessToken(user.id?:"", tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(user.id?:"", tokenConfig)
 
         call.respond(
             HttpStatusCode.OK,
@@ -130,6 +130,22 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
         val request = call.receive<PhoneCheckRequest>()
         val phoneExists = repository.findByPhone(request.phoneNumber) != null
         call.respond(HttpStatusCode.OK, PhoneCheckResponse(exists = phoneExists))
+    }
+
+    post("/send-otp-test"){
+        val request = call.receive<OtpRequest>()
+
+        // 1. Generate a 5-digit code
+        val otp = (10000..99999).random().toString()
+
+        // 2. Store the OTP with an expiry
+        val expiryTime = System.currentTimeMillis() + (OTP_EXPIRY_SECONDS * 1000)
+        otpStore[request.phoneNumber] = OtpData(request.phoneNumber, otp, expiryTime)
+
+        call.respond(
+            HttpStatusCode.OK,
+            AuthRequest(phoneNumber = request.phoneNumber, otp = otp)
+        )
     }
 
     post("/send-otp") {
