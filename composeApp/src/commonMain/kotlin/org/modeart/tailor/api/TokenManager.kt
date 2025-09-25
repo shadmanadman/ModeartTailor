@@ -22,6 +22,8 @@ interface TokenService {
 
     suspend fun refreshToken(): BearerTokens
 
+    suspend fun isLoggedIn(): Boolean
+
     suspend fun logout()
 }
 
@@ -75,6 +77,13 @@ class TokenRepo(
                 }
             }
 
+        }
+    }
+
+    override suspend fun isLoggedIn(): Boolean {
+        return withContext(Dispatchers.IO) {
+            val preferences = dataStore.data.first()
+            preferences[stringPreferencesKey(ACCESS_TOKEN)] != null
         }
     }
 

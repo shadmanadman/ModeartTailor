@@ -89,6 +89,7 @@ fun WelcomeScene(
             when (effect) {
                 WelcomeScreenUiEffect.Navigation.Login -> onNavigate(OnBoardingNavigation.login)
                 WelcomeScreenUiEffect.Navigation.SignUp -> onNavigate(OnBoardingNavigation.signup)
+                is WelcomeScreenUiEffect.Navigation.Main -> onNavigate(effect.screen)
                 is WelcomeScreenUiEffect.ShowRawNotification -> {}
             }
         }.collect()

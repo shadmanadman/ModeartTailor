@@ -5,7 +5,8 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 
 object DatabaseHelper {
     private val client: MongoClient by lazy {
-        MongoClient.create("mongodb://localhost:27017")
+        val mongoUri = System.getenv("MONGO_URI") ?: "mongodb://localhost:27017"
+        MongoClient.create(mongoUri)
     }
 
     fun getDatabase(): MongoDatabase {

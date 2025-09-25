@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.modeart.tailor"
-version = "1.0.3"
+version = "1.0.4"
 application {
     mainClass.set("org.modeart.tailor.ApplicationKt")
     

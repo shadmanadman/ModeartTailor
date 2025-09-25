@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.enter_code
+import modearttailor.composeapp.generated.resources.have_account_login
 import modearttailor.composeapp.generated.resources.logo
 import modearttailor.composeapp.generated.resources.mobile_number
 import modearttailor.composeapp.generated.resources.name_family_name
@@ -105,11 +106,6 @@ fun SignupSceneContent(viewModel: SignupViewModel, state: SignupScreenUiState) {
             when (state.currentStep) {
                 SignupStep.EnterPhoneNumber -> {
                     OutlinedTextFieldModeArt(
-                        value = state.number,
-                        hint = stringResource(Res.string.name_family_name),
-                        onValueChange = viewModel::verifyPhoneNumber
-                    )
-                    OutlinedTextFieldModeArt(
                         modifier = Modifier.padding(top = 8.dp),
                         value = state.number,
                         hint = stringResource(Res.string.mobile_number),
@@ -140,8 +136,10 @@ fun SignupSceneContent(viewModel: SignupViewModel, state: SignupScreenUiState) {
 
             Text(
                 modifier = Modifier.weight(1f).padding(16.dp)
-                    .clickable(onClick = viewModel::goToLogin),
-                text = stringResource(Res.string.no_account_signup),
+                    .clickable(indication = null, interactionSource = null){
+                        viewModel.goToLogin()
+                    },
+                text = stringResource(Res.string.have_account_login),
                 style = appTypography().title16.copy(
                     color = Color.Blue,
                     fontWeight = FontWeight.Bold

@@ -1,20 +1,20 @@
-package org.modeart.tailor.feature.onboarding.signup.contract
+package org.modeart.tailor.feature.onboarding.splash.contract
 
 import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.OnBoardingNavigation
 import org.modeart.tailor.navigation.Route
 
-sealed interface SignupScreenUiEffect {
+sealed interface SplashScreenUiEffect {
     data class ShowRawNotification(val msg: String = "", val errorCode: String = "") :
-        SignupScreenUiEffect
+        SplashScreenUiEffect
 
-    sealed class Navigation(open val screen: Route) : SignupScreenUiEffect {
+    sealed class Navigation(open val screen: Route) : SplashScreenUiEffect {
         data object Main : Navigation(
             screen = MainNavigation.main
         )
 
-        data object Login : Navigation(
-            screen = OnBoardingNavigation.login
+        data object Welcome : Navigation(
+            screen = OnBoardingNavigation.welcome
         )
     }
 }

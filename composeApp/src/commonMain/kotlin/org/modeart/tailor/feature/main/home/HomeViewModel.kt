@@ -29,6 +29,10 @@ class HomeViewModel(private val businessService: BusinessService) : ViewModel() 
     var effects = Channel<HomeUiEffect>(Channel.UNLIMITED)
         private set
 
+    init {
+        getProfile()
+        getBusinessCustomers()
+    }
     fun navigateToProfile() {
         effects.trySend(HomeUiEffect.Navigation(MainNavigation.profile))
     }

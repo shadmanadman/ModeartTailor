@@ -44,6 +44,7 @@ import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiEffect
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiState
 import org.modeart.tailor.feature.onboarding.login.contract.LoginStep
+import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.OnBoardingNavigation
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Background
@@ -62,8 +63,8 @@ fun LoginScene(
     LaunchedEffect(effects) {
         effects.onEach { effect ->
             when (effect) {
-                LoginScreenUiEffect.Navigation.Main -> onNavigate(OnBoardingNavigation.main)
-                LoginScreenUiEffect.Navigation.SignUp -> onNavigate(OnBoardingNavigation.signup)
+                is LoginScreenUiEffect.Navigation.Main -> onNavigate(effect.screen)
+                is LoginScreenUiEffect.Navigation.SignUp -> onNavigate(effect.screen)
                 is LoginScreenUiEffect.ShowRawNotification -> {
                     notification = effect
                 }
@@ -137,7 +138,9 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
 
             Text(
                 modifier = Modifier.weight(1f).padding(16.dp)
-                    .clickable(onClick = viewModel::goToSignUp),
+                    .clickable(indication = null, interactionSource = null){
+                        viewModel.goToSignUp()
+                    },
                 text = stringResource(Res.string.no_account_signup),
                 style = appTypography().title16.copy(
                     color = Color.Blue,

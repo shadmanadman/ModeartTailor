@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
+import org.modeart.tailor.api.TokenService
 import org.modeart.tailor.api.auth.OnBoardingService
 import org.modeart.tailor.feature.onboarding.login.CODE_LENGTH
 import org.modeart.tailor.feature.onboarding.signup.contract.SignupScreenUiEffect
@@ -17,7 +18,10 @@ import org.modeart.tailor.feature.onboarding.signup.contract.SignupScreenUiState
 import org.modeart.tailor.feature.onboarding.signup.contract.SignupStep
 import org.modeart.tailor.model.business.AuthRequest
 
-class SignupViewModel(private val onBoardingService: OnBoardingService) : ViewModel() {
+class SignupViewModel(
+    private val onBoardingService: OnBoardingService,
+    private val tokenService: TokenService
+) : ViewModel() {
     private val _uiState = MutableStateFlow(SignupScreenUiState())
 
     val uiState: StateFlow<SignupScreenUiState> =
@@ -91,7 +95,11 @@ class SignupViewModel(private val onBoardingService: OnBoardingService) : ViewMo
                                 )
                             )
 
-                        is ApiResult.Success<*> -> {
+                        is ApiResult.Success -> {
+                            tokenService.saveToken(
+                                accessToken = response.data.accessToken,
+                                refreshToken = response.data.refreshToken
+                            )
                             effects.send(SignupScreenUiEffect.Navigation.Main)
                         }
                     }
