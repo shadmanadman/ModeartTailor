@@ -12,6 +12,7 @@ import org.modeart.tailor.model.business.RefreshTokenRequest
 import org.modeart.tailor.prefs.PrefsDataStore
 import kotlin.coroutines.cancellation.CancellationException
 
+data class LocalUserData(val phoneNumber: String)
 interface TokenService {
     suspend fun saveToken(
         accessToken: String,
@@ -24,10 +25,13 @@ interface TokenService {
 
     suspend fun isLoggedIn(): Boolean
 
+    suspend fun saveUserDataLocal(localUserData: LocalUserData)
+
     suspend fun logout()
 }
 
 private const val ACCESS_TOKEN = "access_token"
+private const val USER_PHONE_NUMBER = "user_phone_number"
 private const val REFRESH_TOKEN = "refresh_token"
 
 class TokenRepo(
@@ -62,9 +66,10 @@ class TokenRepo(
         return withContext(Dispatchers.IO) {
             val preferences = dataStore.data.first()
             val refreshToken = preferences[stringPreferencesKey(REFRESH_TOKEN)] ?: ""
+            val phoneNumber = preferences[stringPreferencesKey(USER_PHONE_NUMBER)] ?: ""
 
 
-            val tokens = onBoardingRepo.refreshToken(RefreshTokenRequest(refreshToken, ""))
+            val tokens = onBoardingRepo.refreshToken(RefreshTokenRequest(refreshToken, phoneNumber))
             when (tokens) {
                 is ApiResult.Error -> {
                     BearerTokens("", "")
@@ -84,6 +89,14 @@ class TokenRepo(
         return withContext(Dispatchers.IO) {
             val preferences = dataStore.data.first()
             preferences[stringPreferencesKey(ACCESS_TOKEN)] != null
+        }
+    }
+
+    override suspend fun saveUserDataLocal(localUserData: LocalUserData) {
+        return withContext(Dispatchers.IO) {
+            dataStore.edit {
+                it[stringPreferencesKey(USER_PHONE_NUMBER)] = localUserData.phoneNumber
+            }
         }
     }
 

@@ -15,7 +15,7 @@ import org.modeart.tailor.model.customer.CustomerProfile
 
 class BusinessRepo(private val client: HttpClient) : BusinessService {
     override suspend fun businessProfile(): ApiResult<BusinessProfile> =
-        safeRequest { client.get("/business").body() }
+        safeRequest { client.get("/all-business/business").body() }
 
     override suspend fun updateBusinessProfile(businessProfile: BusinessProfile) : ApiResult<Unit> = safeRequest {
         client.patch("/business/${businessProfile.id}").body()

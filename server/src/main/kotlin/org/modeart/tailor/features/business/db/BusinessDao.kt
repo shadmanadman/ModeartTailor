@@ -1,6 +1,7 @@
 package org.modeart.tailor.features.business.db
 
 import org.bson.BsonValue
+import org.bson.Document
 import org.bson.types.ObjectId
 import org.modeart.tailor.model.business.BusinessProfile
 
@@ -10,7 +11,7 @@ interface BusinessDao {
 
     suspend fun findById(objectId: ObjectId): BusinessProfile?
 
-    suspend fun findByPhone(phone: String): BusinessProfile?
+    suspend fun findByPhone(phone: String): Document?
 
     suspend fun insertOne(business: BusinessProfile): BsonValue?
 

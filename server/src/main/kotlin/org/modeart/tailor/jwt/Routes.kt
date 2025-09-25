@@ -20,6 +20,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 import org.modeart.tailor.features.business.di.BusinessModule
 import org.modeart.tailor.model.business.AuthRequest
@@ -52,6 +53,7 @@ val httpClient = HttpClient(CIO) {
         })
     }
 }
+
 fun Route.authRoute(tokenConfig: TokenConfig) {
     val repository = BusinessModule.businessDao()
 
@@ -71,9 +73,12 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
         // 2. Clear the OTP from the store after successful verification
         otpStore.remove(request.phoneNumber)
 
-        val userId = UUID.randomUUID().toString()
         // Save user to database
-        repository.insertOne(BusinessProfile(id = userId, phoneNumber = request.phoneNumber))
+        val insertOneResult =
+            repository.insertOne(BusinessProfile(phoneNumber = request.phoneNumber))
+        val userId = insertOneResult?.asObjectId()?.value?.toHexString()
+            ?: return@post call.respond(HttpStatusCode.InternalServerError, "Failed to create user")
+
         val accessToken = JwtConfig.generateAccessToken(userId, tokenConfig)
         val refreshToken = JwtConfig.generateRefreshToken(userId, tokenConfig)
 
@@ -99,9 +104,9 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
 
         // 2. Clear the OTP from the store after successful verification
         otpStore.remove(request.phoneNumber)
-
-        val accessToken = JwtConfig.generateAccessToken(user.id?:"", tokenConfig)
-        val refreshToken = JwtConfig.generateRefreshToken(user.id?:"", tokenConfig)
+        val userId = user.getObjectId("_id").toHexString()
+        val accessToken = JwtConfig.generateAccessToken(userId, tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(userId, tokenConfig)
         call.respond(HttpStatusCode.OK, Tokens(accessToken, refreshToken))
     }
 
@@ -116,15 +121,17 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
             HttpStatusCode.Unauthorized,
             "Invalid credentials"
         )
-        val newAccessToken = JwtConfig.generateAccessToken(user.id?:"", tokenConfig)
-        val refreshToken = JwtConfig.generateRefreshToken(user.id?:"", tokenConfig)
+        val userId = user.getObjectId("_id").toHexString()
+
+        val newAccessToken = JwtConfig.generateAccessToken(userId, tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(userId, tokenConfig)
 
         call.respond(
             HttpStatusCode.OK,
             Tokens(accessToken = newAccessToken, refreshToken = refreshToken)
         )
     }
-    
+
 
     post("/check-phone-exists") {
         val request = call.receive<PhoneCheckRequest>()
@@ -132,7 +139,7 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
         call.respond(HttpStatusCode.OK, PhoneCheckResponse(exists = phoneExists))
     }
 
-    post("/send-otp-test"){
+    post("/send-otp-test") {
         val request = call.receive<OtpRequest>()
 
         // 1. Generate a 5-digit code

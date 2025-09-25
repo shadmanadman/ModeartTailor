@@ -31,7 +31,7 @@ class HomeViewModel(private val businessService: BusinessService) : ViewModel() 
 
     init {
         getProfile()
-        getBusinessCustomers()
+        //getBusinessCustomers()
     }
     fun navigateToProfile() {
         effects.trySend(HomeUiEffect.Navigation(MainNavigation.profile))
@@ -71,7 +71,7 @@ class HomeViewModel(private val businessService: BusinessService) : ViewModel() 
 
     fun getBusinessCustomers() {
         viewModelScope.launch {
-            val response = businessService.getBusinessCustomers("")
+            val response = businessService.getBusinessCustomers("12342")
             when (response) {
                 is ApiResult.Error -> effects.send(
                     HomeUiEffect.ShowRawNotification(

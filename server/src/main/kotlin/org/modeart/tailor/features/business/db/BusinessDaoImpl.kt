@@ -9,6 +9,7 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import org.bson.BsonValue
+import org.bson.Document
 import org.bson.types.ObjectId
 import org.modeart.tailor.features.customer.db.CustomerDaoImpl.Companion.CUSTOMER_COLLECTION
 import org.modeart.tailor.model.business.BusinessProfile
@@ -28,9 +29,8 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
             .find(Filters.eq("_id", objectId))
             .firstOrNull()
 
-    override suspend fun findByPhone(phone: String): BusinessProfile? =
-        mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
-            .withDocumentClass<BusinessProfile>()
+    override suspend fun findByPhone(phone: String): Document? =
+        mongoDatabase.getCollection<Document>(BUSINESS_COLLECTION)
             .find(Filters.eq("phoneNumber", phone))
             .firstOrNull()
 

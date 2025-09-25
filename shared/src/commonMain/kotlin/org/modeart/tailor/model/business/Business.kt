@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BusinessProfile(
-    @SerialName("_id")
-    val id: String? = null,
     val fullName: String? = null,
     val email: String? = null,
     val phoneNumber: String? = null,

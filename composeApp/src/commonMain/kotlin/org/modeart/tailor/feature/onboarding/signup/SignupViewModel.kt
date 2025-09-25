@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
+import org.modeart.tailor.api.LocalUserData
 import org.modeart.tailor.api.TokenService
 import org.modeart.tailor.api.auth.OnBoardingService
 import org.modeart.tailor.feature.onboarding.login.CODE_LENGTH
@@ -100,6 +101,7 @@ class SignupViewModel(
                                 accessToken = response.data.accessToken,
                                 refreshToken = response.data.refreshToken
                             )
+                            tokenService.saveUserDataLocal(LocalUserData(phoneNumber = _uiState.value.number))
                             effects.send(SignupScreenUiEffect.Navigation.Main)
                         }
                     }

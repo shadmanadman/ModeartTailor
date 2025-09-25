@@ -49,7 +49,7 @@ val networkModule = module {
                         println("$LOG_HTTP $message")
                     }
                 }
-                level = LogLevel.BODY
+                level = LogLevel.ALL
             }
             install(Auth) {
                 bearer {

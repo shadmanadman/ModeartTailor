@@ -36,6 +36,7 @@ fun Route.businessRouting() {
                 // Check if the principal exists and get the userId
                 val userId = principal?.payload?.getClaim("userId")?.asString()
 
+                println("USER_ID is: $userId")
                 if (userId.isNullOrEmpty()) {
                     return@get call.respondText(
                         text = "Missing id",

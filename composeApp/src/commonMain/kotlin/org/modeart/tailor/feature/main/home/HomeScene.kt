@@ -102,7 +102,7 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
             thisMonthCustomer = state.thisMonthCustomer
         )
         LastNoteItem()
-        CustomerItem(state.latestCustomers.first())
+        //CustomerItem(state.latestCustomers.first())
     }
 }
 
