@@ -94,7 +94,7 @@ fun MainProfileScene(onNavigate: (Route) -> Unit) {
         }
     }
 
-    MainProfileContent(state,viewModel)
+    MainProfileContent(state, viewModel)
 }
 
 
@@ -110,6 +110,7 @@ fun MainProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Accent)
+                .padding(top = 42.dp)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -177,25 +178,25 @@ fun MainProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
             MenuItem(
                 text = stringResource(Res.string.edit_profile),
                 icon = vectorResource(Res.drawable.ic_pencil)
-            ){
+            ) {
                 viewmodel.navigateToEditProfile()
             }
             MenuItem(
                 text = stringResource(Res.string.update_plan),
                 icon = vectorResource(Res.drawable.ic_credit_card)
-            ){
+            ) {
                 viewmodel.navigateToEditProfile()
             }
             MenuItem(
                 text = stringResource(Res.string.about_modart),
                 icon = Icons.Default.Info
-            ){
+            ) {
                 viewmodel.navigateToAbout()
             }
             MenuItem(
                 text = stringResource(Res.string.contact_modart),
                 icon = Icons.Default.Message
-            ){
+            ) {
                 viewmodel.navigateToContact()
             }
         }
@@ -207,13 +208,15 @@ fun MainProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 52.dp, vertical = 8.dp).clickable(onClick = viewmodel::logout)
+                .padding(horizontal = 52.dp, vertical = 8.dp)
         ) {
             MenuItem(
                 text = stringResource(Res.string.logout),
                 icon = vectorResource(Res.drawable.ic_logout),
                 hideArrow = true
-            )
+            ){
+                viewmodel.logout()
+            }
         }
     }
 }
@@ -243,11 +246,19 @@ fun InfoCard(label: String, value: String) {
 }
 
 @Composable
-fun MenuItem(text: String, icon: ImageVector, hideArrow: Boolean = false,onClick: () -> Unit = {}) {
+fun MenuItem(
+    text: String,
+    icon: ImageVector,
+    hideArrow: Boolean = false,
+    onClick: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(vertical = 12.dp)
+            .clickable(interactionSource = null,indication = null){
+                onClick()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (hideArrow.not())

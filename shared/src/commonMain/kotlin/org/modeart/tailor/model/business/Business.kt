@@ -1,34 +1,37 @@
 package org.modeart.tailor.model.business
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+//import org.bson.types.ObjectId
 
 @Serializable
 data class BusinessProfile(
-    val fullName: String? = null,
-    val email: String? = null,
-    val phoneNumber: String? = null,
-    val profilePictureUrl: String? = null,
-    val businessName: String? = null,
-    val city: String? = null,
-    val state: String? = null,
-    val plan: Plan? = null,
-    val notes: List<Notes>? = null,
-    val createdAt: String? = null,
-    val updatedAt: String? = null,
-    val deletedAt: String? = null,
-    val deleted: Boolean? = null,
-    val planEndDate: String? = null
+    val id: String = "",
+    val fullName: String? = "",
+    val email: String? = "",
+    val phoneNumber: String? = "",
+    val profilePictureUrl: String? = "",
+    val businessName: String? = "",
+    val city: String? = "",
+    val state: String? = "",
+    val plan: Plan? = Plan.NONE,
+    val notes: List<Notes>? = emptyList(),
+    val createdAt: String? = "",
+    val updatedAt: String? = "",
+    val deletedAt: String? = "",
+    val deleted: Boolean? = false,
+    val planEndDate: String? = ""
 ) {
     @Serializable
     data class Notes(
         @SerialName("_id")
-        val id: String? = null,
+        val id: String? = "",
         val title: String,
         val content: String,
-        val createdAt: String? = null,
-        val updatedAt: String? = null,
-        val deletedAt: String? = null,
+        val createdAt: String? = "",
+        val updatedAt: String? = "",
+        val deletedAt: String? = "",
         val category: NoteCategory,
     )
 }
@@ -60,6 +63,13 @@ data class Tokens(
 
 @Serializable
 data class AuthRequest(
+    val phoneNumber: String,
+    val otp: String
+)
+
+@Serializable
+data class RegisterRequest(
+    val fullName: String,
     val phoneNumber: String,
     val otp: String
 )

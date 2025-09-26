@@ -23,10 +23,10 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
     override suspend fun findAll(): List<BusinessProfile>? =
         mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION).find().toList()
 
-    override suspend fun findById(objectId: ObjectId): BusinessProfile? =
+    override suspend fun findById(id: String): BusinessProfile? =
         mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
             .withDocumentClass<BusinessProfile>()
-            .find(Filters.eq("_id", objectId))
+            .find(Filters.eq("id", id))
             .firstOrNull()
 
     override suspend fun findByPhone(phone: String): Document? =
@@ -49,10 +49,10 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
         return null
     }
 
-    override suspend fun deleteById(objectId: ObjectId): Long {
+    override suspend fun deleteById(id: String): Long {
         try {
             val result = mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
-                .deleteOne(Filters.eq("_id", objectId))
+                .deleteOne(Filters.eq("id", id))
             return result.deletedCount
         } catch (e: MongoException) {
             System.err.println("Unable to delete due to an error: $e")
@@ -62,42 +62,44 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
     }
 
     override suspend fun updateOne(
-        objectId: ObjectId,
+        objectId: String,
         businessProfile: BusinessProfile
     ): Long {
         try {
-            val query = Filters.eq("_id", objectId)
+            val query = Filters.eq("id", objectId)
             val updates = mutableListOf<org.bson.conversions.Bson>()
 
-            // Helper function to add update if value is not null
-            fun <T> addUpdateIfNotNull(
+            // Helper function to add update if value is not null or empty
+            fun <T> addUpdateIfNotEmpty(
                 field: kotlin.reflect.KProperty1<BusinessProfile, T?>,
                 value: T?
             ) {
-                value?.let { updates.add(Updates.set(field.name, it)) }
+                if (value != null && (value !is String || value.isNotEmpty())) {
+                    updates.add(Updates.set(field.name, value))
+                }
             }
 
-            addUpdateIfNotNull(BusinessProfile::fullName, businessProfile.fullName)
-            addUpdateIfNotNull(BusinessProfile::email, businessProfile.email)
-            addUpdateIfNotNull(BusinessProfile::phoneNumber, businessProfile.phoneNumber)
-            addUpdateIfNotNull(
+            addUpdateIfNotEmpty(BusinessProfile::fullName, businessProfile.fullName)
+            addUpdateIfNotEmpty(BusinessProfile::email, businessProfile.email)
+            addUpdateIfNotEmpty(BusinessProfile::phoneNumber, businessProfile.phoneNumber)
+            addUpdateIfNotEmpty(
                 BusinessProfile::profilePictureUrl,
                 businessProfile.profilePictureUrl
             )
-            addUpdateIfNotNull(BusinessProfile::businessName, businessProfile.businessName)
-            addUpdateIfNotNull(BusinessProfile::city, businessProfile.city)
-            addUpdateIfNotNull(BusinessProfile::state, businessProfile.state)
-            addUpdateIfNotNull(BusinessProfile::plan, businessProfile.plan)
-            addUpdateIfNotNull(
+            addUpdateIfNotEmpty(BusinessProfile::businessName, businessProfile.businessName)
+            addUpdateIfNotEmpty(BusinessProfile::city, businessProfile.city)
+            addUpdateIfNotEmpty(BusinessProfile::state, businessProfile.state)
+            addUpdateIfNotEmpty(BusinessProfile::plan, businessProfile.plan)
+            addUpdateIfNotEmpty(
                 BusinessProfile::notes,
                 businessProfile.notes
             )
             // If you need to update individual items within the list, that's a more complex scenario.
-            addUpdateIfNotNull(BusinessProfile::createdAt, businessProfile.createdAt)
-            addUpdateIfNotNull(BusinessProfile::updatedAt, businessProfile.updatedAt)
-            addUpdateIfNotNull(BusinessProfile::deletedAt, businessProfile.deletedAt)
-            addUpdateIfNotNull(BusinessProfile::deleted, businessProfile.deleted)
-            addUpdateIfNotNull(BusinessProfile::planEndDate, businessProfile.planEndDate)
+            addUpdateIfNotEmpty(BusinessProfile::createdAt, businessProfile.createdAt)
+            addUpdateIfNotEmpty(BusinessProfile::updatedAt, businessProfile.updatedAt)
+            addUpdateIfNotEmpty(BusinessProfile::deletedAt, businessProfile.deletedAt)
+            addUpdateIfNotEmpty(BusinessProfile::deleted, businessProfile.deleted)
+            addUpdateIfNotEmpty(BusinessProfile::planEndDate, businessProfile.planEndDate)
 
 
             if (updates.isEmpty()) {
@@ -122,7 +124,7 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
     override suspend fun insertNote(businessId: String, note: BusinessProfile.Notes): Long? {
         return try {
             val collection = mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
-            val query = Filters.eq("_id", businessId)
+            val query = Filters.eq("id", businessId)
             val update =
                 Updates.push(BusinessProfile::notes.name, note) // Add the note to the 'notes' array
 
@@ -137,7 +139,7 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
     override suspend fun deleteNote(businessId: String, noteId: String): Long? {
         return try {
             val collection = mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
-            val query = Filters.eq("_id", businessId)
+            val query = Filters.eq("id", businessId)
             // Pull the note from the 'notes' array where the 'noteId' matches
             val update = Updates.pull(
                 BusinessProfile::notes.name,
@@ -160,7 +162,7 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
 
     override suspend fun getAllNotes(businessId: String): List<BusinessProfile.Notes>? {
         return try {
-            val business = findById(ObjectId(businessId))
+            val business = findById(businessId)
             business?.notes
         } catch (e: MongoException) {
             System.err.println("Error fetching notes for business $businessId: $e")

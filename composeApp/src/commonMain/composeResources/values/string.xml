@@ -171,4 +171,7 @@
 
     <string name="select_customer_size">انتخاب سایز مشتری</string>
     <string name="register_new_customer">ثبت مشتری جدید</string>
+    <string name="see_all">نمایش همه</string>
+    <string name="last_notes">اخرین یادداشت</string>
+    <string name="last_customers">اخرین مشتری</string>
 </resources>

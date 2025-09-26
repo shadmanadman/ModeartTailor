@@ -11,14 +11,19 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
+import org.modeart.tailor.api.TokenService
 import org.modeart.tailor.api.business.BusinessService
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiState
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.navigation.MainNavigation
+import org.modeart.tailor.navigation.OnBoardingNavigation
 import kotlin.toString
 
-class ProfileViewModel(private val businessService: BusinessService) : ViewModel() {
+class ProfileViewModel(
+    private val businessService: BusinessService,
+    private val tokenService: TokenService
+) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
 
     val uiState: StateFlow<ProfileUiState> = _uiState.stateIn(
@@ -30,6 +35,9 @@ class ProfileViewModel(private val businessService: BusinessService) : ViewModel
     var effects = Channel<ProfileUiEffect>(Channel.UNLIMITED)
         private set
 
+    init {
+        getProfile()
+    }
 
     fun navigateToEditProfile() {
         effects.trySend(ProfileUiEffect.Navigation(MainNavigation.editProfile))
@@ -44,7 +52,10 @@ class ProfileViewModel(private val businessService: BusinessService) : ViewModel
     }
 
     fun logout() {
-
+        viewModelScope.launch {
+            tokenService.logout()
+            effects.trySend(ProfileUiEffect.Navigation(OnBoardingNavigation.login))
+        }
     }
 
     fun onFullNameUpdated(fullName: String) {
@@ -73,7 +84,7 @@ class ProfileViewModel(private val businessService: BusinessService) : ViewModel
 
 
     fun updateProfile() {
-        if (_uiState.value.phone.isNotEmpty() && _uiState.value.fullName.isNotEmpty() && _uiState.value.businessName.isNotEmpty() && _uiState.value.address.isNotEmpty())
+        if (_uiState.value.fullName.isEmpty() && _uiState.value.businessName.isEmpty())
             return
 
         viewModelScope.launch {
@@ -115,11 +126,11 @@ class ProfileViewModel(private val businessService: BusinessService) : ViewModel
                 is ApiResult.Success -> {
                     _uiState.update {
                         it.copy(
-                            fullName = response.data.fullName.toString(),
-                            businessName = response.data.businessName.toString(),
-                            phone = response.data.phoneNumber.toString(),
-                            address = response.data.city.toString(),
-                            avatar = response.data.profilePictureUrl.toString()
+                            fullName = response.data.fullName ?: "",
+                            businessName = response.data.businessName ?: "",
+                            phone = response.data.phoneNumber ?: "",
+                            address = response.data.city ?: "",
+                            avatar = response.data.profilePictureUrl ?: ""
                         )
                     }
                 }

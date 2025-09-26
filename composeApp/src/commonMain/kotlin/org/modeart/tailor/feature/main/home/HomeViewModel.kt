@@ -33,6 +33,7 @@ class HomeViewModel(private val businessService: BusinessService) : ViewModel() 
         getProfile()
         //getBusinessCustomers()
     }
+
     fun navigateToProfile() {
         effects.trySend(HomeUiEffect.Navigation(MainNavigation.profile))
     }
@@ -58,9 +59,9 @@ class HomeViewModel(private val businessService: BusinessService) : ViewModel() 
                 is ApiResult.Success -> {
                     _uiState.update {
                         it.copy(
-                            fullName = response.data.fullName.toString(),
-                            phoneNumber = response.data.phoneNumber.toString(),
-                            avatar = response.data.profilePictureUrl.toString(),
+                            fullName = response.data.fullName ?: "",
+                            phoneNumber = response.data.phoneNumber ?: "",
+                            avatar = response.data.profilePictureUrl ?: "",
                             latestNotes = response.data.notes ?: emptyList()
                         )
                     }

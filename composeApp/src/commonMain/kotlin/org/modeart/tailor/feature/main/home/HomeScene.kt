@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -49,7 +50,10 @@ import modearttailor.composeapp.generated.resources.ic_notification
 import modearttailor.composeapp.generated.resources.ic_search
 import modearttailor.composeapp.generated.resources.ic_target
 import modearttailor.composeapp.generated.resources.ic_user_star
+import modearttailor.composeapp.generated.resources.last_customers
+import modearttailor.composeapp.generated.resources.last_notes
 import modearttailor.composeapp.generated.resources.search_in_customers
+import modearttailor.composeapp.generated.resources.see_all
 import modearttailor.composeapp.generated.resources.test_avatar
 import modearttailor.composeapp.generated.resources.this_month_customer
 import moe.tlaster.precompose.koin.koinViewModel
@@ -62,6 +66,7 @@ import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
 import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
+import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
@@ -93,62 +98,77 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
 
     Column {
         HomeTopBar(
+            customerName = state.fullName,
+            phoneNumber = state.phoneNumber,
+            avatar = state.avatar,
             onNavigateToProfile = viewModel::navigateToProfile,
             onNavigateToNotification = {},
-            onSearchQueryCompleted = { }
+            onSearchQueryCompleted = {}
         )
         Statistics(
             allCustomersCount = state.customerCount,
             thisMonthCustomer = state.thisMonthCustomer
         )
-        LastNoteItem()
-        //CustomerItem(state.latestCustomers.first())
+        SectionTitle(stringResource(Res.string.last_notes))
+        LastNoteItem(state.latestNotes)
+        SectionTitle(stringResource(Res.string.last_customers))
+        LatestCustomerSection(state.latestCustomers)
     }
 }
 
+@Composable
+fun SectionTitle(title: String) {
+    Row(modifier = Modifier.fillMaxWidth().padding(22.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(text = title, style = appTypography().title15)
+        Text(text = stringResource(Res.string.see_all), style = appTypography().body12)
+    }
+}
 
 @Composable
-fun LastNoteItem() {
-    Box(
-        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
-            .background(color = Color.Black, shape = RoundedCornerShape(16.dp))
-            .padding(16.dp)
-    ) {
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Title
-                Text(text = "Title", style = appTypography().title17.copy(color = Color.White))
-                // Date
-                Box(
-                    modifier = Modifier.background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(16.dp)
-                    )
+fun LastNoteItem(lastThreeNotes: List<BusinessProfile.Notes> = emptyList()) {
+    if (lastThreeNotes.isNotEmpty())
+        Box(
+            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
+                .background(color = Color.Black, shape = RoundedCornerShape(16.dp))
+                .padding(16.dp)
+        ) {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    // Title
+                    Text(text = "Title", style = appTypography().title17.copy(color = Color.White))
+                    // Date
+                    Box(
+                        modifier = Modifier.background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(16.dp)
+                        )
                     ) {
-                        Icon(
-                            painter = painterResource(Res.drawable.ic_calendar),
-                            contentDescription = null
-                        )
-                        Text(
-                            modifier = Modifier.padding(start = 8.dp),
-                            text = "22 Aug",
-                            style = appTypography().body12
-                        )
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_calendar),
+                                contentDescription = null
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 8.dp),
+                                text = "22 Aug",
+                                style = appTypography().body12
+                            )
+                        }
                     }
                 }
+                // Note content
+                Text(text = "Content", style = appTypography().body14.copy(color = Color.White))
             }
-            // Note content
-            Text(text = "Content", style = appTypography().body14.copy(color = Color.White))
         }
-    }
+    else
+        EmptyNoteOrCustomer(isNote = true, onCardClicked = {})
 }
 
 
@@ -159,9 +179,9 @@ fun EmptyNoteOrCustomer(isNote: Boolean, onCardClicked: () -> Unit) {
     else
         stringResource(Res.string.first_customer)
     Box(
-        modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
+        modifier = Modifier.fillMaxWidth().padding(16.dp).defaultMinSize(minHeight = 136.dp)
             .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
-            .padding(16.dp).clickable(onClick = onCardClicked), contentAlignment = Alignment.Center
+            .clickable(onClick = onCardClicked), contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(painter = painterResource(Res.drawable.ic_add_button), contentDescription = null)
@@ -173,6 +193,9 @@ fun EmptyNoteOrCustomer(isNote: Boolean, onCardClicked: () -> Unit) {
 
 @Composable
 fun HomeTopBar(
+    customerName: String = "",
+    phoneNumber: String = "",
+    avatar: String = "",
     onNavigateToProfile: () -> Unit,
     onNavigateToNotification: () -> Unit,
     onSearchQueryCompleted: () -> Unit
@@ -204,12 +227,12 @@ fun HomeTopBar(
                         .clickable(onClick = onNavigateToProfile)
                 ) {
                     Text(
-                        text = "مریم جان خوش آمدی",
+                        text = customerName,
                         color = Color.White,
                         style = appTypography().title15
                     )
                     Text(
-                        text = "۰۹۱۷۱۷۴۹۱۱۷",
+                        text = phoneNumber,
                         color = Color.White,
                         style = appTypography().title15,
                         fontSize = 14.sp
@@ -256,7 +279,10 @@ fun HomeTopBar(
 
 @Composable
 fun Statistics(allCustomersCount: String, thisMonthCustomer: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 60.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
         // Customers count
         Box(
             modifier = Modifier.size(154.dp, 137.dp)
@@ -347,7 +373,20 @@ fun CustomerItem(customerProfile: CustomerProfile) {
         )
 
     }
+}
 
+@Composable
+fun LatestCustomerSection(latestCustomers: List<CustomerProfile>) {
+    if (latestCustomers.isNotEmpty())
+        LazyRow {
+            items(latestCustomers.size) {
+                CustomerItem(latestCustomers[it])
+            }
+        }
+    else
+        EmptyNoteOrCustomer(isNote = false) {
+
+        }
 }
 
 @Composable

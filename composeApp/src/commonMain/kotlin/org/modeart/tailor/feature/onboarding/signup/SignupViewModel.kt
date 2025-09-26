@@ -18,6 +18,7 @@ import org.modeart.tailor.feature.onboarding.signup.contract.SignupScreenUiEffec
 import org.modeart.tailor.feature.onboarding.signup.contract.SignupScreenUiState
 import org.modeart.tailor.feature.onboarding.signup.contract.SignupStep
 import org.modeart.tailor.model.business.AuthRequest
+import org.modeart.tailor.model.business.RegisterRequest
 
 class SignupViewModel(
     private val onBoardingService: OnBoardingService,
@@ -39,6 +40,12 @@ class SignupViewModel(
     fun goToLogin() {
         viewModelScope.launch {
             effects.send(SignupScreenUiEffect.Navigation.Login)
+        }
+    }
+
+    fun updateFullName(fullName: String) {
+        _uiState.update {
+            it.copy(fullName = fullName, enableContinue = fullName.isNotEmpty())
         }
     }
 
@@ -87,7 +94,14 @@ class SignupViewModel(
 
                 SignupStep.EnterVerificationCode -> {
                     val response =
-                        _uiState.value.run { onBoardingService.register(AuthRequest(number, code)) }
+                        _uiState.value.run {
+                            onBoardingService.register(
+                                RegisterRequest(
+                                    fullName = fullName, phoneNumber = number,
+                                    otp = code
+                                )
+                            )
+                        }
                     when (response) {
                         is ApiResult.Error ->
                             effects.send(

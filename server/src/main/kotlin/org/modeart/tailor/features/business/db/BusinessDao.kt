@@ -9,15 +9,15 @@ interface BusinessDao {
 
     suspend fun findAll(): List<BusinessProfile>?
 
-    suspend fun findById(objectId: ObjectId): BusinessProfile?
+    suspend fun findById(id: String): BusinessProfile?
 
     suspend fun findByPhone(phone: String): Document?
 
     suspend fun insertOne(business: BusinessProfile): BsonValue?
 
-    suspend fun deleteById(objectId: ObjectId): Long
+    suspend fun deleteById(id: String): Long
 
-    suspend fun updateOne(objectId: ObjectId, businessProfile: BusinessProfile): Long
+    suspend fun updateOne(objectId: String, businessProfile: BusinessProfile): Long
 
     suspend fun insertNote(businessId: String, note: BusinessProfile.Notes): Long?
 

@@ -31,6 +31,7 @@ import org.modeart.tailor.model.business.OtpResponse
 import org.modeart.tailor.model.business.PhoneCheckRequest
 import org.modeart.tailor.model.business.PhoneCheckResponse
 import org.modeart.tailor.model.business.RefreshTokenRequest
+import org.modeart.tailor.model.business.RegisterRequest
 import org.modeart.tailor.model.business.SmsIrRequest
 import org.modeart.tailor.model.business.Tokens
 import java.util.UUID
@@ -59,9 +60,8 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
 
 
     post("/register") {
-        val request = call.receive<AuthRequest>()
+        val request = call.receive<RegisterRequest>()
 
-        // 1. Verify the OTP
         val storedOtpData = otpStore[request.phoneNumber]
         if (storedOtpData == null || storedOtpData.otp != request.otp || storedOtpData.expiry < System.currentTimeMillis()) {
             return@post call.respond(
@@ -70,17 +70,19 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
             )
         }
 
-        // 2. Clear the OTP from the store after successful verification
         otpStore.remove(request.phoneNumber)
 
-        // Save user to database
-        val insertOneResult =
-            repository.insertOne(BusinessProfile(phoneNumber = request.phoneNumber))
-        val userId = insertOneResult?.asObjectId()?.value?.toHexString()
-            ?: return@post call.respond(HttpStatusCode.InternalServerError, "Failed to create user")
+        val businessId = UUID.randomUUID().toString()
 
-        val accessToken = JwtConfig.generateAccessToken(userId, tokenConfig)
-        val refreshToken = JwtConfig.generateRefreshToken(userId, tokenConfig)
+        repository.insertOne(
+            BusinessProfile(
+                id = businessId,
+                phoneNumber = request.phoneNumber,
+                fullName = request.fullName
+            )
+        )
+        val accessToken = JwtConfig.generateAccessToken(businessId, tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(businessId, tokenConfig)
 
         call.respond(HttpStatusCode.OK, Tokens(accessToken, refreshToken))
     }

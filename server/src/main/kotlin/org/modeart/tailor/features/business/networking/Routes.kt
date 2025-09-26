@@ -44,7 +44,7 @@ fun Route.businessRouting() {
                     )
                 }
 
-                repository.findById(ObjectId(userId))?.let {
+                repository.findById(userId)?.let {
                     call.respond(it)
                 } ?: call.respondText("No records found for id $userId")
             }
@@ -57,7 +57,7 @@ fun Route.businessRouting() {
                 status = HttpStatusCode.BadRequest
             )
 
-            val delete: Long = repository.deleteById(ObjectId(id))
+            val delete: Long = repository.deleteById(id)
 
             if (delete == 1L) {
                 return@delete call.respondText(
@@ -68,19 +68,24 @@ fun Route.businessRouting() {
             return@delete call.respondText("business not found", status = HttpStatusCode.NotFound)
 
         }
+        authenticate("auth-jwt") {
+            patch("/update-business-profile") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+                println("USER_ID is: $userId")
+                if (userId.isNullOrEmpty()) {
+                    return@patch call.respondText(
+                        text = "Missing id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
+                val updated = repository.updateOne(userId, call.receive())
 
-        patch("/{id?}") {
-            val id = call.parameters["id"] ?: return@patch call.respondText(
-                text = "Missing business id",
-                status = HttpStatusCode.BadRequest
-            )
-
-            val updated = repository.updateOne(ObjectId(id), call.receive())
-
-            call.respondText(
-                text = if (updated == 1L) "business updated successfully" else "business not found",
-                status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
-            )
+                call.respondText(
+                    text = if (updated == 1L) "business updated successfully" else "business not found",
+                    status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
+                )
+            }
         }
 
         post {
@@ -119,7 +124,7 @@ fun Route.businessRouting() {
             )
         }
 
-        
+
 
         delete("/{businessId?}/note/{noteId?}") {
             val businessId = call.parameters["businessId"] ?: return@delete call.respondText(

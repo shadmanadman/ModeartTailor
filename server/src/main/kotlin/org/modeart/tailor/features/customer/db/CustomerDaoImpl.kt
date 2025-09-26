@@ -66,41 +66,44 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
             val query = Filters.eq("_id", objectId)
             val updates = mutableListOf<org.bson.conversions.Bson>()
 
-            // Helper function to add update if value is not null
-            fun <T> addUpdateIfNotNull(
+            // Helper function to add update if value is not null or empty
+            fun <T> addUpdateIfNotEmpty(
                 field: kotlin.reflect.KProperty1<CustomerProfile, T?>,
                 value: T?
             ) {
-                value?.let { updates.add(Updates.set(field.name, it)) }
+                value?.let {
+                    if (it is String && it.isEmpty()) return@let
+                    updates.add(Updates.set(field.name, it))
+                }
             }
 
-            addUpdateIfNotNull(CustomerProfile::name, customer.name)
-            addUpdateIfNotNull(CustomerProfile::email, customer.email)
-            addUpdateIfNotNull(CustomerProfile::phoneNumber, customer.phoneNumber)
-            addUpdateIfNotNull(CustomerProfile::address, customer.address)
-            addUpdateIfNotNull(CustomerProfile::gender, customer.gender)
-            addUpdateIfNotNull(CustomerProfile::birthday, customer.birthday)
-            addUpdateIfNotNull(CustomerProfile::sizeSource, customer.sizeSource)
-            addUpdateIfNotNull(CustomerProfile::importantNote, customer.importantNote)
-            addUpdateIfNotNull(CustomerProfile::sizeFreedom, customer.sizeFreedom)
-            addUpdateIfNotNull(CustomerProfile::extraPhoto, customer.extraPhoto)
-            addUpdateIfNotNull(CustomerProfile::customerStyle, customer.customerStyle)
-            addUpdateIfNotNull(CustomerProfile::customerBodyType, customer.customerBodyType)
-            addUpdateIfNotNull(CustomerProfile::customerShoulderType, customer.customerShoulderType)
-            addUpdateIfNotNull(CustomerProfile::fabricSensitivity, customer.fabricSensitivity)
-            addUpdateIfNotNull(CustomerProfile::customerColor, customer.customerColor)
-            addUpdateIfNotNull(CustomerProfile::isOldCustomer, customer.isOldCustomer)
-            addUpdateIfNotNull(CustomerProfile::referredBy, customer.referredBy)
-            addUpdateIfNotNull(CustomerProfile::upperBodySizes, customer.upperBodySizes)
-            addUpdateIfNotNull(CustomerProfile::lowerBodySizes, customer.lowerBodySizes)
-            addUpdateIfNotNull(CustomerProfile::sleevesSizes, customer.sleevesSizes)
-            addUpdateIfNotNull(CustomerProfile::overallNote, customer.overallNote)
-            addUpdateIfNotNull(CustomerProfile::createdAt, customer.createdAt)
-            addUpdateIfNotNull(CustomerProfile::updatedAt, customer.updatedAt)
-            addUpdateIfNotNull(CustomerProfile::deletedAt, customer.deletedAt)
-            addUpdateIfNotNull(CustomerProfile::deleted, customer.deleted)
-            addUpdateIfNotNull(CustomerProfile::avatar, customer.avatar)
-            addUpdateIfNotNull(CustomerProfile::customerOf, customer.customerOf)
+            addUpdateIfNotEmpty(CustomerProfile::name, customer.name)
+            addUpdateIfNotEmpty(CustomerProfile::email, customer.email)
+            addUpdateIfNotEmpty(CustomerProfile::phoneNumber, customer.phoneNumber)
+            addUpdateIfNotEmpty(CustomerProfile::address, customer.address)
+            addUpdateIfNotEmpty(CustomerProfile::gender, customer.gender)
+            addUpdateIfNotEmpty(CustomerProfile::birthday, customer.birthday)
+            addUpdateIfNotEmpty(CustomerProfile::sizeSource, customer.sizeSource)
+            addUpdateIfNotEmpty(CustomerProfile::importantNote, customer.importantNote)
+            addUpdateIfNotEmpty(CustomerProfile::sizeFreedom, customer.sizeFreedom)
+            addUpdateIfNotEmpty(CustomerProfile::extraPhoto, customer.extraPhoto)
+            addUpdateIfNotEmpty(CustomerProfile::customerStyle, customer.customerStyle)
+            addUpdateIfNotEmpty(CustomerProfile::customerBodyType, customer.customerBodyType)
+            addUpdateIfNotEmpty(CustomerProfile::customerShoulderType, customer.customerShoulderType)
+            addUpdateIfNotEmpty(CustomerProfile::fabricSensitivity, customer.fabricSensitivity)
+            addUpdateIfNotEmpty(CustomerProfile::customerColor, customer.customerColor)
+            addUpdateIfNotEmpty(CustomerProfile::isOldCustomer, customer.isOldCustomer)
+            addUpdateIfNotEmpty(CustomerProfile::referredBy, customer.referredBy)
+            addUpdateIfNotEmpty(CustomerProfile::upperBodySizes, customer.upperBodySizes)
+            addUpdateIfNotEmpty(CustomerProfile::lowerBodySizes, customer.lowerBodySizes)
+            addUpdateIfNotEmpty(CustomerProfile::sleevesSizes, customer.sleevesSizes)
+            addUpdateIfNotEmpty(CustomerProfile::overallNote, customer.overallNote)
+            addUpdateIfNotEmpty(CustomerProfile::createdAt, customer.createdAt)
+            addUpdateIfNotEmpty(CustomerProfile::updatedAt, customer.updatedAt)
+            addUpdateIfNotEmpty(CustomerProfile::deletedAt, customer.deletedAt)
+            addUpdateIfNotEmpty(CustomerProfile::deleted, customer.deleted)
+            addUpdateIfNotEmpty(CustomerProfile::avatar, customer.avatar)
+            addUpdateIfNotEmpty(CustomerProfile::customerOf, customer.customerOf)
 
 
             if (updates.isEmpty()) {

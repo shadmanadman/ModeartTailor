@@ -98,6 +98,7 @@ fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Accent)
+                .padding(top = 42.dp)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -140,6 +141,7 @@ fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
 
         OutlinedTextFieldModeArt(
             value = state.phone,
+            isEnabled = false,
             onValueChange = viewmodel::onPhoneNumberUpdated,
             hint = stringResource(Res.string.mobile_number)
         )

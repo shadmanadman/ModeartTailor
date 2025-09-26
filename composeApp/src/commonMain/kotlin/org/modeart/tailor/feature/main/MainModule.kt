@@ -13,12 +13,14 @@ import org.modeart.tailor.api.customer.CustomerRepo
 import org.modeart.tailor.api.customer.CustomerService
 import org.modeart.tailor.feature.main.home.HomeViewModel
 import org.modeart.tailor.feature.main.main.BottomNavViewModel
+import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.prefs.PrefsDataStore
 import org.modeart.tailor.prefs.rememberDataStore
 
 val mainModule = module {
     single { BottomNavViewModel() }
     single { HomeViewModel(get()) }
+    single{ ProfileViewModel(get(),get()) }
     singleOf(::BusinessRepo).bind<BusinessService>()
     singleOf(::OnBoardingRepo).bind<OnBoardingService>()
 }

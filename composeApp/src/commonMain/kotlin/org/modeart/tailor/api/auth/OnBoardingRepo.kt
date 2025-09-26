@@ -10,6 +10,7 @@ import org.modeart.tailor.model.business.OtpRequest
 import org.modeart.tailor.model.business.PhoneCheckRequest
 import org.modeart.tailor.model.business.PhoneCheckResponse
 import org.modeart.tailor.model.business.RefreshTokenRequest
+import org.modeart.tailor.model.business.RegisterRequest
 import org.modeart.tailor.model.business.Tokens
 
 class OnBoardingRepo(private val client: HttpClient) : OnBoardingService {
@@ -20,10 +21,10 @@ class OnBoardingRepo(private val client: HttpClient) : OnBoardingService {
     }
 
 
-    override suspend fun register(authRequest: AuthRequest): ApiResult<Tokens> =
+    override suspend fun register(registerRequest: RegisterRequest): ApiResult<Tokens> =
         safeRequest {
             client.post(urlString = "register") {
-                setBody(authRequest)
+                setBody(registerRequest)
             }
         }
 

@@ -33,6 +33,7 @@ fun OutlinedTextFieldModeArt(
     hintColor: Color = Hint,
     isSearch: Boolean = false,
     isNumberOnly: Boolean = false,
+    isEnabled: Boolean = true,
     leadingIcon: DrawableResource? = null,
     onValueChange: (String) -> Unit,
     onSearchCompleted: (String) -> Unit = {},
@@ -42,6 +43,7 @@ fun OutlinedTextFieldModeArt(
         modifier = modifier.size(width, height)
             .border(1.dp, borderColor, RoundedCornerShape(roundedCorner)),
         value = value,
+        readOnly = isEnabled.not(),
         textStyle = appTypography().body13,
         leadingIcon = if (leadingIcon != null) {
             {

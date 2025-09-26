@@ -107,6 +107,13 @@ fun SignupSceneContent(viewModel: SignupViewModel, state: SignupScreenUiState) {
                 SignupStep.EnterPhoneNumber -> {
                     OutlinedTextFieldModeArt(
                         modifier = Modifier.padding(top = 8.dp),
+                        value = state.fullName,
+                        hint = stringResource(Res.string.name_family_name),
+                        onValueChange = viewModel::updateFullName
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextFieldModeArt(
+                        modifier = Modifier.padding(top = 8.dp),
                         value = state.number,
                         hint = stringResource(Res.string.mobile_number),
                         onValueChange = viewModel::verifyPhoneNumber

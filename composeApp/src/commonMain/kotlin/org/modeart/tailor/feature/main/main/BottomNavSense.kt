@@ -91,13 +91,13 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
             initialRoute = MainNavigation.home.name
         ) {
             scene(route = MainNavigation.home.fullPath) {
-                HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
+                HomeScene(onNavigate = { onNavigate(it) })
             }
             scene(route = MainNavigation.measure.fullPath) {
-                HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
+                HomeScene(onNavigate = { onNavigate(it) })
             }
             scene(route = MainNavigation.note.fullPath) {
-                NoteScene(onNavigate = { navigator.navigate(it.fullPath) })
+                NoteScene(onNavigate = { onNavigate(it) })
             }
         }
     })
