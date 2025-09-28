@@ -177,4 +177,5 @@
     <string name="phone_dos_not_exsits_signup">این شماره ثبت نشده است. لطفا ثبت نام کنید.</string>
     <string name="phone_exsits_login_please">این شماره قبلا ثبت شده. لطفا وارد شوید.</string>
     <string name="updates_was_successfully">به‌روزرسانی موفقیت آمیز بود.</string>
+    <string name="note_registered">یادداشت با موفقیت ثبت شد.</string>
 </resources>

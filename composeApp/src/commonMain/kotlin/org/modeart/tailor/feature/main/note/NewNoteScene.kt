@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.in_category
+import modearttailor.composeapp.generated.resources.new_note
 import modearttailor.composeapp.generated.resources.note_content
 import modearttailor.composeapp.generated.resources.others
 import modearttailor.composeapp.generated.resources.personal
@@ -42,20 +44,28 @@ import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.InAppNotification
+import org.modeart.tailor.common.MainToolbar
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.note.contract.NoteUiEffect
+import org.modeart.tailor.feature.main.note.contract.NoteUiState
+import org.modeart.tailor.model.business.NoteCategory
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
 
 @Composable
 @Preview
-fun NewNoteScene(onNavigate: (Route) -> Unit) {
+fun NewNoteScene(onNavigate: (Route) -> Unit,onBack: () -> Unit) {
     val viewModel = koinViewModel(NoteViewModel::class)
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<NoteUiEffect.ShowRawNotification?>(null) }
+    var notificationLocalized by remember {
+        mutableStateOf<NoteUiEffect.ShowLocalizedNotification?>(
+            null
+        )
+    }
 
     LaunchedEffect(effects) {
         effects.onEach { effect ->
@@ -63,6 +73,10 @@ fun NewNoteScene(onNavigate: (Route) -> Unit) {
                 is NoteUiEffect.Navigation -> onNavigate(effect.screen)
                 is NoteUiEffect.ShowRawNotification -> {
                     notification = effect
+                }
+
+                is NoteUiEffect.ShowLocalizedNotification ->{
+                    notificationLocalized = effect
                 }
             }
         }.collect()
@@ -72,20 +86,38 @@ fun NewNoteScene(onNavigate: (Route) -> Unit) {
             notification = null
         }
     }
+    notificationLocalized?.let { notif ->
+        InAppNotification(message = stringResource(notif.msg)) {
+            notificationLocalized = null
+        }
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize().background(Background).padding(32.dp)
     ) {
-        NoteCategory()
-        AddNewNote()
-        RoundedCornerButton(text = stringResource(Res.string.save), isEnabled = state.isEnabled) {}
+        MainToolbar(title = stringResource(Res.string.new_note)){
+            onBack()
+        }
+        NoteCategory(viewModel::newNoteCategorySelected)
+        Spacer(modifier = Modifier.height(16.dp))
+        AddNewNote(state, viewModel)
+        Spacer(modifier = Modifier.height(16.dp))
+        if (state.isLoading)
+            CircularProgressIndicator()
+        else
+            RoundedCornerButton(
+                text = stringResource(Res.string.save),
+                isEnabled = state.isEnabled
+            ) {
+                viewModel.newNote()
+            }
     }
 
 }
 
 
 @Composable
-fun NoteCategory() {
+fun NoteCategory(onCategorySelected: (NoteCategory) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier.size(80.dp, 47.dp)
@@ -99,30 +131,30 @@ fun NoteCategory() {
         }
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = stringResource(Res.string.work_and_customer), style = appTypography().body13)
-        Checkbox(checked = false, onCheckedChange = {})
+        Checkbox(checked = false, onCheckedChange = { onCategorySelected(NoteCategory.WORK) })
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = stringResource(Res.string.personal), style = appTypography().body13)
-        Checkbox(checked = true, onCheckedChange = {})
+        Checkbox(checked = true, onCheckedChange = { onCategorySelected(NoteCategory.PERSONAL) })
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = stringResource(Res.string.others), style = appTypography().body13)
-        Checkbox(checked = false, onCheckedChange = {})
+        Checkbox(checked = false, onCheckedChange = { onCategorySelected(NoteCategory.OTHERS) })
     }
 }
 
 @Composable
 @Preview
-fun AddNewNote() {
+fun AddNewNote(state: NoteUiState, viewModel: NoteViewModel) {
     Column(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextFieldModeArt(
             modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
+            value = state.newNoteTitle,
+            onValueChange = viewModel::newNoteTitleChanged,
             hint = stringResource(Res.string.title)
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextFieldModeArt(
             modifier = Modifier.fillMaxWidth(),
-            value = "", onValueChange = {},
+            value = state.newNoteContent, onValueChange = viewModel::newNoteContentChanged,
             height = 440.dp,
             hint = stringResource(Res.string.note_content)
         )

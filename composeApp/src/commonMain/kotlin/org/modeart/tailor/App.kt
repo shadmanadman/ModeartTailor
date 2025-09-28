@@ -64,7 +64,9 @@ internal fun App() {
                     HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
                 scene(route = MainNavigation.newNote.fullPath) {
-                    NewNoteScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    NewNoteScene(
+                        onNavigate = { navigator.navigate(it.fullPath) },
+                        onBack = { navigator.goBack() })
                 }
                 //************************ Profile *********************************//
                 scene(route = MainNavigation.profile.fullPath) {

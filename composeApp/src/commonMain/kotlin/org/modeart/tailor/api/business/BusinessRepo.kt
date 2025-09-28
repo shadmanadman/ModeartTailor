@@ -27,17 +27,15 @@ class BusinessRepo(private val client: HttpClient) : BusinessService {
         }
 
     override suspend fun createNote(
-        businessId: String,
         notes: BusinessProfile.Notes
     ): ApiResult<Unit> = safeRequest {
-        client.post("/business/${businessId}/note") { setBody(notes) }.body()
+        client.post("/business/note") { setBody(notes) }.body()
     }
 
     override suspend fun updateNote(
-        businessId: String,
         notes: BusinessProfile.Notes
     ): ApiResult<Unit> = safeRequest {
-        client.patch("/business/${businessId}/note/${notes.id}") { setBody(notes) }.body()
+        client.patch("/business/note/${notes.id}") { setBody(notes) }.body()
     }
 
     override suspend fun deleteNote(noteId: String): ApiResult<Unit> = safeRequest {
@@ -45,9 +43,9 @@ class BusinessRepo(private val client: HttpClient) : BusinessService {
     }
 
 
-    override suspend fun getBusinessNotes(businessId: String): ApiResult<List<BusinessProfile.Notes>> =
+    override suspend fun getBusinessNotes(): ApiResult<List<BusinessProfile.Notes>> =
         safeRequest {
-            client.get("/business/$businessId/notes")
+            client.get("/business/notes")
         }
 
     override suspend fun getBusinessCustomers(businessId: String): ApiResult<List<CustomerProfile>> =

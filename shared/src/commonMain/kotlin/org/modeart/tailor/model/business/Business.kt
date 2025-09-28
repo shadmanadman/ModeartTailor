@@ -25,7 +25,6 @@ data class BusinessProfile(
 ) {
     @Serializable
     data class Notes(
-        @SerialName("_id")
         val id: String? = "",
         val title: String,
         val content: String,

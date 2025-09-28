@@ -8,11 +8,11 @@ import org.modeart.tailor.model.customer.CustomerProfile
 interface BusinessService {
     suspend fun businessProfile(): ApiResult<BusinessProfile>
     suspend fun updateBusinessProfile(businessProfile: BusinessProfile,id:String): ApiResult<Unit>
-    suspend fun createNote(businessId: String, notes: BusinessProfile.Notes): ApiResult<Unit>
-    suspend fun updateNote(businessId: String, notes: BusinessProfile.Notes): ApiResult<Unit>
+    suspend fun createNote(notes: BusinessProfile.Notes): ApiResult<Unit>
+    suspend fun updateNote(notes: BusinessProfile.Notes): ApiResult<Unit>
     suspend fun deleteNote(noteId: String): ApiResult<Unit>
 
-    suspend fun getBusinessNotes(businessId: String): ApiResult<List<BusinessProfile.Notes>>
+    suspend fun getBusinessNotes(): ApiResult<List<BusinessProfile.Notes>>
 
     suspend fun getBusinessCustomers(businessId: String): ApiResult<List<CustomerProfile>>
 }

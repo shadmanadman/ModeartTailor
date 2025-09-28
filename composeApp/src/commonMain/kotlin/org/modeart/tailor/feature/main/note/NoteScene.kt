@@ -75,6 +75,8 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
                 is NoteUiEffect.ShowRawNotification -> {
                     notification = effect
                 }
+
+                is NoteUiEffect.ShowLocalizedNotification -> {}
             }
         }.collect()
     }
@@ -100,8 +102,8 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
             item {
                 NewNote(onNewNote = { onNavigate(MainNavigation.newNote) })
             }
-            items(2) {
-                NoteItem(title = "", content = "")
+            items(state.allNotes.size) {
+                NoteItem(title = state.allNotes[it].title, content = state.allNotes[it].content)
             }
         }
     }

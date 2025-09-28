@@ -105,48 +105,54 @@ fun Route.businessRouting() {
                 call.respond(HttpStatusCode.Created, "Created business with id $insertedId")
             }
 
-            post("/{businessId?}/note") {
-                val businessId = call.parameters["businessId"] ?: return@post call.respondText(
-                    text = "Missing businessId",
-                    status = HttpStatusCode.BadRequest
-                )
-                val note = call.receive<BusinessProfile.Notes>()
-                val insertedId = repository.insertNote(businessId, note)
+            post("/note") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+                if (userId.isNullOrEmpty()) {
+                    return@post call.respondText(
+                        text = "Missing id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
+                var note = call.receive<BusinessProfile.Notes>()
+                note = note.copy(id = UUID.randomUUID().toString())
+                val insertedId = repository.insertNote(userId, note)
                 call.respond(HttpStatusCode.Created, "Created note with id $insertedId")
             }
 
-            get("/{businessId?}/notes") {
-                val businessId = call.parameters["businessId"] ?: return@get call.respondText(
-                    text = "Missing businessId",
-                    status = HttpStatusCode.BadRequest
-                )
-                repository.getAllNotes(businessId)?.let { notes ->
-                    if (notes.isNotEmpty()) {
-                        call.respond(notes)
-                    } else {
-                        call.respondText(
-                            "No notes found for businessId $businessId",
-                            status = HttpStatusCode.NotFound
-                        )
-                    }
+            get("/notes") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+                if (userId.isNullOrEmpty()) {
+                    return@get call.respondText(
+                        text = "Missing id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
+                repository.getAllNotes(userId)?.let { notes ->
+                    call.respond(notes)
                 } ?: call.respondText(
-                    "Business not found for id $businessId",
+                    "Business not found for id $userId",
                     status = HttpStatusCode.NotFound
                 )
             }
 
 
 
-            delete("/{businessId?}/note/{noteId?}") {
-                val businessId = call.parameters["businessId"] ?: return@delete call.respondText(
-                    text = "Missing businessId",
-                    status = HttpStatusCode.BadRequest
-                )
+            delete("/note/{noteId?}") {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+                if (userId.isNullOrEmpty()) {
+                    return@delete call.respondText(
+                        text = "Missing id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
                 val noteId = call.parameters["noteId"] ?: return@delete call.respondText(
                     text = "Missing noteId",
                     status = HttpStatusCode.BadRequest
                 )
-                val deletedCount = repository.deleteNote(businessId, noteId)
+                val deletedCount = repository.deleteNote(userId, noteId)
                 if (deletedCount == 1L) {
                     call.respondText("Note deleted successfully", status = HttpStatusCode.OK)
                 } else {

@@ -85,6 +85,8 @@ fun MainProfileScene(onNavigate: (Route) -> Unit) {
                 is ProfileUiEffect.ShowRawNotification -> {
                     notification = effect
                 }
+
+                is ProfileUiEffect.ShowLocalizedNotification -> {}
             }
         }.collect()
     }

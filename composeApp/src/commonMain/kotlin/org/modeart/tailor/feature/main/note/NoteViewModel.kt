@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import modearttailor.composeapp.generated.resources.Res
+import modearttailor.composeapp.generated.resources.note_registered
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
@@ -33,9 +35,30 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
     var effects = Channel<NoteUiEffect>(Channel.UNLIMITED)
         private set
 
+    init {
+        getAllNotes()
+    }
 
     fun noteCategorySelected(category: NoteCategory) {
-        _uiState.update { it.copy(currentCategory = category) }
+        _uiState.update {
+            it.copy(
+                currentCategory = category,
+                allNotes = uiState.value.allNotes.filter { allNotes -> allNotes.category == category })
+        }
+    }
+
+    fun newNoteCategorySelected(category: NoteCategory) {
+        _uiState.update { it.copy(newNoteCategory = category) }
+    }
+
+    fun newNoteTitleChanged(title: String) {
+        _uiState.update { it.copy(newNoteTitle = title) }
+    }
+
+    fun newNoteContentChanged(content: String) {
+        _uiState.update {
+            it.copy(newNoteContent = content)
+        }
     }
 
     fun navigateToProfile() {
@@ -51,10 +74,10 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
     }
 
 
-    fun getAllNotes(businessId: String) {
+    fun getAllNotes() {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val response = businessService.getBusinessNotes(businessId)
+            val response = businessService.getBusinessNotes()
             when (response) {
                 is ApiResult.Error -> effects.send(
                     NoteUiEffect.ShowRawNotification(
@@ -63,19 +86,27 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
                 )
 
                 is ApiResult.Success -> {
-                    _uiState.update { it.copy(allNotes = response.data) }
+                    _uiState.update { it.copy(allNotes = response.data, isLoading = false) }
                 }
             }
         }
     }
 
-    fun newNote(title: String, content: String, category: NoteCategory) {
-        _uiState.update { it.copy(isLoading = true) }
+    fun newNote() {
+        if (_uiState.value.newNoteTitle.isEmpty() || _uiState.value.newNoteContent.isEmpty())
+            return
+
         viewModelScope.launch {
-            val response = businessService.createNote(
-                title,
-                BusinessProfile.Notes(title = title, content = content, category = category)
-            )
+            val response = _uiState.value.run {
+                businessService.createNote(
+                    BusinessProfile.Notes(
+                        title = newNoteTitle,
+                        content = newNoteContent,
+                        category = newNoteCategory
+                    )
+                )
+            }
+            _uiState.update { it.copy(isLoading = true) }
 
             when (response) {
                 is ApiResult.Error -> effects.send(
@@ -84,11 +115,14 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
                     )
                 )
 
-                is ApiResult.Success -> effects.send(
-                    NoteUiEffect.ShowRawNotification(
-                        msg = "Note created successfully", isError = false
+                is ApiResult.Success -> {
+                    effects.send(
+                        NoteUiEffect.ShowLocalizedNotification(
+                            msg = Res.string.note_registered
+                        )
                     )
-                )
+                    _uiState.update { it.copy(isLoading = false) }
+                }
             }
         }
     }
