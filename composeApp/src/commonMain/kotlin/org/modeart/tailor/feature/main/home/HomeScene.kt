@@ -68,6 +68,7 @@ import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
+import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
@@ -110,7 +111,9 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
             thisMonthCustomer = state.thisMonthCustomer
         )
         SectionTitle(stringResource(Res.string.last_notes))
-        LastNoteItem(state.latestNotes)
+        LastNoteItem(state.latestNotes){
+            onNavigate(MainNavigation.newNote)
+        }
         SectionTitle(stringResource(Res.string.last_customers))
         LatestCustomerSection(state.latestCustomers)
     }
@@ -118,14 +121,20 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
 
 @Composable
 fun SectionTitle(title: String) {
-    Row(modifier = Modifier.fillMaxWidth().padding(22.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(22.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Text(text = title, style = appTypography().title15)
         Text(text = stringResource(Res.string.see_all), style = appTypography().body12)
     }
 }
 
 @Composable
-fun LastNoteItem(lastThreeNotes: List<BusinessProfile.Notes> = emptyList()) {
+fun LastNoteItem(
+    lastThreeNotes: List<BusinessProfile.Notes> = emptyList(),
+    onNavigateToNewNote: () -> Unit
+) {
     if (lastThreeNotes.isNotEmpty())
         Box(
             modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
@@ -168,7 +177,9 @@ fun LastNoteItem(lastThreeNotes: List<BusinessProfile.Notes> = emptyList()) {
             }
         }
     else
-        EmptyNoteOrCustomer(isNote = true, onCardClicked = {})
+        EmptyNoteOrCustomer(isNote = true, onCardClicked = {
+            onNavigateToNewNote()
+        })
 }
 
 

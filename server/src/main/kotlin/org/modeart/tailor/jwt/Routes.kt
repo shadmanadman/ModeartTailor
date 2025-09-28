@@ -106,9 +106,8 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
 
         // 2. Clear the OTP from the store after successful verification
         otpStore.remove(request.phoneNumber)
-        val userId = user.getObjectId("_id").toHexString()
-        val accessToken = JwtConfig.generateAccessToken(userId, tokenConfig)
-        val refreshToken = JwtConfig.generateRefreshToken(userId, tokenConfig)
+        val accessToken = JwtConfig.generateAccessToken(user.id, tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(user.id, tokenConfig)
         call.respond(HttpStatusCode.OK, Tokens(accessToken, refreshToken))
     }
 
@@ -123,10 +122,9 @@ fun Route.authRoute(tokenConfig: TokenConfig) {
             HttpStatusCode.Unauthorized,
             "Invalid credentials"
         )
-        val userId = user.getObjectId("_id").toHexString()
 
-        val newAccessToken = JwtConfig.generateAccessToken(userId, tokenConfig)
-        val refreshToken = JwtConfig.generateRefreshToken(userId, tokenConfig)
+        val newAccessToken = JwtConfig.generateAccessToken(user.id, tokenConfig)
+        val refreshToken = JwtConfig.generateRefreshToken(user.id, tokenConfig)
 
         call.respond(
             HttpStatusCode.OK,

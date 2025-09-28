@@ -28,7 +28,7 @@ const val NOTIFICATION_DELAY = 3000L
 @Composable
 fun InAppNotification(
     message: String = "",
-    isError: Boolean = true,
+    isError: Boolean = false,
     isNetworkError: Boolean = false,
     networkErrorCode: String = "",
     onDismiss: () -> Unit = {}

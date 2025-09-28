@@ -1,10 +1,14 @@
 package org.modeart.tailor.features.business.networking
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
+import io.ktor.http.content.streamProvider
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
+import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
@@ -15,25 +19,25 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.bson.types.ObjectId
 import org.modeart.tailor.features.business.di.BusinessModule
+import org.modeart.tailor.features.customer.di.CustomerModule
 import org.modeart.tailor.model.business.BusinessProfile
+import java.io.File
+import java.util.UUID
 
 fun Route.businessRouting() {
     val repository = BusinessModule.businessDao()
 
-    route("/all-business") {
+    authenticate("auth-jwt") {
+        route("/business") {
 
-        get {
-            repository.findAll()?.let { list ->
-                call.respond(list)
-            } ?: call.respondText("No records found")
-        }
+            get {
+                repository.findAll()?.let { list ->
+                    call.respond(list)
+                } ?: call.respondText("No records found")
+            }
 
-        authenticate("auth-jwt") {
-            get("/business") {
-                // Get the principal from the call object
+            get("/profile") {
                 val principal = call.principal<JWTPrincipal>()
-
-                // Check if the principal exists and get the userId
                 val userId = principal?.payload?.getClaim("userId")?.asString()
 
                 println("USER_ID is: $userId")
@@ -48,98 +52,158 @@ fun Route.businessRouting() {
                     call.respond(it)
                 } ?: call.respondText("No records found for id $userId")
             }
-        }
 
 
-        delete("/{id?}") {
-            val id = call.parameters["id"] ?: return@delete call.respondText(
-                text = "Missing business id",
-                status = HttpStatusCode.BadRequest
-            )
 
-            val delete: Long = repository.deleteById(id)
-
-            if (delete == 1L) {
-                return@delete call.respondText(
-                    "business Deleted successfully",
-                    status = HttpStatusCode.OK
-                )
-            }
-            return@delete call.respondText("business not found", status = HttpStatusCode.NotFound)
-
-        }
-        authenticate("auth-jwt") {
-            patch("/update-business-profile") {
+            delete("/remove") {
                 val principal = call.principal<JWTPrincipal>()
                 val userId = principal?.payload?.getClaim("userId")?.asString()
+
                 println("USER_ID is: $userId")
+                if (userId.isNullOrEmpty()) {
+                    return@delete call.respondText(
+                        text = "Missing id",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
+
+                val delete: Long = repository.deleteById(userId)
+
+                if (delete == 1L) {
+                    return@delete call.respondText(
+                        "business Deleted successfully",
+                        status = HttpStatusCode.OK
+                    )
+                }
+                return@delete call.respondText(
+                    "business not found",
+                    status = HttpStatusCode.NotFound
+                )
+
+            }
+            patch("/update-profile") {
+                val request = call.receive<BusinessProfile>()
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
                 if (userId.isNullOrEmpty()) {
                     return@patch call.respondText(
                         text = "Missing id",
                         status = HttpStatusCode.BadRequest
                     )
                 }
-                val updated = repository.updateOne(userId, call.receive())
-
+                val updated = repository.updateOne(objectId = userId, businessProfile = request)
                 call.respondText(
                     text = if (updated == 1L) "business updated successfully" else "business not found",
                     status = if (updated == 1L) HttpStatusCode.OK else HttpStatusCode.NotFound
                 )
             }
-        }
 
-        post {
-            val business = call.receive<BusinessProfile>()
-            val insertedId = repository.insertOne(business)
-            call.respond(HttpStatusCode.Created, "Created business with id $insertedId")
-        }
 
-        post("/{businessId?}/note") {
-            val businessId = call.parameters["businessId"] ?: return@post call.respondText(
-                text = "Missing businessId",
-                status = HttpStatusCode.BadRequest
-            )
-            val note = call.receive<BusinessProfile.Notes>()
-            val insertedId = repository.insertNote(businessId, note)
-            call.respond(HttpStatusCode.Created, "Created note with id $insertedId")
-        }
+            post {
+                val business = call.receive<BusinessProfile>()
+                val insertedId = repository.insertOne(business)
+                call.respond(HttpStatusCode.Created, "Created business with id $insertedId")
+            }
 
-        get("/{businessId?}/notes") {
-            val businessId = call.parameters["businessId"] ?: return@get call.respondText(
-                text = "Missing businessId",
-                status = HttpStatusCode.BadRequest
-            )
-            repository.getAllNotes(businessId)?.let { notes ->
-                if (notes.isNotEmpty()) {
-                    call.respond(notes)
+            post("/{businessId?}/note") {
+                val businessId = call.parameters["businessId"] ?: return@post call.respondText(
+                    text = "Missing businessId",
+                    status = HttpStatusCode.BadRequest
+                )
+                val note = call.receive<BusinessProfile.Notes>()
+                val insertedId = repository.insertNote(businessId, note)
+                call.respond(HttpStatusCode.Created, "Created note with id $insertedId")
+            }
+
+            get("/{businessId?}/notes") {
+                val businessId = call.parameters["businessId"] ?: return@get call.respondText(
+                    text = "Missing businessId",
+                    status = HttpStatusCode.BadRequest
+                )
+                repository.getAllNotes(businessId)?.let { notes ->
+                    if (notes.isNotEmpty()) {
+                        call.respond(notes)
+                    } else {
+                        call.respondText(
+                            "No notes found for businessId $businessId",
+                            status = HttpStatusCode.NotFound
+                        )
+                    }
+                } ?: call.respondText(
+                    "Business not found for id $businessId",
+                    status = HttpStatusCode.NotFound
+                )
+            }
+
+
+
+            delete("/{businessId?}/note/{noteId?}") {
+                val businessId = call.parameters["businessId"] ?: return@delete call.respondText(
+                    text = "Missing businessId",
+                    status = HttpStatusCode.BadRequest
+                )
+                val noteId = call.parameters["noteId"] ?: return@delete call.respondText(
+                    text = "Missing noteId",
+                    status = HttpStatusCode.BadRequest
+                )
+                val deletedCount = repository.deleteNote(businessId, noteId)
+                if (deletedCount == 1L) {
+                    call.respondText("Note deleted successfully", status = HttpStatusCode.OK)
                 } else {
-                    call.respondText(
-                        "No notes found for businessId $businessId",
-                        status = HttpStatusCode.NotFound
+                    call.respondText("Note not found", status = HttpStatusCode.NotFound)
+                }
+            }
+        }
+    }
+
+
+    val UPLOAD_DIR = File("uploads").apply { mkdirs() }
+
+    fun Route.configureUpload(isBusiness: Boolean, id: String) {
+        route("/upload") {
+            post("/image") {
+                val multipart = call.receiveMultipart()
+                var imageUrl: String? = null
+                var updated = 0L
+                multipart.forEachPart { part ->
+                    when (part) {
+                        is PartData.FileItem -> {
+                            // This is the actual file data
+                            val originalFileName = part.originalFileName ?: "file"
+                            // Get the file extension and generate a unique file name to avoid collisions
+                            val fileExtension = originalFileName.substringAfterLast('.', "")
+                            val newFileName = "${UUID.randomUUID()}.$fileExtension"
+                            val file = File(UPLOAD_DIR, newFileName)
+
+                            // Use a stream provider to read the file content
+                            part.streamProvider().use { inputStream ->
+                                file.outputStream().buffered().use { outputStream ->
+                                    // Copy the file content from the input stream to the new file
+                                    inputStream.copyTo(outputStream)
+                                }
+                            }
+                            imageUrl = "/uploads/$newFileName"
+                            if (isBusiness) {
+                                updated = BusinessModule.businessDao().updateAvatar(id, imageUrl)
+                            } else
+                                updated = CustomerModule.customerDao().updateAvatar(id, imageUrl)
+                        }
+
+                        is PartData.FormItem -> {
+                            println("Received form field ${part.name}: ${part.value}")
+                        }
+
+                        else -> {}
+                    }
+
+                    part.dispose()
+                }
+                if (updated == 1L) {
+                    return@post call.respondText(
+                        text = "business updated successfully",
+                        status = HttpStatusCode.OK
                     )
                 }
-            } ?: call.respondText(
-                "Business not found for id $businessId",
-                status = HttpStatusCode.NotFound
-            )
-        }
-
-
-
-        delete("/{businessId?}/note/{noteId?}") {
-            val businessId = call.parameters["businessId"] ?: return@delete call.respondText(
-                text = "Missing businessId",
-                status = HttpStatusCode.BadRequest
-            )
-            val noteId = call.parameters["noteId"] ?: return@delete call.respondText(
-                text = "Missing noteId",
-                status = HttpStatusCode.BadRequest
-            )
-            val deletedCount = repository.deleteNote(businessId, noteId)
-            if (deletedCount == 1L) {
-                call.respondText("Note deleted successfully", status = HttpStatusCode.OK)
-            } else {
-                call.respondText("Note not found", status = HttpStatusCode.NotFound)
             }
         }
     }

@@ -63,6 +63,7 @@ fun EditeProfileScene(onNavigate: (Route) -> Unit) {
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<ProfileUiEffect.ShowRawNotification?>(null) }
+    var notificationLocalized by remember { mutableStateOf<ProfileUiEffect.ShowLocalizedNotification?>(null) }
 
     LaunchedEffect(effects) {
         effects.onEach { effect ->
@@ -71,12 +72,21 @@ fun EditeProfileScene(onNavigate: (Route) -> Unit) {
                 is ProfileUiEffect.ShowRawNotification -> {
                     notification = effect
                 }
+
+                is ProfileUiEffect.ShowLocalizedNotification -> {
+                    notificationLocalized = effect
+                }
             }
         }.collect()
     }
     notification?.let { notif ->
         InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
             notification = null
+        }
+    }
+    notificationLocalized?.let { notif ->
+        InAppNotification(message = stringResource(notif.msg), networkErrorCode = notif.errorCode) {
+            notificationLocalized = null
         }
     }
 

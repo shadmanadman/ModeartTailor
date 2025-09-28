@@ -15,11 +15,14 @@ import org.modeart.tailor.model.customer.CustomerProfile
 
 class BusinessRepo(private val client: HttpClient) : BusinessService {
     override suspend fun businessProfile(): ApiResult<BusinessProfile> =
-        safeRequest { client.get("/all-business/business").body() }
+        safeRequest { client.get("/business/profile").body() }
 
-    override suspend fun updateBusinessProfile(businessProfile: BusinessProfile): ApiResult<Unit> =
+    override suspend fun updateBusinessProfile(
+        businessProfile: BusinessProfile,
+        id: String
+    ): ApiResult<Unit> =
         safeRequest {
-            client.patch("/all-business/update-business-profile") { setBody(businessProfile) }
+            client.patch("/business/update-profile") { setBody(businessProfile) }
                 .body()
         }
 

@@ -59,6 +59,11 @@ fun LoginScene(
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<LoginScreenUiEffect.ShowRawNotification?>(null) }
+    var notificationLocalized by remember {
+        mutableStateOf<LoginScreenUiEffect.ShowLocalizedNotification?>(
+            null
+        )
+    }
 
     LaunchedEffect(effects) {
         effects.onEach { effect ->
@@ -68,11 +73,20 @@ fun LoginScene(
                 is LoginScreenUiEffect.ShowRawNotification -> {
                     notification = effect
                 }
+
+                is LoginScreenUiEffect.ShowLocalizedNotification -> {
+                    notificationLocalized = effect
+                }
             }
         }.collect()
     }
     notification?.let { notif ->
         InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
+            notification = null
+        }
+    }
+    notificationLocalized?.let { notif ->
+        InAppNotification(message = stringResource(notif.msg), networkErrorCode = notif.errorCode) {
             notification = null
         }
     }
@@ -138,7 +152,7 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
 
             Text(
                 modifier = Modifier.weight(1f).padding(16.dp)
-                    .clickable(indication = null, interactionSource = null){
+                    .clickable(indication = null, interactionSource = null) {
                         viewModel.goToSignUp()
                     },
                 text = stringResource(Res.string.no_account_signup),

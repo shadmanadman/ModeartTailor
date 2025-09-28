@@ -46,6 +46,26 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
         return null
     }
 
+    override suspend fun updateAvatar(
+        objectId: String,
+        avatarUrl: String
+    ): Long {
+        try {
+            val query = Filters.eq("id", objectId)
+            val updates = mutableListOf<org.bson.conversions.Bson>()
+            updates.add(Updates.set("avatar", avatarUrl))
+            val combinedUpdates = Updates.combine(updates)
+            val options = UpdateOptions().upsert(true)
+            val result =
+                mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)
+                    .updateOne(query, combinedUpdates, options)
+            return result.modifiedCount
+        } catch (e: MongoException) {
+            System.err.println("Unable to update due to an error: $e")
+        }
+        return 0
+    }
+
     override suspend fun deleteById(objectId: ObjectId): Long {
         try {
             val result = mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)

@@ -3,6 +3,7 @@ package org.modeart.tailor.feature.main.profile.contract
 import org.modeart.tailor.model.business.BusinessProfile
 
 data class ProfileUiState(
+    val id: String = "",
     val fullName: String = "",
     val email: String = "",
     val phone: String = "",

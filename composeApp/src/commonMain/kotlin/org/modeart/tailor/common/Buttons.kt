@@ -17,6 +17,7 @@ import org.modeart.tailor.theme.appTypography
 
 @Composable
 fun RoundedCornerButton(
+    modifier: Modifier = Modifier,
     isEnabled: Boolean,
     text: String,
     textColor: Color = Color.White,
@@ -27,7 +28,7 @@ fun RoundedCornerButton(
     onClick: () -> Unit
 ) {
     Button(
-        modifier = Modifier.size(width.dp, height.dp)
+        modifier = modifier.size(width.dp, height.dp)
             .background(backgroundColor, shape = RoundedCornerShape(roundedCornerShape)),
         colors = ButtonDefaults.buttonColors(
             disabledContainerColor = Hint,

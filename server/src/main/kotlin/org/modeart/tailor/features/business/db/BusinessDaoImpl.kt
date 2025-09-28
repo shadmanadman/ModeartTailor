@@ -29,8 +29,8 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
             .find(Filters.eq("id", id))
             .firstOrNull()
 
-    override suspend fun findByPhone(phone: String): Document? =
-        mongoDatabase.getCollection<Document>(BUSINESS_COLLECTION)
+    override suspend fun findByPhone(phone: String): BusinessProfile? =
+        mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
             .find(Filters.eq("phoneNumber", phone))
             .firstOrNull()
 
@@ -68,7 +68,7 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
         try {
             val query = Filters.eq("id", objectId)
             val updates = mutableListOf<org.bson.conversions.Bson>()
-
+            println("businessProfile: $businessProfile")
             // Helper function to add update if value is not null or empty
             fun <T> addUpdateIfNotEmpty(
                 field: kotlin.reflect.KProperty1<BusinessProfile, T?>,
@@ -111,12 +111,30 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
             val options = UpdateOptions().upsert(true)
 
             val result =
-                mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)
+                mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
                     .updateOne(query, combinedUpdates, options)
 
             return result.modifiedCount
         } catch (e: MongoException) {
             System.err.println("Unable to update due to an error: $e")
+        }
+        return 0
+    }
+
+    override suspend fun updateAvatar(
+        objectId: String,
+        avatarUrl: String
+    ): Long {
+        try {
+            val query = Filters.eq("id", objectId)
+            val update = Updates.set(BusinessProfile::profilePictureUrl.name, avatarUrl)
+            val options = UpdateOptions().upsert(true)
+            val result =
+                mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
+                    .updateOne(query, update, options)
+            return result.modifiedCount
+        } catch (e: MongoException) {
+            System.err.println("Unable to update avatar due to an error: $e")
         }
         return 0
     }

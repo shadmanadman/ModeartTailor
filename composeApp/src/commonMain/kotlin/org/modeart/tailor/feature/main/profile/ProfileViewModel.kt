@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import modearttailor.composeapp.generated.resources.Res
+import modearttailor.composeapp.generated.resources.updates_was_successfully
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
@@ -95,7 +97,8 @@ class ProfileViewModel(
                     businessName = _uiState.value.businessName,
                     city = _uiState.value.address,
                     profilePictureUrl = _uiState.value.avatar
-                )
+                ),
+                id = _uiState.value.id
             )
 
 
@@ -107,7 +110,7 @@ class ProfileViewModel(
                 )
 
                 is ApiResult.Success -> {
-                    effects.send(ProfileUiEffect.ShowRawNotification(msg = "Profile updated successfully"))
+                    effects.send(ProfileUiEffect.ShowLocalizedNotification(msg = Res.string.updates_was_successfully))
                 }
             }
         }
@@ -126,6 +129,7 @@ class ProfileViewModel(
                 is ApiResult.Success -> {
                     _uiState.update {
                         it.copy(
+                            id = response.data.id,
                             fullName = response.data.fullName ?: "",
                             businessName = response.data.businessName ?: "",
                             phone = response.data.phoneNumber ?: "",

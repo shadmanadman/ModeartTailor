@@ -15,6 +15,8 @@ interface CustomerDao {
 
     suspend fun insertOne(customer: CustomerProfile): BsonValue?
 
+    suspend fun updateAvatar(objectId: String, avatarUrl: String): Long
+
     suspend fun deleteById(objectId: ObjectId): Long
 
     suspend fun updateOne(objectId: ObjectId, customer: CustomerProfile): Long

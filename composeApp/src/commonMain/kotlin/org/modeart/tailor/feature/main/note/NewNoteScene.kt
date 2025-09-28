@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +35,7 @@ import modearttailor.composeapp.generated.resources.in_category
 import modearttailor.composeapp.generated.resources.note_content
 import modearttailor.composeapp.generated.resources.others
 import modearttailor.composeapp.generated.resources.personal
+import modearttailor.composeapp.generated.resources.save
 import modearttailor.composeapp.generated.resources.title
 import modearttailor.composeapp.generated.resources.work_and_customer
 import moe.tlaster.precompose.koin.koinViewModel
@@ -40,8 +43,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.note.contract.NoteUiEffect
 import org.modeart.tailor.navigation.Route
+import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
 
 @Composable
@@ -67,6 +72,15 @@ fun NewNoteScene(onNavigate: (Route) -> Unit) {
             notification = null
         }
     }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize().background(Background).padding(32.dp)
+    ) {
+        NoteCategory()
+        AddNewNote()
+        RoundedCornerButton(text = stringResource(Res.string.save), isEnabled = state.isEnabled) {}
+    }
+
 }
 
 
@@ -118,8 +132,5 @@ fun AddNewNote() {
 @Composable
 @Preview
 fun NotePreview() {
-    Column {
-        NoteCategory()
-        AddNewNote()
-    }
+
 }

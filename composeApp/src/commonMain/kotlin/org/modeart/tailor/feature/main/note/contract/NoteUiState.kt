@@ -9,5 +9,6 @@ data class NoteUiState(
     val newNoteTitle: String = "",
     val newNoteContent: String= "",
     val newNoteCategory: NoteCategory = NoteCategory.WORK,
+    val isEnabled: Boolean = false,
     val isLoading: Boolean = false
 )

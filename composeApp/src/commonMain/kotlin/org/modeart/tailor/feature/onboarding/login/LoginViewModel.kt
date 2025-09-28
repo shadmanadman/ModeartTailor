@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import modearttailor.composeapp.generated.resources.Res
+import modearttailor.composeapp.generated.resources.phone_dos_not_exsits_signup
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
@@ -17,6 +19,7 @@ import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiEffect
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiState
 import org.modeart.tailor.feature.onboarding.login.contract.LoginStep
 import org.modeart.tailor.model.business.AuthRequest
+import org.modeart.tailor.model.business.PhoneCheckRequest
 
 const val CODE_LENGTH = 5
 
@@ -67,26 +70,34 @@ class LoginViewModel(
             val currentStage = _uiState.value.currentStep
             when (currentStage) {
                 LoginStep.EnterPhoneNumber -> {
-                    val response =
-                        _uiState.value.run { onBoardingService.sendOtpTest(phoneNumber = number) }
-                    when (response) {
-                        is ApiResult.Error ->
-                            effects.send(
-                                LoginScreenUiEffect.ShowRawNotification(
-                                    msg = response.message, errorCode = response.code.toString()
+                    val checkPhoneResponse = _uiState.value.run {
+                        onBoardingService.checkPhoneNumber(
+                            PhoneCheckRequest(number)
+                        )
+                    }
+                    if (checkPhoneResponse is ApiResult.Success && checkPhoneResponse.data.exists) {
+                        val response =
+                            _uiState.value.run { onBoardingService.sendOtpTest(phoneNumber = number) }
+                        when (response) {
+                            is ApiResult.Error ->
+                                effects.send(
+                                    LoginScreenUiEffect.ShowRawNotification(
+                                        msg = response.message, errorCode = response.code.toString()
+                                    )
                                 )
-                            )
 
-                        is ApiResult.Success -> {
-                            _uiState.update {
-                                it.copy(
-                                    currentStep = LoginStep.EnterVerificationCode,
-                                    enableContinue = true,
-                                    code = response.data.otp
-                                )
+                            is ApiResult.Success -> {
+                                _uiState.update {
+                                    it.copy(
+                                        currentStep = LoginStep.EnterVerificationCode,
+                                        enableContinue = true,
+                                        code = response.data.otp
+                                    )
+                                }
                             }
                         }
-                    }
+                    } else
+                        effects.send(LoginScreenUiEffect.ShowLocalizedNotification(msg = Res.string.phone_dos_not_exsits_signup))
                 }
 
                 LoginStep.EnterVerificationCode -> {
