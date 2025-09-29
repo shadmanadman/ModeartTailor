@@ -31,10 +31,10 @@ import org.modeart.tailor.theme.appTypography
 @Composable
 fun MainToolbar(title: String, onBack: () -> Unit) {
     Box(
-        modifier = Modifier.fillMaxWidth().height(84.dp)
+        modifier = Modifier.fillMaxWidth().height(110.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxSize().padding(start = 18.dp, end = 18.dp),
+            modifier = Modifier.fillMaxSize().padding(start = 18.dp, end = 18.dp, top = 24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

@@ -42,8 +42,8 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
     fun noteCategorySelected(category: NoteCategory) {
         _uiState.update {
             it.copy(
-                currentCategory = category,
-                allNotes = uiState.value.allNotes.filter { allNotes -> allNotes.category == category })
+                currentCategory = category
+            )
         }
     }
 

@@ -10,6 +10,10 @@ sealed interface BottomNavUiEffect {
         data object Home : Navigation(
             screen = MainNavigation.home
         )
+        data object Profile : Navigation(
+            screen = MainNavigation.profile
+        )
+
 
         data object Measure : Navigation(
             screen = MainNavigation.measure

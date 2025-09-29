@@ -44,6 +44,8 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.modeart.tailor.feature.main.home.HomeScene
+import org.modeart.tailor.feature.main.home.HomeTopBar
+import org.modeart.tailor.feature.main.home.HomeViewModel
 import org.modeart.tailor.feature.main.main.contract.BottomNavScreensState
 import org.modeart.tailor.feature.main.main.contract.BottomNavUiEffect
 import org.modeart.tailor.feature.main.main.contract.RootBottomNavId
@@ -58,6 +60,8 @@ import org.modeart.tailor.theme.appTypography
 @Composable
 fun BottomNavScene(onNavigate: (Route) -> Unit) {
     val viewModel = koinViewModel(BottomNavViewModel::class)
+    val homeViewModel = koinViewModel(HomeViewModel::class)
+    val homeState by homeViewModel.uiState.collectAsState()
     val state by viewModel.state.collectAsState()
     val effect = viewModel.effect.receiveAsFlow()
 
@@ -76,6 +80,7 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
                 BottomNavUiEffect.Navigation.Measure -> navigator.navigate(MainNavigation.measure.fullPath)
                 BottomNavUiEffect.Navigation.Note -> navigator.navigate(MainNavigation.note.fullPath)
                 is BottomNavUiEffect.ShowRawNotification -> {}
+                BottomNavUiEffect.Navigation.Profile -> navigator.navigate(MainNavigation.profile.fullPath)
             }
         }.collect()
     }
@@ -84,20 +89,30 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
     Scaffold(bottomBar = {
         BottomNavigationBar(items = bottomNavItems)
     }, content = { innerPadding ->
-        NavHost(
-            modifier = Modifier.padding(innerPadding),
-            navigator = navigator,
-            navTransition = NavTransition(),
-            initialRoute = MainNavigation.home.name
-        ) {
-            scene(route = MainNavigation.home.fullPath) {
-                HomeScene(onNavigate = { onNavigate(it) })
-            }
-            scene(route = MainNavigation.measure.fullPath) {
-                HomeScene(onNavigate = { onNavigate(it) })
-            }
-            scene(route = MainNavigation.note.fullPath) {
-                NoteScene(onNavigate = { onNavigate(it) })
+        Column {
+            HomeTopBar(
+                customerName = homeState.fullName,
+                phoneNumber = homeState.phoneNumber,
+                avatar = homeState.avatar,
+                onNavigateToProfile = viewModel::navigateToProfile,
+                onNavigateToNotification = {},
+                onSearchQueryCompleted = {}
+            )
+            NavHost(
+                modifier = Modifier.padding(innerPadding),
+                navigator = navigator,
+                navTransition = NavTransition(),
+                initialRoute = MainNavigation.home.name
+            ) {
+                scene(route = MainNavigation.home.fullPath) {
+                    HomeScene(onNavigate = { onNavigate(it) })
+                }
+                scene(route = MainNavigation.measure.fullPath) {
+                    HomeScene(onNavigate = { onNavigate(it) })
+                }
+                scene(route = MainNavigation.note.fullPath) {
+                    NoteScene(onNavigate = { onNavigate(it) })
+                }
             }
         }
     })

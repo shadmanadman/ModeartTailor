@@ -86,12 +86,7 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
         }
     }
 
-    Column {
-        HomeTopBar(
-            onNavigateToProfile = viewModel::navigateToProfile,
-            onSearchQueryCompleted = viewModel::navigateToSearch,
-            onNavigateToNotification = viewModel::navigateToNavigation
-        )
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         NoteTabs(onSelectedTab = viewModel::noteCategorySelected)
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -102,8 +97,13 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
             item {
                 NewNote(onNewNote = { onNavigate(MainNavigation.newNote) })
             }
-            items(state.allNotes.size) {
-                NoteItem(title = state.allNotes[it].title, content = state.allNotes[it].content)
+            val notesBasedOnCategory =
+                state.allNotes.filter { it.category == state.currentCategory }
+            items(notesBasedOnCategory.size) {
+                NoteItem(
+                    title = notesBasedOnCategory[it].title,
+                    content = notesBasedOnCategory[it].content
+                )
             }
         }
     }
@@ -143,7 +143,7 @@ fun NoteTabs(onSelectedTab: (NoteCategory) -> Unit) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable {
+                        .clickable(null,indication = null){
                             selectedTabIndex = index.convertToNoteCategory()
                             onSelectedTab(index.convertToNoteCategory())
                         },
@@ -168,7 +168,7 @@ fun NoteTabs(onSelectedTab: (NoteCategory) -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = tabTexts[selectedTabIndex.ordinal],
+                text = tabTexts[selectedTabIndex.convertToTabIndex()],
                 style = appTypography().body14,
                 color = Color.White
             )
@@ -236,5 +236,13 @@ fun Int.convertToNoteCategory(): NoteCategory {
         1 -> NoteCategory.PERSONAL
         2 -> NoteCategory.OTHERS
         else -> NoteCategory.WORK
+    }
+}
+
+fun NoteCategory.convertToTabIndex(): Int {
+    return when (this) {
+        NoteCategory.WORK -> 0
+        NoteCategory.PERSONAL -> 1
+        NoteCategory.OTHERS -> 2
     }
 }

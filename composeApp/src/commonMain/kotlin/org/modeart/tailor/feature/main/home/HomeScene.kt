@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -66,6 +68,8 @@ import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
 import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
+import org.modeart.tailor.feature.onboarding.welcome.WELCOME_PAGE_COUNT
+import org.modeart.tailor.feature.onboarding.welcome.WelcomeIndicators
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.navigation.MainNavigation
@@ -98,20 +102,12 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
     }
 
     Column {
-        HomeTopBar(
-            customerName = state.fullName,
-            phoneNumber = state.phoneNumber,
-            avatar = state.avatar,
-            onNavigateToProfile = viewModel::navigateToProfile,
-            onNavigateToNotification = {},
-            onSearchQueryCompleted = {}
-        )
         Statistics(
             allCustomersCount = state.customerCount,
             thisMonthCustomer = state.thisMonthCustomer
         )
         SectionTitle(stringResource(Res.string.last_notes))
-        LastNoteItem(state.latestNotes){
+        LastNoteItem(state.latestNotes) {
             onNavigate(MainNavigation.newNote)
         }
         SectionTitle(stringResource(Res.string.last_customers))
@@ -130,51 +126,69 @@ fun SectionTitle(title: String) {
     }
 }
 
+
 @Composable
 fun LastNoteItem(
     lastThreeNotes: List<BusinessProfile.Notes> = emptyList(),
     onNavigateToNewNote: () -> Unit
 ) {
+    val pagerState = rememberPagerState(pageCount = { lastThreeNotes.size })
+
     if (lastThreeNotes.isNotEmpty())
-        Box(
-            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 136.dp)
-                .background(color = Color.Black, shape = RoundedCornerShape(16.dp))
-                .padding(16.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+            HorizontalPager(state = pagerState) { page ->
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
+                        .defaultMinSize(minHeight = 136.dp)
+                        .background(color = Color.Black, shape = RoundedCornerShape(16.dp))
+                        .padding(16.dp)
                 ) {
-                    // Title
-                    Text(text = "Title", style = appTypography().title17.copy(color = Color.White))
-                    // Date
-                    Box(
-                        modifier = Modifier.background(
-                            color = Color.White,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                    ) {
+                    Column {
                         Row(
-                            modifier = Modifier.padding(12.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_calendar),
-                                contentDescription = null
-                            )
+                            // Title
                             Text(
-                                modifier = Modifier.padding(start = 8.dp),
-                                text = "22 Aug",
-                                style = appTypography().body12
+                                text = lastThreeNotes[page].title,
+                                style = appTypography().title17.copy(color = Color.White)
                             )
+                            // Date
+                            Box(
+                                modifier = Modifier.background(
+                                    color = Color.White,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.ic_calendar),
+                                        contentDescription = null
+                                    )
+                                    Text(
+                                        modifier = Modifier.padding(start = 8.dp),
+                                        text = "22 Aug",
+                                        style = appTypography().body12
+                                    )
+                                }
+                            }
                         }
+                        // Note content
+                        Text(
+                            text = lastThreeNotes[page].content,
+                            style = appTypography().body14.copy(color = Color.White)
+                        )
                     }
                 }
-                // Note content
-                Text(text = "Content", style = appTypography().body14.copy(color = Color.White))
             }
+            WelcomeIndicators(pagerState.currentPage)
         }
     else
         EmptyNoteOrCustomer(isNote = true, onCardClicked = {
@@ -217,7 +231,7 @@ fun HomeTopBar(
             modifier = Modifier.fillMaxWidth().background(
                 color = Color.Black,
                 shape = RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp)
-            ).padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 50.dp)
+            ).padding(top = 40.dp, start = 16.dp, end = 16.dp, bottom = 50.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -291,7 +305,7 @@ fun HomeTopBar(
 @Composable
 fun Statistics(allCustomersCount: String, thisMonthCustomer: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 60.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         // Customers count

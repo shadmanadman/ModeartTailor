@@ -9,9 +9,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
 import org.modeart.tailor.feature.main.main.contract.BottomNavUiEffect
 import org.modeart.tailor.feature.main.main.contract.BottomNavUiState
 import org.modeart.tailor.feature.main.main.contract.RootBottomNavId
+import org.modeart.tailor.navigation.MainNavigation
 
 class BottomNavViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(BottomNavUiState())
@@ -26,6 +28,10 @@ class BottomNavViewModel : ViewModel() {
 
     var effect = Channel<BottomNavUiEffect>(Channel.UNLIMITED)
         private set
+
+    fun navigateToProfile() {
+        effect.trySend(BottomNavUiEffect.Navigation.Profile)
+    }
 
     fun openScreen(screen: RootBottomNavId) {
         viewModelScope.launch {
