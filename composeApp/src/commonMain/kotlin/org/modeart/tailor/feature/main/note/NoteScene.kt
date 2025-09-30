@@ -68,6 +68,7 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<NoteUiEffect.ShowRawNotification?>(null) }
 
+    viewModel.getAllNotes()
     LaunchedEffect(effects) {
         effects.onEach { effect ->
             when (effect) {
@@ -89,6 +90,7 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         NoteTabs(onSelectedTab = viewModel::noteCategorySelected)
         LazyVerticalGrid(
+            modifier = Modifier.padding(16.dp),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -143,7 +145,7 @@ fun NoteTabs(onSelectedTab: (NoteCategory) -> Unit) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable(null,indication = null){
+                        .clickable(null, indication = null) {
                             selectedTabIndex = index.convertToNoteCategory()
                             onSelectedTab(index.convertToNoteCategory())
                         },

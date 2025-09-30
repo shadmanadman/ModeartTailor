@@ -35,10 +35,6 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
     var effects = Channel<NoteUiEffect>(Channel.UNLIMITED)
         private set
 
-    init {
-        getAllNotes()
-    }
-
     fun noteCategorySelected(category: NoteCategory) {
         _uiState.update {
             it.copy(
@@ -79,11 +75,14 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
         viewModelScope.launch {
             val response = businessService.getBusinessNotes()
             when (response) {
-                is ApiResult.Error -> effects.send(
-                    NoteUiEffect.ShowRawNotification(
-                        msg = response.message, errorCode = response.code.toString()
+                is ApiResult.Error -> {
+                    effects.send(
+                        NoteUiEffect.ShowRawNotification(
+                            msg = response.message, errorCode = response.code.toString()
+                        )
                     )
-                )
+                    _uiState.update { it.copy(isLoading = false) }
+                }
 
                 is ApiResult.Success -> {
                     _uiState.update { it.copy(allNotes = response.data, isLoading = false) }

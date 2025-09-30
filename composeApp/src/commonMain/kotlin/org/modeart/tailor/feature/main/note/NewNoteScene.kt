@@ -3,14 +3,17 @@ package org.modeart.tailor.feature.main.note
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
@@ -36,7 +41,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
+import io.ktor.client.request.invoke
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -137,82 +145,111 @@ fun NoteCategory(onCategorySelected: (NoteCategory) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     val categoryOptions = mapOf(
         NoteCategory.WORK to Res.string.work_and_customer,
-        NoteCategory.PERSONAL to  Res.string.personal,
+        NoteCategory.PERSONAL to Res.string.personal,
         NoteCategory.OTHERS to Res.string.others
     )
     var selectedOption by remember { mutableStateOf(categoryOptions.entries.first()) }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        // --- 1. The Main (Selected) Category Box ---
-        Row(
+    Column {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
             modifier = Modifier
                 .fillMaxWidth()
-                // The main box has a light background and rounded corners
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .height(55.dp) // Fixed height to match the look
-                .clickable(onClick = { expanded = true }) // Makes the whole row clickable
-                .padding(horizontal = 16.dp), // Padding inside the row
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End // Since the text is right-aligned (RTL)
+                .wrapContentHeight()
         ) {
-            // Dropdown Indicator Icon (e.g., a simple down arrow)
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                contentDescription = null,
-                tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // The Box with the Highlighted Selection Text
-            Box(
+            // --- 1. The Main (Selected) Category Box ---
+            Row(
                 modifier = Modifier
-                    .wrapContentSize(Alignment.Center) // Center content within this box
+                    .fillMaxWidth()
+                    // The main box has a light background and rounded corners
                     .background(
-                        color = AccentLight,
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .height(55.dp)
+                    .clickable(
+                        interactionSource = null,
+                        indication = null,
+                        onClick = { expanded = true })
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.width(64.dp))
+
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize(Alignment.Center) // Center content within this box
+                        .background(
+                            color = AccentLight,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    // The main selected text (e.g., "Work and Customer Category")
+                    Text(
+                        text = stringResource(selectedOption.value), // Use the text of the selected item
+                        style = appTypography().body14 // Use your defined style
+                    )
+                }
+            }
+        }
+
+        if (expanded) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color.White,
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(8.dp),
             ) {
-                // The main selected text (e.g., "Work and Customer Category")
-                Text(
-                    text = stringResource(selectedOption.value), // Use the text of the selected item
-                    style = appTypography().body14 // Use your defined style
-                )
+                categoryOptions.forEach { option ->
+                    DropdownMenuItem(
+                        onClick = {
+
+                        },
+                        contentPadding = PaddingValues(0.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        text = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(interactionSource = null,indication = null){
+                                        onCategorySelected(option.key)
+                                        selectedOption = option
+                                        expanded = false
+                                    }
+                                    .background(
+                                        color = if (option.key == selectedOption.key) AccentLight else Color.Transparent,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                horizontalArrangement = Arrangement.End // Align text to the right
+                            ) {
+                                Text(
+                                    text = stringResource(option.value),
+                                    style = appTypography().body13 // Use your defined style
+                                )
+                            }
+                        }
+                    )
+                }
             }
         }
     }
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            modifier = Modifier.size(80.dp, 47.dp)
-                .background(color = Color.LightGray, shape = RoundedCornerShape(8.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(Res.string.in_category),
-                style = appTypography().body14.copy(color = Color.Gray)
-            )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = stringResource(Res.string.work_and_customer), style = appTypography().body13)
-        Checkbox(checked = false, onCheckedChange = { onCategorySelected(NoteCategory.WORK) })
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = stringResource(Res.string.personal), style = appTypography().body13)
-        Checkbox(checked = true, onCheckedChange = { onCategorySelected(NoteCategory.PERSONAL) })
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = stringResource(Res.string.others), style = appTypography().body13)
-        Checkbox(checked = false, onCheckedChange = { onCategorySelected(NoteCategory.OTHERS) })
-    }
+
 }
 
 @Composable
