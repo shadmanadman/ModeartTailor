@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -81,12 +82,7 @@ fun CustomerScene(onNavigate: (Route) -> Unit) {
         }
     }
 
-    Column {
-        HomeTopBar(
-            onNavigateToProfile = viewModel::navigateToProfile,
-            onSearchQueryCompleted = viewModel::navigateToSearch,
-            onNavigateToNotification = viewModel::navigateToNavigation
-        )
+    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         FilterTabs(viewModel::customerFilterChanged)
 
         LazyVerticalGrid(
@@ -139,7 +135,7 @@ fun FilterTabs(onSelectedTab: (CustomerFilter) -> Unit) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clickable {
+                        .clickable(interactionSource = null, indication = null) {
                             selectedTabIndex = index.convertToCustomerFilters()
                             onSelectedTab(index.convertToCustomerFilters())
                         },

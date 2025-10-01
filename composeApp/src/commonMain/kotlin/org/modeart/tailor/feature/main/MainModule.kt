@@ -11,6 +11,7 @@ import org.modeart.tailor.api.business.BusinessRepo
 import org.modeart.tailor.api.business.BusinessService
 import org.modeart.tailor.api.customer.CustomerRepo
 import org.modeart.tailor.api.customer.CustomerService
+import org.modeart.tailor.feature.main.customer.CustomersViewModel
 import org.modeart.tailor.feature.main.home.HomeViewModel
 import org.modeart.tailor.feature.main.main.BottomNavViewModel
 import org.modeart.tailor.feature.main.note.NoteViewModel
@@ -23,6 +24,7 @@ val mainModule = module {
     single { HomeViewModel(get()) }
     single{ ProfileViewModel(get(),get()) }
     single { NoteViewModel(get()) }
+    single { CustomersViewModel(get()) }
     singleOf(::BusinessRepo).bind<BusinessService>()
     singleOf(::OnBoardingRepo).bind<OnBoardingService>()
 }

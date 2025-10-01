@@ -34,6 +34,7 @@ import modearttailor.composeapp.generated.resources.customer
 import modearttailor.composeapp.generated.resources.home
 import modearttailor.composeapp.generated.resources.ic_customer
 import modearttailor.composeapp.generated.resources.ic_home
+import modearttailor.composeapp.generated.resources.ic_measurment
 import modearttailor.composeapp.generated.resources.ic_note_add
 import modearttailor.composeapp.generated.resources.measure
 import modearttailor.composeapp.generated.resources.note
@@ -43,12 +44,14 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.modeart.tailor.feature.main.customer.CustomerScene
 import org.modeart.tailor.feature.main.home.HomeScene
 import org.modeart.tailor.feature.main.home.HomeTopBar
 import org.modeart.tailor.feature.main.home.HomeViewModel
 import org.modeart.tailor.feature.main.main.contract.BottomNavScreensState
 import org.modeart.tailor.feature.main.main.contract.BottomNavUiEffect
 import org.modeart.tailor.feature.main.main.contract.RootBottomNavId
+import org.modeart.tailor.feature.main.measurments.MeasurementScene
 import org.modeart.tailor.feature.main.note.NoteScene
 import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.Route
@@ -112,6 +115,12 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
                 }
                 scene(route = MainNavigation.note.fullPath) {
                     NoteScene(onNavigate = { onNavigate(it) })
+                }
+                scene(route = MainNavigation.customers.fullPath) {
+                    CustomerScene(onNavigate = { onNavigate(it) })
+                }
+                scene(route = MainNavigation.measure.fullPath) {
+                    MeasurementScene(onNavigate = { onNavigate(it) })
                 }
             }
         }
@@ -186,7 +195,7 @@ fun bottomNavItems(
         BottomNavScreensState(
             id = RootBottomNavId.Measure,
             name = Res.string.measure,
-            icon = Res.drawable.ic_note_add,
+            icon = Res.drawable.ic_measurment,
             isSelected = currentSelected == RootBottomNavId.Measure,
             openScreen = { openScreen(RootBottomNavId.Measure) }),
         BottomNavScreensState(
