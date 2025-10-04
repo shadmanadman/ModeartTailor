@@ -182,4 +182,13 @@
     <string name="select_customer_sub">مشخص کنید: ثبت مشتری تازه یا انتخاب از لیست</string>
     <string name="new_customer">مشتری جدید</string>
     <string name="old_customer">مشتری قدیمی</string>
+
+    <string name="title_select_measurement_type">انتخاب نوع اندازه گیری</string>
+    <string name="subtitle_quick_or_complete">اندازه گیری سریع یا اندازه گیری کامل</string>
+
+    <string name="quick_measurement_title">اندازه گیری سریع</string>
+    <string name="quick_measurement_description">اگر عجله دارید، فقط با وارد کردن سایزبندی، اطلاعات رو ثبت کنید.</string>
+
+    <string name="complete_measurement_title">اندازه گیری کامل</string>
+    <string name="complete_measurement_description">پرونده‌ای دیجیتالی مشتری با همه اندازه‌ها، فرم بدن و استایل شخصی.</string>
 </resources>
