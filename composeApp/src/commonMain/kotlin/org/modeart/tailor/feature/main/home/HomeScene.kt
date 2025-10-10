@@ -378,8 +378,11 @@ fun Statistics(allCustomersCount: String, thisMonthCustomer: String) {
 
 
 @Composable
-fun CustomerItem(customerProfile: CustomerProfile) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun CustomerItem(customerProfile: CustomerProfile, onCustomerClicked: (CustomerProfile) -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable(onClick = { onCustomerClicked(customerProfile)})
+    ) {
         Box(modifier = Modifier.size(68.dp).clip(shape = RoundedCornerShape(16.dp))) {
             Image(painter = painterResource(Res.drawable.test_avatar), contentDescription = null)
         }
@@ -405,7 +408,7 @@ fun LatestCustomerSection(latestCustomers: List<CustomerProfile>) {
     if (latestCustomers.isNotEmpty())
         LazyRow {
             items(latestCustomers.size) {
-                CustomerItem(latestCustomers[it])
+                CustomerItem(latestCustomers[it]){}
             }
         }
     else

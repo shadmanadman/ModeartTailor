@@ -49,5 +49,5 @@ class BusinessRepo(private val client: HttpClient) : BusinessService {
         }
 
     override suspend fun getBusinessCustomers(businessId: String): ApiResult<List<CustomerProfile>> =
-        client.get("/customer/$businessId").body()
+        client.get("/customers").body()
 }

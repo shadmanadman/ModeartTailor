@@ -110,9 +110,6 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
                 scene(route = MainNavigation.home.fullPath) {
                     HomeScene(onNavigate = { onNavigate(it) })
                 }
-                scene(route = MainNavigation.measure.fullPath) {
-                    HomeScene(onNavigate = { onNavigate(it) })
-                }
                 scene(route = MainNavigation.note.fullPath) {
                     NoteScene(onNavigate = { onNavigate(it) })
                 }

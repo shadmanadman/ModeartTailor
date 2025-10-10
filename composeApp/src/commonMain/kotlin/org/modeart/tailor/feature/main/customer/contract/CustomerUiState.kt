@@ -5,5 +5,6 @@ import org.modeart.tailor.model.customer.CustomerProfile
 
 data class CustomerUiState(
     val businessCustomers:List<CustomerProfile> = emptyList(),
-    val customerListFilter: CustomerFilter = CustomerFilter.ALPHABETIC
+    val customerListFilter: CustomerFilter = CustomerFilter.ALPHABETIC,
+    val selectedCustomer: CustomerProfile? = null
 )

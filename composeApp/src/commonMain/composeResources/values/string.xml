@@ -191,4 +191,5 @@
 
     <string name="complete_measurement_title">اندازه گیری کامل</string>
     <string name="complete_measurement_description">پرونده‌ای دیجیتالی مشتری با همه اندازه‌ها، فرم بدن و استایل شخصی.</string>
+    <string name="if_no_customer_selected_then_new_one_will_get_create">اگر مشتری را انتخاب نکنید اندازه‌ها برای مشتری جدید ثبت می‌شود.</string>
 </resources>

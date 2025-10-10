@@ -16,6 +16,7 @@ import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
 import org.modeart.tailor.feature.main.customer.contract.CustomerUiState
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
 import org.modeart.tailor.feature.main.home.contract.HomeUiState
+import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.navigation.MainNavigation
 import kotlin.toString
 
@@ -47,6 +48,9 @@ class CustomersViewModel(private val businessService: BusinessService): ViewMode
         _uiState.update { it.copy(customerListFilter = filter) }
     }
 
+    fun selectedCustomer(customer: CustomerProfile){
+        _uiState.update { it.copy(selectedCustomer = customer) }
+    }
 
     fun getBusinessCustomers() {
         viewModelScope.launch {
