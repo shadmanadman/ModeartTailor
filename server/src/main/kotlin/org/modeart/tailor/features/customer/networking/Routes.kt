@@ -16,6 +16,7 @@ import io.ktor.server.routing.route
 import org.bson.types.ObjectId
 import org.modeart.tailor.features.customer.di.CustomerModule
 import org.modeart.tailor.model.customer.CustomerProfile
+import java.util.UUID
 
 
 fun Route.customerRouting() {
@@ -96,7 +97,8 @@ fun Route.customerRouting() {
 
             post {
                 val customer = call.receive<CustomerProfile>()
-                val insertedId = repository.insertOne(customer)
+                val businessId = UUID.randomUUID().toString()
+                val insertedId = repository.insertOne(customer.copy(id = businessId))
                 call.respond(HttpStatusCode.Created, "Created customer with id $insertedId")
             }
         }

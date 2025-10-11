@@ -62,12 +62,7 @@ fun SleeveSizes(
         animationSpec = tween(durationMillis = 500)
     )
     var sleevesSize by remember { mutableStateOf(CustomerProfile.SleevesSizes()) }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF8F8F8))
-            .padding(16.dp)
-    ) {
+    Column(modifier = Modifier.offset(x = 10.dp, y = (-70).dp)) {
         Spacer(modifier = Modifier.height(16.dp))
 
         val fields = listOf(

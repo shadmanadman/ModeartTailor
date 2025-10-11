@@ -38,6 +38,12 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
     var effects = Channel<NewCustomerUiEffect>(Channel.UNLIMITED)
         private set
 
+    private val selectedCustomer = MutableStateFlow<CustomerProfile?>(null)
+
+    fun setSelectedCustomer(customer: CustomerProfile) {
+        selectedCustomer.value = customer
+    }
+
     fun updateStep(step: NewCustomerSteps) {
         _uiState.update { it.copy(step = step) }
     }
@@ -97,7 +103,7 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
                     referredBy = referredBy,
                     overallNote = overallNote
                 ),
-                step = NewCustomerSteps.FinalInfo
+                step = NewCustomerSteps.OverallSize
             )
         }
     }
@@ -115,10 +121,15 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
                     sizeFreedom = sizeFreedom,
                     extraPhoto = extraPhoto,
                     importantNote = importantNote
-                ),
-                step = NewCustomerSteps.OverallSize
+                )
             )
         }
+        if (selectedCustomer.value == null)
+            newCustomer()
+        else
+            selectedCustomer.value?.let {
+                updateCustomer(it.id)
+            }
     }
 
     fun upperSizeChanged(upperBodySizes: CustomerProfile.UpperBodySizes) {
@@ -134,7 +145,7 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
     }
 
 
-    fun updateCustomer(customerId: Int, sizeId: Int) {
+    fun updateCustomer(customerId: String) {
         viewModelScope.launch {
             val response = customerService.updateCustomer(_uiState.value.customer)
             when (response) {

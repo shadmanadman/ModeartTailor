@@ -185,10 +185,10 @@ fun MeasurementSelectionCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(116.dp)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 16.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(backgroundColor)
-            .clickable(onClick = onClick)
+            .clickable(onClick={onClick()})
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

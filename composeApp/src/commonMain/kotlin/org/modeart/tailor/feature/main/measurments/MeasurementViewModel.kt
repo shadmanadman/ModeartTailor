@@ -14,6 +14,7 @@ import org.modeart.tailor.feature.main.measurments.contracts.MeasurementType
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementUiEffect
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementUiState
 import org.modeart.tailor.model.customer.CustomerProfile
+import org.modeart.tailor.navigation.MainNavigation
 
 class MeasurementViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MeasurementUiState())
@@ -44,6 +45,8 @@ class MeasurementViewModel: ViewModel() {
 
     fun measurementTypeSelected(measurementType: MeasurementType){
         _uiState.update { it.copy(measurementType = measurementType) }
+        if (measurementType== MeasurementType.CustomSize)
+            effect.trySend(MeasurementUiEffect.Navigation(MainNavigation.newCustomer))
     }
 
 }

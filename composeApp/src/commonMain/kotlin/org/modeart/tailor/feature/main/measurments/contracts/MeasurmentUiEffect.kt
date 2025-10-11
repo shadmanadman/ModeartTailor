@@ -7,5 +7,5 @@ sealed interface MeasurementUiEffect {
     data class ShowRawNotification(val msg: String) : MeasurementUiEffect
     data class ShowLocalizedNotification(val msg: StringResource) : MeasurementUiEffect
 
-    sealed class Navigation(open val screen: Route) : MeasurementUiEffect
+    data class Navigation(val screen: Route) : MeasurementUiEffect
 }

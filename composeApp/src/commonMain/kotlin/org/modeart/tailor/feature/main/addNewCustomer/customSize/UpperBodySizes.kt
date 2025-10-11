@@ -176,10 +176,7 @@ fun UpperBodyMeasurementScreen(
         animationSpec = tween(durationMillis = 500)
     )
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF8F8F8))
-            .padding(8.dp)
+        modifier = Modifier.padding(8.dp)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 

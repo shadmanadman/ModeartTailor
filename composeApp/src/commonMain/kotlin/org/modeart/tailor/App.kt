@@ -13,6 +13,7 @@ import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
+import org.modeart.tailor.feature.main.addNewCustomer.AddNewCustomerScene
 import org.modeart.tailor.feature.main.home.HomeScene
 import org.modeart.tailor.feature.main.main.BottomNavScene
 import org.modeart.tailor.feature.main.measurments.MeasurementScene
@@ -76,7 +77,10 @@ internal fun App() {
                 scene(route = MainNavigation.editProfile.fullPath) {
                     EditeProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
-
+                //************************ Customer *********************************//
+                scene(route = MainNavigation.newCustomer.fullPath){
+                    AddNewCustomerScene(onNavigate = {navigator.navigate(it.fullPath)})
+                }
             }
         }
     }

@@ -75,7 +75,8 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF0F0F0))
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Title Section
         Text(
@@ -209,6 +210,7 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
             })
 
         RoundedCornerButton(
+            modifier = Modifier.padding(top = 24.dp),
             width = 332,
             isEnabled = true,
             text = stringResource(Res.string.next),

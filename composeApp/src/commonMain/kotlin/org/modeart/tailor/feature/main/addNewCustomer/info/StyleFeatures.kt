@@ -150,7 +150,8 @@ fun StyleFeatures(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         HeaderSection(title = stringResource(Res.string.title_personal_and_style_features))
 
@@ -199,6 +200,7 @@ fun StyleFeatures(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
 
 
         RoundedCornerButton(
+            modifier = Modifier.padding(top = 24.dp),
             width = 332,
             isEnabled = true,
             text = stringResource(Res.string.next),
