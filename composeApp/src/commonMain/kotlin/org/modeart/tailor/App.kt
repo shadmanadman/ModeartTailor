@@ -65,6 +65,9 @@ internal fun App() {
                 scene(route = MainNavigation.home.fullPath) {
                     HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
+                scene(route = MainNavigation.measure.fullPath) {
+                    MeasurementScene(onNavigate = { navigator.navigate(it.fullPath) })
+                }
                 scene(route = MainNavigation.newNote.fullPath) {
                     NewNoteScene(
                         onNavigate = { navigator.navigate(it.fullPath) },

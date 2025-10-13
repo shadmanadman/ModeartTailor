@@ -14,5 +14,5 @@ interface BusinessService {
 
     suspend fun getBusinessNotes(): ApiResult<List<BusinessProfile.Notes>>
 
-    suspend fun getBusinessCustomers(businessId: String): ApiResult<List<CustomerProfile>>
+    suspend fun getBusinessCustomers(): ApiResult<List<CustomerProfile>>
 }

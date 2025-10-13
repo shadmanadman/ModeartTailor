@@ -96,18 +96,19 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             Box(
                 modifier = Modifier.width(140.dp).height(tabHeight)
                     .background(color = AccentLight, shape = RoundedCornerShape(12.dp))
+                    .clickable(interactionSource = null,indication = null,onClick = {
+                        selectedGender = if (selectedGender===CustomerGender.MALE) {
+                            CustomerGender.FEMALE
+                        }else {
+                            CustomerGender.MALE
+                        }
+                    })
             ) {
                 Box(
                     modifier = Modifier
                         .offset(x = animatedOffset)
                         .width(tabWidth)
                         .height(tabHeight)
-                        .clickable(onClick = {
-                            selectedGender = if (animatedOffset == 0.dp)
-                                CustomerGender.MALE
-                            else
-                                CustomerGender.FEMALE
-                        })
                         .background(color = Color.Black, shape = RoundedCornerShape(12.dp))
                 )
                 Row(

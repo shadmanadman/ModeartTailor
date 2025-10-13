@@ -111,7 +111,9 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
             onNavigate(MainNavigation.newNote)
         }
         SectionTitle(stringResource(Res.string.last_customers))
-        LatestCustomerSection(state.latestCustomers)
+        LatestCustomerSection(state.latestCustomers){
+            viewModel.navigateToCustomers()
+        }
     }
 }
 
@@ -404,7 +406,7 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClicked: (CustomerP
 }
 
 @Composable
-fun LatestCustomerSection(latestCustomers: List<CustomerProfile>) {
+fun LatestCustomerSection(latestCustomers: List<CustomerProfile>,firstCustomer:()-> Unit) {
     if (latestCustomers.isNotEmpty())
         LazyRow {
             items(latestCustomers.size) {
@@ -413,7 +415,7 @@ fun LatestCustomerSection(latestCustomers: List<CustomerProfile>) {
         }
     else
         EmptyNoteOrCustomer(isNote = false) {
-
+            firstCustomer()
         }
 }
 

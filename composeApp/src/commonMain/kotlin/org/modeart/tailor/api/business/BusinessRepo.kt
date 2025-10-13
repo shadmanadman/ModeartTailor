@@ -48,6 +48,6 @@ class BusinessRepo(private val client: HttpClient) : BusinessService {
             client.get("/business/notes")
         }
 
-    override suspend fun getBusinessCustomers(businessId: String): ApiResult<List<CustomerProfile>> =
-        client.get("/customers").body()
+    override suspend fun getBusinessCustomers(): ApiResult<List<CustomerProfile>> =
+        safeRequest { client.get("/customer/customers").body() }
 }

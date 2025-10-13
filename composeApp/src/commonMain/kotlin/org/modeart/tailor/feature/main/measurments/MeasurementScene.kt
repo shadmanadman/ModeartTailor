@@ -3,6 +3,7 @@ package org.modeart.tailor.feature.main.measurments
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -92,14 +93,16 @@ fun MeasurementScene(onNavigate: (Route) -> Unit) {
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(Background),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (state.currentStage == MeasurementStage.SelectCustomer)
-            CustomerTypeSelection(viewModel)
-        else
-            MeasurementTypeSelection(viewModel)
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.padding(bottom = 60.dp).align(Alignment.BottomCenter),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (state.currentStage == MeasurementStage.SelectCustomer)
+                CustomerTypeSelection(viewModel)
+            else
+                MeasurementTypeSelection(viewModel)
+        }
     }
 }
 

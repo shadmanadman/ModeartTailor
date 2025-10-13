@@ -61,6 +61,7 @@ import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.model.customer.CustomerColor
+import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Hint
 import org.modeart.tailor.theme.appTypography
@@ -228,7 +229,7 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
 @Composable
 fun ColorSelectionBox(color: Color, isSelected: Boolean, onClick: () -> Unit) {
     val borderColor by animateColorAsState(
-        targetValue = if (isSelected) Color.Black else Color.Transparent,
+        targetValue = if (isSelected) Accent else Color.Transparent,
         animationSpec = tween(durationMillis = 500)
     )
     Box(
@@ -237,7 +238,7 @@ fun ColorSelectionBox(color: Color, isSelected: Boolean, onClick: () -> Unit) {
             .clip(CircleShape)
             .background(color)
             .border(
-                width = if (isSelected) 2.dp else 0.dp,
+                width = if (isSelected) 4.dp else 0.dp,
                 color = borderColor,
                 shape = CircleShape
             )
@@ -249,6 +250,10 @@ fun ColorSelectionBox(color: Color, isSelected: Boolean, onClick: () -> Unit) {
 fun YesNoButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected) Color.Black else AccentLight,
+        animationSpec = tween(durationMillis = 500)
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (isSelected) AccentLight else Color.Black,
         animationSpec = tween(durationMillis = 500)
     )
     val shadowElevation by animateDpAsState(
@@ -269,7 +274,7 @@ fun YesNoButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = text, fontSize = 16.sp, style = appTypography().title15)
+        Text(text = text, fontSize = 16.sp, style = appTypography().title15, color = textColor)
     }
 }
 

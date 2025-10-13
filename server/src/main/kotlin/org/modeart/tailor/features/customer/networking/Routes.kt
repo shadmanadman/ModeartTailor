@@ -55,7 +55,7 @@ fun Route.customerRouting() {
                     )
                 }
 
-                repository.findById(ObjectId(id))?.let {
+                repository.findById(id)?.let {
                     call.respond(it)
                 } ?: call.respondText("No records found for id $id")
             }
@@ -66,7 +66,7 @@ fun Route.customerRouting() {
                     status = HttpStatusCode.BadRequest
                 )
 
-                val delete: Long = repository.deleteById(ObjectId(id))
+                val delete: Long = repository.deleteById(id)
 
                 if (delete == 1L) {
                     return@delete call.respondText(
@@ -87,7 +87,7 @@ fun Route.customerRouting() {
                     status = HttpStatusCode.BadRequest
                 )
 
-                val updated = repository.updateOne(ObjectId(id), call.receive())
+                val updated = repository.updateOne(id, call.receive())
 
                 call.respondText(
                     text = if (updated == 1L) "customer updated successfully" else "customer not found",

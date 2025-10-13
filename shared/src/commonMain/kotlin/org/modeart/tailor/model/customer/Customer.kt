@@ -10,7 +10,7 @@ data class CustomerProfile(
     val email: String? = "",
     val phoneNumber: String? = "",
     val address: String? = "",
-    val gender: CustomerGender? = CustomerGender.OTHER,
+    val gender: CustomerGender? = CustomerGender.MALE,
     val birthday: String? = "",
     val sizes: Sizes? = Sizes(),
     val sizeSource: CustomerSizeSource? = CustomerSizeSource.Body,

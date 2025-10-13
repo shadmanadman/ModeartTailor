@@ -20,7 +20,7 @@ object MainNavigation : Navigation {
     val newNote = Route(name = "newNote")
     val notes = Route(name = "notes")
 
-    val measure = Route(name = "measure", fullPath = "measure/{mode}")
+    val measure = Route(name = "measure", fullPath = "measure")
     val customers = Route(name = "customer", fullPath = "customer/{mode}")
     val newCustomer = Route(name = "new_customer", fullPath = "new_customer/{mode}")
     val note = Route(name = "note")

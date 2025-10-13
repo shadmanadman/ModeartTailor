@@ -9,7 +9,7 @@ interface CustomerDao {
 
     suspend fun findAll(): List<CustomerProfile>?
 
-    suspend fun findById(objectId: ObjectId): CustomerProfile?
+    suspend fun findById(objectId: String): CustomerProfile?
 
     suspend fun findByPhone(phone: String): CustomerProfile?
 
@@ -17,9 +17,9 @@ interface CustomerDao {
 
     suspend fun updateAvatar(objectId: String, avatarUrl: String): Long
 
-    suspend fun deleteById(objectId: ObjectId): Long
+    suspend fun deleteById(objectId: String): Long
 
-    suspend fun updateOne(objectId: ObjectId, customer: CustomerProfile): Long
+    suspend fun updateOne(objectId: String, customer: CustomerProfile): Long
 
     suspend fun findByBusiness(businessId: String): List<CustomerProfile>?
 }

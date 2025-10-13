@@ -54,7 +54,7 @@ class CustomersViewModel(private val businessService: BusinessService): ViewMode
 
     fun getBusinessCustomers() {
         viewModelScope.launch {
-            val response = businessService.getBusinessCustomers("")
+            val response = businessService.getBusinessCustomers()
             when (response) {
                 is ApiResult.Error -> effects.send(
                     CustomerUiEffect.ShowRawNotification(

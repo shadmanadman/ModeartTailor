@@ -19,10 +19,10 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
     override suspend fun findAll(): List<CustomerProfile>? =
         mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION).find().toList()
 
-    override suspend fun findById(objectId: ObjectId): CustomerProfile? =
+    override suspend fun findById(objectId: String): CustomerProfile? =
         mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)
             .withDocumentClass<CustomerProfile>()
-            .find(Filters.eq("_id", objectId))
+            .find(Filters.eq("id", objectId))
             .firstOrNull()
 
     override suspend fun findByPhone(phone: String): CustomerProfile? =
@@ -66,10 +66,10 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
         return 0
     }
 
-    override suspend fun deleteById(objectId: ObjectId): Long {
+    override suspend fun deleteById(objectId: String): Long {
         try {
             val result = mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)
-                .deleteOne(Filters.eq("_id", objectId))
+                .deleteOne(Filters.eq("id", objectId))
             return result.deletedCount
         } catch (e: MongoException) {
             System.err.println("Unable to delete due to an error: $e")
@@ -79,11 +79,11 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
     }
 
     override suspend fun updateOne(
-        objectId: ObjectId,
+        objectId: String,
         customer: CustomerProfile
     ): Long {
         try {
-            val query = Filters.eq("_id", objectId)
+            val query = Filters.eq("id", objectId)
             val updates = mutableListOf<org.bson.conversions.Bson>()
 
             // Helper function to add update if value is not null or empty
