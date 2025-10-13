@@ -25,15 +25,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.add_photo
 import modearttailor.composeapp.generated.resources.body_dress_pattern_measurement
@@ -66,6 +71,12 @@ import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiStat
 import org.modeart.tailor.feature.main.addNewCustomer.customSize.HeaderSection
 import org.modeart.tailor.model.customer.CustomerSizeFreedom
 import org.modeart.tailor.model.customer.CustomerSizeSource
+import org.modeart.tailor.platform.PermissionCallback
+import org.modeart.tailor.platform.PermissionStatus
+import org.modeart.tailor.platform.PermissionType
+import org.modeart.tailor.platform.createPermissionsManager
+import org.modeart.tailor.platform.rememberCameraManager
+import org.modeart.tailor.platform.rememberGalleryManager
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Hint
@@ -251,6 +262,14 @@ fun SelectableButton(
 
 @Composable
 fun AddPhotoSection() {
+    val coroutineScope = rememberCoroutineScope()
+
+    var launchGallery by remember { mutableStateOf(value = false) }
+    var launchCamera by remember { mutableStateOf(value = false) }
+    var launchSetting by remember { mutableStateOf(value = false) }
+    var selectedImageBitmap = remember { mutableListOf<ImageBitmap>() }
+    var selectedImageByteArray = remember { mutableListOf<ByteArray>() }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -263,20 +282,96 @@ fun AddPhotoSection() {
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            AddPhotoButton(iconRes = Res.drawable.ic_add_photo)
-            AddPhotoButton(iconRes = Res.drawable.ic_upload)
+            AddPhotoButton(iconRes = Res.drawable.ic_add_photo){
+                launchCamera = true
+            }
+            AddPhotoButton(iconRes = Res.drawable.ic_upload){
+                launchGallery = true
+            }
         }
     }
+
+
+    val permissionsManager = createPermissionsManager(object : PermissionCallback {
+        override fun onPermissionStatus(
+            permissionType: PermissionType,
+            status: PermissionStatus
+        ) {
+            when (status) {
+                PermissionStatus.GRANTED -> {
+                    when (permissionType) {
+                        PermissionType.GALLERY -> launchGallery = true
+                        PermissionType.CAMERA -> launchCamera = true
+                    }
+                }
+                else -> {
+                    launchSetting = true
+                }
+            }
+        }
+    })
+
+
+    val galleryManager = rememberGalleryManager {
+        coroutineScope.launch {
+            withContext(Dispatchers.Default) {
+                it?.toByteArray()?.let {
+                    selectedImageByteArray.add(it)
+                }
+            }
+            withContext(Dispatchers.Default) {
+                it?.toImageBitmap()?.let {
+                    selectedImageBitmap.add(it)
+                }
+            }
+            launchGallery = false
+        }
+    }
+
+    val cameraManager = rememberCameraManager {
+        coroutineScope.launch {
+            withContext(Dispatchers.Default) {
+                it?.toByteArray()?.let {
+                    selectedImageByteArray.add(it)
+                }
+            }
+            withContext(Dispatchers.Default) {
+                it?.toImageBitmap()?.let {
+                    selectedImageBitmap.add(it)
+                }
+            }
+            launchCamera = false
+        }
+    }
+
+    if (launchGallery) {
+        if (permissionsManager.isPermissionGranted(PermissionType.GALLERY))
+            galleryManager.launch()
+        else {
+            permissionsManager.askPermission(PermissionType.GALLERY)
+        }
+    }
+
+    if (launchCamera) {
+        if (permissionsManager.isPermissionGranted(PermissionType.CAMERA))
+            cameraManager.launch()
+        else {
+            permissionsManager.askPermission(PermissionType.CAMERA)
+        }
+    }
+
+    if (launchSetting)
+        permissionsManager.launchSettings()
 }
 
 @Composable
-fun AddPhotoButton(iconRes: DrawableResource) {
+fun AddPhotoButton(iconRes: DrawableResource,onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(50.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(AccentLight)
-            .clickable { /* Handle photo click */ },
+            .clickable { onClick()},
         contentAlignment = Alignment.Center
     ) {
         Icon(

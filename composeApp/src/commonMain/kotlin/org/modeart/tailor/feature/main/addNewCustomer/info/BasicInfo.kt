@@ -23,11 +23,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.birth_date
 import modearttailor.composeapp.generated.resources.choose_gender
@@ -49,6 +57,12 @@ import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.model.customer.CustomerGender
+import org.modeart.tailor.platform.PermissionCallback
+import org.modeart.tailor.platform.PermissionStatus
+import org.modeart.tailor.platform.PermissionType
+import org.modeart.tailor.platform.createPermissionsManager
+import org.modeart.tailor.platform.rememberCameraManager
+import org.modeart.tailor.platform.rememberGalleryManager
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
@@ -62,6 +76,14 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     var customerPhoneNumber by remember { mutableStateOf(state.customer.phoneNumber) }
     var customerBirthday by remember { mutableStateOf(state.customer.birthday) }
     var customerAvatar by remember { mutableStateOf(state.customer.avatar) }
+
+    val coroutineScope = rememberCoroutineScope()
+
+    var launchGallery by remember { mutableStateOf(value = false) }
+    var launchCamera by remember { mutableStateOf(value = false) }
+    var launchSetting by remember { mutableStateOf(value = false) }
+    var selectedImageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
+    var selectedImageByteArray = remember { mutableStateOf<ByteArray?>(null) }
 
     Column(
         modifier = Modifier.fillMaxSize().background(Background),
@@ -148,6 +170,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             )
         }
 
+
         // Customer picture
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -158,11 +181,22 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                 text = stringResource(Res.string.customer_picture),
                 style = appTypography().body13
             )
-
+            // Selected image
+            Box(
+                modifier = Modifier.padding(end = 8.dp).size(64.dp)
+                    .clip(shape = RoundedCornerShape(16.dp))
+                    .clickable(onClick = {launchGallery = true}),
+                contentAlignment = Alignment.Center
+            ) {
+                selectedImageBitmap.value?.let {
+                    Image(bitmap = it, contentDescription = null, contentScale = ContentScale.Crop)
+                }
+            }
             // Upload
             Box(
                 modifier = Modifier.padding(end = 16.dp).size(64.dp)
-                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp)),
+                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
+                    .clickable(onClick = {launchGallery = true}),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(painter = painterResource(Res.drawable.ic_upload), contentDescription = null)
@@ -170,7 +204,8 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             // Take picture
             Box(
                 modifier = Modifier.size(64.dp)
-                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp)),
+                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
+                    .clickable(onClick = {launchCamera = true}),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -194,4 +229,67 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                 )
             })
     }
+
+    val permissionsManager = createPermissionsManager(object : PermissionCallback {
+        override fun onPermissionStatus(
+            permissionType: PermissionType,
+            status: PermissionStatus
+        ) {
+            when (status) {
+                PermissionStatus.GRANTED -> {
+                    when (permissionType) {
+                        PermissionType.GALLERY -> launchGallery = true
+                        PermissionType.CAMERA -> launchCamera = true
+                    }
+                }
+                else -> {
+                    launchSetting = true
+                }
+            }
+        }
+    })
+
+
+    val galleryManager = rememberGalleryManager {
+        coroutineScope.launch {
+             withContext(Dispatchers.Default) {
+                selectedImageByteArray.value = it?.toByteArray()
+            }
+            withContext(Dispatchers.Default) {
+                selectedImageBitmap.value = it?.toImageBitmap()
+            }
+            launchGallery = false
+        }
+    }
+
+    val cameraManager = rememberCameraManager {
+        coroutineScope.launch {
+            withContext(Dispatchers.Default) {
+                selectedImageByteArray.value = it?.toByteArray()
+            }
+            withContext(Dispatchers.Default) {
+                selectedImageBitmap.value = it?.toImageBitmap()
+            }
+            launchCamera = false
+        }
+    }
+
+    if (launchGallery) {
+        if (permissionsManager.isPermissionGranted(PermissionType.GALLERY))
+            galleryManager.launch()
+        else {
+            permissionsManager.askPermission(PermissionType.GALLERY)
+        }
+    }
+
+    if (launchCamera) {
+        if (permissionsManager.isPermissionGranted(PermissionType.CAMERA))
+            cameraManager.launch()
+        else {
+            permissionsManager.askPermission(PermissionType.CAMERA)
+        }
+    }
+
+    if (launchSetting)
+        permissionsManager.launchSettings()
 }
