@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
+import org.modeart.tailor.api.business.BusinessService
 import org.modeart.tailor.api.customer.CustomerService
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiEffect
@@ -25,7 +26,7 @@ import org.modeart.tailor.model.customer.CustomerSizeSource
 import org.modeart.tailor.model.customer.CustomerStyle
 import kotlin.toString
 
-class NewCustomerViewModel(private val customerService: CustomerService) : ViewModel() {
+class NewCustomerViewModel(private val customerService: CustomerService,private val businessService: BusinessService) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NewCustomerUiState())
 
@@ -44,6 +45,11 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
         selectedCustomer.value = customer
     }
 
+
+    fun fastSizeSelected(size: Int){
+        _uiState.update { it.copy(selectedFastSize = size) }
+    }
+
     fun updateStep(step: NewCustomerSteps) {
         _uiState.update { it.copy(step = step) }
     }
@@ -53,7 +59,6 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
         fullName: String,
         phoneNumber: String,
         birth: String,
-        customerAvatar: String
     ) {
 
         _uiState.update {
@@ -63,7 +68,6 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
                     name = fullName,
                     phoneNumber = phoneNumber,
                     birthday = birth,
-                    avatar = customerAvatar
                 ),
                 step = NewCustomerSteps.StyleFeature
             )
@@ -176,4 +180,21 @@ class NewCustomerViewModel(private val customerService: CustomerService) : ViewM
             }
         }
     }
+    fun uploadImage(byteArray: ByteArray) {
+        viewModelScope.launch {
+            val response = businessService.uploadImage(byteArray)
+            when (response) {
+                is ApiResult.Error -> effects.send(
+                    NewCustomerUiEffect.ShowRawNotification(
+                        msg = response.message, errorCode = response.code.toString()
+                    )
+                )
+
+                is ApiResult.Success -> {
+                    _uiState.update { it.copy(customer = it.customer.copy(avatar = response.data.url)) }
+                }
+            }
+        }
+    }
+
 }

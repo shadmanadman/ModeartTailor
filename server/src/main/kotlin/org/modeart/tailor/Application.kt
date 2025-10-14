@@ -11,6 +11,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
 import org.modeart.tailor.features.business.networking.businessRouting
+import org.modeart.tailor.features.business.networking.configureUpload
 import org.modeart.tailor.features.customer.networking.customerRouting
 import org.modeart.tailor.jwt.ACCESS_TOKEN_EXPIRATION
 import org.modeart.tailor.jwt.TokenConfig
@@ -35,6 +36,7 @@ fun Application.module() {
     routing {
         customerRouting()
         businessRouting()
+        configureUpload()
         authRoute(tokenConfig)
     }
 }

@@ -73,6 +73,10 @@ data class RegisterRequest(
     val otp: String
 )
 
+@Serializable
+data class ImageUploadResponse(val url: String)
+
+
 data class OtpData(
     val phoneNumber: String,
     val otp: String,

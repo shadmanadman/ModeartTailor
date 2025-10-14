@@ -18,9 +18,11 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.bson.types.ObjectId
+import org.modeart.tailor.HOST
 import org.modeart.tailor.features.business.di.BusinessModule
 import org.modeart.tailor.features.customer.di.CustomerModule
 import org.modeart.tailor.model.business.BusinessProfile
+import org.modeart.tailor.model.business.ImageUploadResponse
 import java.io.File
 import java.util.UUID
 
@@ -163,54 +165,35 @@ fun Route.businessRouting() {
     }
 
 
-    val UPLOAD_DIR = File("uploads").apply { mkdirs() }
 
-    fun Route.configureUpload(isBusiness: Boolean, id: String) {
-        route("/upload") {
-            post("/image") {
-                val multipart = call.receiveMultipart()
-                var imageUrl: String? = null
-                var updated = 0L
-                multipart.forEachPart { part ->
-                    when (part) {
-                        is PartData.FileItem -> {
-                            // This is the actual file data
-                            val originalFileName = part.originalFileName ?: "file"
-                            // Get the file extension and generate a unique file name to avoid collisions
-                            val fileExtension = originalFileName.substringAfterLast('.', "")
-                            val newFileName = "${UUID.randomUUID()}.$fileExtension"
-                            val file = File(UPLOAD_DIR, newFileName)
 
-                            // Use a stream provider to read the file content
-                            part.streamProvider().use { inputStream ->
-                                file.outputStream().buffered().use { outputStream ->
-                                    // Copy the file content from the input stream to the new file
-                                    inputStream.copyTo(outputStream)
-                                }
-                            }
-                            imageUrl = "/uploads/$newFileName"
-                            if (isBusiness) {
-                                updated = BusinessModule.businessDao().updateAvatar(id, imageUrl)
-                            } else
-                                updated = CustomerModule.customerDao().updateAvatar(id, imageUrl)
-                        }
+}
 
-                        is PartData.FormItem -> {
-                            println("Received form field ${part.name}: ${part.value}")
-                        }
+fun Route.configureUpload() {
+    route("/upload") {
+        post("/image") {
+            val multipart = call.receiveMultipart()
+            var imageUrl: String? = null
 
-                        else -> {}
+            multipart.forEachPart { part ->
+                when (part) {
+                    is PartData.FileItem -> {
+                        val name = "${UUID.randomUUID()}.png"
+                        val file = File("uploads/$name")
+                        file.parentFile.mkdirs()
+                        part.streamProvider().use { it.copyTo(file.outputStream()) }
+                        imageUrl = "http://localhost:8080/uploads/$name"
                     }
 
-                    part.dispose()
+                    else -> Unit
                 }
-                if (updated == 1L) {
-                    return@post call.respondText(
-                        text = "business updated successfully",
-                        status = HttpStatusCode.OK
-                    )
-                }
+                part.dispose()
             }
+
+            if (imageUrl != null)
+                call.respond(HttpStatusCode.OK, ImageUploadResponse(url = imageUrl))
+            else
+                call.respond(HttpStatusCode.BadRequest, "No file uploaded")
         }
     }
 }

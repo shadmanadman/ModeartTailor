@@ -24,14 +24,13 @@ import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.next
 import modearttailor.composeapp.generated.resources.register_new_customer
-import modearttailor.composeapp.generated.resources.register_title
 import modearttailor.composeapp.generated.resources.select_customer_size
 import modearttailor.composeapp.generated.resources.vector_fast_size
-import modearttailor.composeapp.generated.resources.vector_register_new_customer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.addNewCustomer.info.SelectableButton
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
@@ -58,12 +57,12 @@ enum class CustomerSize(val value: Int) {
     }
 }
 @Composable
-fun SizeSelectionScreen() {
-
+fun FastSizeSelectionScreen(viewModel: NewCustomerViewModel) {
+    SizeSelectionContent(fastSizeSelected = viewModel::fastSizeSelected)
 }
 @Composable
 @Preview
-fun SizeSelectionContent() {
+fun SizeSelectionContent(fastSizeSelected:(Int)-> Unit) {
     var selectedSize by remember { mutableStateOf(32) }
 
     Column(
@@ -101,6 +100,7 @@ fun SizeSelectionContent() {
                     isSelected = selectedSize == sizeList[index].value,
                     onClick = {
                         selectedSize = sizeList[index].value
+                        fastSizeSelected(sizeList[index].value)
                     })
             }
         }

@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,7 +76,6 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     var customerName by remember { mutableStateOf(state.customer.name) }
     var customerPhoneNumber by remember { mutableStateOf(state.customer.phoneNumber) }
     var customerBirthday by remember { mutableStateOf(state.customer.birthday) }
-    var customerAvatar by remember { mutableStateOf(state.customer.avatar) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -84,6 +84,12 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     var launchSetting by remember { mutableStateOf(value = false) }
     var selectedImageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
     var selectedImageByteArray = remember { mutableStateOf<ByteArray?>(null) }
+
+    LaunchedEffect(selectedImageByteArray.value){
+        selectedImageByteArray.value?.let {
+            viewModel.uploadImage(it)
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().background(Background),
@@ -225,7 +231,6 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                     fullName = customerName ?: "",
                     phoneNumber = customerPhoneNumber ?: "",
                     birth = customerBirthday ?: "",
-                    customerAvatar = customerAvatar ?: ""
                 )
             })
     }

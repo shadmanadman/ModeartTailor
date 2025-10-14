@@ -28,7 +28,7 @@ val mainModule = module {
     single { NoteViewModel(get()) }
     single { CustomersViewModel(get()) }
     single { MeasurementViewModel() }
-    single { NewCustomerViewModel(get()) }
+    single { NewCustomerViewModel(get(),get()) }
     singleOf(::BusinessRepo).bind<BusinessService>()
     singleOf(::CustomerRepo).bind<CustomerService>()
     singleOf(::OnBoardingRepo).bind<OnBoardingService>()

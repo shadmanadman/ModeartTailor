@@ -24,6 +24,7 @@ import org.modeart.tailor.common.MainToolbar
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiEffect
 import org.modeart.tailor.feature.main.addNewCustomer.customSize.OverallSize
+import org.modeart.tailor.feature.main.addNewCustomer.fastSize.FastSizeSelectionScreen
 import org.modeart.tailor.feature.main.addNewCustomer.info.BasicInfo
 import org.modeart.tailor.feature.main.addNewCustomer.info.FinalInfo
 import org.modeart.tailor.feature.main.addNewCustomer.info.StyleFeatures
@@ -68,6 +69,7 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit) {
                 NewCustomerSteps.SupplementaryInfo -> viewModel.updateStep(NewCustomerSteps.StyleFeature)
                 NewCustomerSteps.FinalInfo -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
                 NewCustomerSteps.OverallSize -> viewModel.updateStep(NewCustomerSteps.FinalInfo)
+                NewCustomerSteps.FastSize -> viewModel.updateStep(NewCustomerSteps.FastSize)
             }
         }
         when (state.step) {
@@ -76,6 +78,7 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit) {
             NewCustomerSteps.SupplementaryInfo -> SupplementaryInformationScreen(state, viewModel)
             NewCustomerSteps.FinalInfo -> FinalInfo(state, viewModel)
             NewCustomerSteps.OverallSize -> OverallSize(state, viewModel)
+            NewCustomerSteps.FastSize -> FastSizeSelectionScreen(viewModel)
         }
     }
 }
