@@ -1,13 +1,8 @@
 package org.modeart.tailor
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import moe.tlaster.precompose.PreComposeApp
-import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.BackHandler
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
@@ -24,7 +19,6 @@ import org.modeart.tailor.feature.onboarding.login.LoginScene
 import org.modeart.tailor.feature.onboarding.signup.SignupScene
 import org.modeart.tailor.feature.onboarding.splash.SplashScene
 import org.modeart.tailor.feature.onboarding.welcome.WelcomeScene
-import org.modeart.tailor.feature.onboarding.welcome.WelcomeViewModel
 import org.modeart.tailor.koin.appModule
 import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.OnBoardingNavigation
@@ -33,6 +27,7 @@ import org.modeart.tailor.navigation.OnBoardingNavigation
 @Preview
 internal fun App() {
     KoinApplication(application = { modules(modules = appModule()) }) {
+        
         PreComposeApp {
             val navigator = rememberNavigator()
             NavHost(

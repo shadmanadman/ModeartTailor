@@ -14,6 +14,9 @@ import org.bson.types.ObjectId
 import org.modeart.tailor.features.customer.db.CustomerDaoImpl.Companion.CUSTOMER_COLLECTION
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
     companion object {
@@ -34,11 +37,13 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
             .find(Filters.eq("phoneNumber", phone))
             .firstOrNull()
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun insertOne(business: BusinessProfile): BsonValue? {
         try {
+
             val result =
                 mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION).insertOne(
-                    business
+                    business.copy(createdAt = Clock.System.now().toString())
                 )
 
             return result.insertedId
@@ -61,6 +66,7 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
         return 0
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun updateOne(
         objectId: String,
         businessProfile: BusinessProfile
@@ -94,16 +100,11 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
                 BusinessProfile::notes,
                 businessProfile.notes
             )
-            // If you need to update individual items within the list, that's a more complex scenario.
-            addUpdateIfNotEmpty(BusinessProfile::createdAt, businessProfile.createdAt)
-            addUpdateIfNotEmpty(BusinessProfile::updatedAt, businessProfile.updatedAt)
-            addUpdateIfNotEmpty(BusinessProfile::deletedAt, businessProfile.deletedAt)
-            addUpdateIfNotEmpty(BusinessProfile::deleted, businessProfile.deleted)
+            addUpdateIfNotEmpty(BusinessProfile::updatedAt, Clock.System.now().toString())
             addUpdateIfNotEmpty(BusinessProfile::planEndDate, businessProfile.planEndDate)
 
 
             if (updates.isEmpty()) {
-                // No fields to update
                 return 0
             }
 

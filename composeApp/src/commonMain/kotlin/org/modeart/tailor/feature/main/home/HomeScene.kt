@@ -66,6 +66,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
+import org.modeart.tailor.feature.main.main.BottomNavViewModel
+import org.modeart.tailor.feature.main.main.contract.RootBottomNavId
 import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
 import org.modeart.tailor.feature.onboarding.welcome.WELCOME_PAGE_COUNT
@@ -81,6 +83,8 @@ import org.modeart.tailor.theme.appTypography
 @Composable
 fun HomeScene(onNavigate: (Route) -> Unit) {
     val viewModel = koinViewModel(HomeViewModel::class)
+    val bottomNavViewModel = koinViewModel(BottomNavViewModel::class)
+
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<HomeUiEffect.ShowRawNotification?>(null) }
@@ -106,21 +110,26 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
             allCustomersCount = state.customerCount,
             thisMonthCustomer = state.thisMonthCustomer
         )
-        SectionTitle(stringResource(Res.string.last_notes))
+        SectionTitle(stringResource(Res.string.last_notes)){
+            bottomNavViewModel.openScreen(RootBottomNavId.Note)
+        }
         LastNoteItem(state.latestNotes) {
             onNavigate(MainNavigation.newNote)
         }
-        SectionTitle(stringResource(Res.string.last_customers))
-        LatestCustomerSection(state.latestCustomers){
-            viewModel.navigateToCustomers()
+        SectionTitle(stringResource(Res.string.last_customers)){
+            bottomNavViewModel.openScreen(RootBottomNavId.Customer)
+        }
+        LatestCustomerSection(state.latestCustomers) {
+            bottomNavViewModel.openScreen(RootBottomNavId.Measure)
         }
     }
 }
 
 @Composable
-fun SectionTitle(title: String) {
+fun SectionTitle(title: String, onClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(22.dp),
+        modifier = Modifier.fillMaxWidth().padding(22.dp)
+            .clickable(interactionSource = null, indication = null, onClick =  onClick),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = title, style = appTypography().title15)
@@ -190,7 +199,7 @@ fun LastNoteItem(
                     }
                 }
             }
-            WelcomeIndicators(pagerState.currentPage)
+            WelcomeIndicators(pageSize = pagerState.pageCount,pagerState.currentPage)
         }
     else
         EmptyNoteOrCustomer(isNote = true, onCardClicked = {
@@ -383,7 +392,7 @@ fun Statistics(allCustomersCount: String, thisMonthCustomer: String) {
 fun CustomerItem(customerProfile: CustomerProfile, onCustomerClicked: (CustomerProfile) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable(onClick = { onCustomerClicked(customerProfile)})
+        modifier = Modifier.clickable(onClick = { onCustomerClicked(customerProfile) })
     ) {
         Box(modifier = Modifier.size(68.dp).clip(shape = RoundedCornerShape(16.dp))) {
             Image(painter = painterResource(Res.drawable.test_avatar), contentDescription = null)
@@ -406,11 +415,11 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClicked: (CustomerP
 }
 
 @Composable
-fun LatestCustomerSection(latestCustomers: List<CustomerProfile>,firstCustomer:()-> Unit) {
+fun LatestCustomerSection(latestCustomers: List<CustomerProfile>, firstCustomer: () -> Unit) {
     if (latestCustomers.isNotEmpty())
         LazyRow {
             items(latestCustomers.size) {
-                CustomerItem(latestCustomers[it]){}
+                CustomerItem(latestCustomers[it]) {}
             }
         }
     else

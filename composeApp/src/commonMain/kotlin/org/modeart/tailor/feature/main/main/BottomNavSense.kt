@@ -69,7 +69,6 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
     val effect = viewModel.effect.receiveAsFlow()
 
     val navigator = rememberNavigator()
-
     val bottomNavItems = bottomNavItems(
         currentSelected = state.selectedScreen,
         openScreen = viewModel::openScreen
@@ -83,7 +82,7 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
                 BottomNavUiEffect.Navigation.Measure -> navigator.navigate(MainNavigation.measure.fullPath)
                 BottomNavUiEffect.Navigation.Note -> navigator.navigate(MainNavigation.note.fullPath)
                 is BottomNavUiEffect.ShowRawNotification -> {}
-                BottomNavUiEffect.Navigation.Profile -> navigator.navigate(MainNavigation.profile.fullPath)
+                BottomNavUiEffect.Navigation.Profile -> onNavigate(MainNavigation.profile)
             }
         }.collect()
     }

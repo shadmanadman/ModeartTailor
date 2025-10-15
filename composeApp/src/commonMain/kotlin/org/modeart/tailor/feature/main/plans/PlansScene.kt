@@ -54,6 +54,7 @@ fun PlansScene() {
 
 }
 
+@Preview
 @Composable
 fun SubscriptionScreen() {
     Column(

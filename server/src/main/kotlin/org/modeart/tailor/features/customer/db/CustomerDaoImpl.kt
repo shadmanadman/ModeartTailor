@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.toList
 import org.bson.BsonValue
 import org.bson.types.ObjectId
 import org.modeart.tailor.model.customer.CustomerProfile
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
     companion object {
@@ -31,11 +33,12 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
             .find(Filters.eq("phone", phone))
             .firstOrNull()
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun insertOne(customer: CustomerProfile): BsonValue? {
         try {
             val result =
                 mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION).insertOne(
-                    customer
+                    customer.copy(createdAt = Clock.System.now().toString())
                 )
 
             return result.insertedId
@@ -78,6 +81,7 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
         return 0
     }
 
+    @OptIn(ExperimentalTime::class)
     override suspend fun updateOne(
         objectId: String,
         customer: CustomerProfile
@@ -118,16 +122,11 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
             addUpdateIfNotEmpty(CustomerProfile::lowerBodySizes, customer.lowerBodySizes)
             addUpdateIfNotEmpty(CustomerProfile::sleevesSizes, customer.sleevesSizes)
             addUpdateIfNotEmpty(CustomerProfile::overallNote, customer.overallNote)
-            addUpdateIfNotEmpty(CustomerProfile::createdAt, customer.createdAt)
-            addUpdateIfNotEmpty(CustomerProfile::updatedAt, customer.updatedAt)
-            addUpdateIfNotEmpty(CustomerProfile::deletedAt, customer.deletedAt)
-            addUpdateIfNotEmpty(CustomerProfile::deleted, customer.deleted)
-            addUpdateIfNotEmpty(CustomerProfile::avatar, customer.avatar)
+            addUpdateIfNotEmpty(CustomerProfile::updatedAt, Clock.System.now().toString())
             addUpdateIfNotEmpty(CustomerProfile::customerOf, customer.customerOf)
 
 
             if (updates.isEmpty()) {
-                // No fields to update
                 return 0
             }
 

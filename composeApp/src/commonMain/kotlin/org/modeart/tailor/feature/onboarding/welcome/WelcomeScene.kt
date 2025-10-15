@@ -101,7 +101,7 @@ fun WelcomeScene(
             WelcomePage(page)
         }
         WelcomeShapes(pagerState.currentPage, modifier = Modifier.align(Alignment.TopCenter))
-        WelcomeIndicators(pagerState.currentPage, modifier = Modifier.align(Alignment.BottomStart))
+        WelcomeIndicators(currentPage = pagerState.currentPage, modifier = Modifier.align(Alignment.BottomStart))
         DoneButton(
             pagerState.currentPage,
             modifier = Modifier.align(Alignment.BottomEnd),
@@ -120,7 +120,7 @@ fun WelcomePagePreview() {
             WelcomePage(page)
         }
         WelcomeShapes(pagerState.currentPage, modifier = Modifier.align(Alignment.TopCenter))
-        WelcomeIndicators(pagerState.currentPage, modifier = Modifier.align(Alignment.BottomStart))
+        WelcomeIndicators(currentPage = pagerState.currentPage, modifier = Modifier.align(Alignment.BottomStart))
         DoneButton(
             pagerState.currentPage,
             modifier = Modifier.align(Alignment.BottomEnd),
@@ -228,10 +228,10 @@ fun WelcomeShapes(currentPage: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun WelcomeIndicators(currentPage: Int, modifier: Modifier = Modifier) {
+fun WelcomeIndicators(pageSize :Int = WELCOME_PAGE_COUNT,currentPage: Int, modifier: Modifier = Modifier) {
 
     LazyRow(modifier = modifier.padding(start = 15.dp, bottom = 30.dp)) {
-        items(WELCOME_PAGE_COUNT) { index ->
+        items(pageSize) { index ->
             val isSelected = index == currentPage
             val width by animateDpAsState(
                 targetValue = if (isSelected) 25.dp else 10.dp,
