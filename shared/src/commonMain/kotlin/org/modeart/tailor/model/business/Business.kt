@@ -15,7 +15,7 @@ data class BusinessProfile(
     val businessName: String? = "",
     val city: String? = "",
     val state: String? = "",
-    val plan: Plan? = Plan.NONE,
+    val plan: Plan? = Plan(),
     val notes: List<Notes>? = emptyList(),
     val createdAt: String? = "",
     val updatedAt: String? = "",
@@ -33,9 +33,17 @@ data class BusinessProfile(
         val deletedAt: String? = "",
         val category: NoteCategory,
     )
+
+    @Serializable
+    data class Plan(
+        val planStatus: PlanStatus = PlanStatus.EXPIRED,
+        val planType: PlanType = PlanType.NONE,
+        val dateOfPurchase:String = ""
+    )
 }
 
-enum class Plan { MONTHLY, YEARLY, NONE }
+enum class PlanStatus{ACTIVE,PENDING,EXPIRED}
+enum class PlanType { MONTHLY, YEARLY, NONE }
 enum class NoteCategory { PERSONAL, OTHERS, WORK }
 
 
