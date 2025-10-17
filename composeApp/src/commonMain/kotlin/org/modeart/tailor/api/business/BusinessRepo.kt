@@ -3,6 +3,7 @@ package org.modeart.tailor.api.business
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.get
@@ -59,11 +60,18 @@ class BusinessRepo(private val client: HttpClient) : BusinessService {
 
     override suspend fun uploadImage(byteArray: ByteArray): ApiResult<ImageUploadResponse> =
         safeRequest {
-            client.submitFormWithBinaryData(url = "/upload/image", formData = formData {
-                append("image", byteArray, Headers.build {
-                    append(HttpHeaders.ContentType, "image/png")
-                })
-            }).body()
+            client.post(urlString = "/upload/image") {
+                setBody(
+                    MultiPartFormDataContent(
+                        formData {
+                            append("image", byteArray, Headers.build {
+                                append(HttpHeaders.ContentType, "image/png")
+                                append(HttpHeaders.ContentDisposition, "filename=upload.png")
+                            })
+                        }
+                    )
+                )
+            }.body()
         }
 
 }

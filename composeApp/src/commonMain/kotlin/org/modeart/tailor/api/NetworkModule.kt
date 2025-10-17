@@ -2,6 +2,9 @@ package org.modeart.tailor.api
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -19,6 +22,9 @@ import kotlinx.serialization.json.Json
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.client.request.header
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.cio.Response
 
 const val BASE_URL = "http://10.0.2.2:8080/"
 private const val LOG_HTTP = "HTTP call"
@@ -33,9 +39,6 @@ val networkModule = module {
         val tokenService: TokenService by inject()
 
         HttpClient(CIO) {
-            defaultRequest {
-                header(HttpHeaders.ContentType, ContentType.Application.Json)
-            }
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
@@ -61,8 +64,20 @@ val networkModule = module {
                     }
                 }
             }
+            install(HttpSend){
+
+            }
             defaultRequest {
+                header(HttpHeaders.ContentType, ContentType.Application.Json)
                 url(BASE_URL)
+            }
+            HttpResponseValidator {
+                handleResponseExceptionWithRequest { exception, request ->
+                    val clientException = exception as? ClientRequestException ?: return@handleResponseExceptionWithRequest
+                    val response = clientException.response
+                    if (response.status == HttpStatusCode.Unauthorized)
+                        tokenService.logout()
+                }
             }
         }
     }

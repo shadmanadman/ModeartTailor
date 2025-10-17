@@ -82,8 +82,8 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     var launchGallery by remember { mutableStateOf(value = false) }
     var launchCamera by remember { mutableStateOf(value = false) }
     var launchSetting by remember { mutableStateOf(value = false) }
-    var selectedImageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
-    var selectedImageByteArray = remember { mutableStateOf<ByteArray?>(null) }
+    val selectedImageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
+    val selectedImageByteArray = remember { mutableStateOf<ByteArray?>(null) }
 
     LaunchedEffect(selectedImageByteArray.value){
         selectedImageByteArray.value?.let {
@@ -263,8 +263,8 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             withContext(Dispatchers.Default) {
                 selectedImageBitmap.value = it?.toImageBitmap()
             }
-            launchGallery = false
         }
+        launchGallery = false
     }
 
     val cameraManager = rememberCameraManager {
@@ -275,8 +275,8 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             withContext(Dispatchers.Default) {
                 selectedImageBitmap.value = it?.toImageBitmap()
             }
-            launchCamera = false
         }
+        launchCamera = false
     }
 
     if (launchGallery) {

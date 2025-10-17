@@ -88,7 +88,7 @@ class TokenRepo(
     override suspend fun isLoggedIn(): Boolean {
         return withContext(Dispatchers.IO) {
             val preferences = dataStore.data.first()
-            preferences[stringPreferencesKey(ACCESS_TOKEN)] != null
+            preferences[stringPreferencesKey(ACCESS_TOKEN)].isNullOrEmpty().not()
         }
     }
 
