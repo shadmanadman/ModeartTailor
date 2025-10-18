@@ -116,7 +116,7 @@ fun MainProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(contentAlignment = Alignment.BottomEnd) {
+            Box(contentAlignment = Alignment.BottomEnd, modifier = Modifier.clickable(onClick = {viewmodel.navigateToEditProfile()})) {
                 // Placeholder for profile image
                 Box(
                     modifier = Modifier

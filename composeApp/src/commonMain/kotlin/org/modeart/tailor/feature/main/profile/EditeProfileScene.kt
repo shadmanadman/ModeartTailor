@@ -21,15 +21,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import coil3.compose.AsyncImage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.business_city
 import modearttailor.composeapp.generated.resources.ic_add_photo
@@ -44,6 +52,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.api.BASE_URL
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
@@ -53,6 +62,11 @@ import org.modeart.tailor.feature.onboarding.login.LoginViewModel
 import org.modeart.tailor.feature.onboarding.login.contract.LoginScreenUiEffect
 import org.modeart.tailor.navigation.OnBoardingNavigation
 import org.modeart.tailor.navigation.Route
+import org.modeart.tailor.platform.PermissionCallback
+import org.modeart.tailor.platform.PermissionStatus
+import org.modeart.tailor.platform.PermissionType
+import org.modeart.tailor.platform.createPermissionsManager
+import org.modeart.tailor.platform.rememberGalleryManager
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Primary
@@ -63,7 +77,11 @@ fun EditeProfileScene(onNavigate: (Route) -> Unit) {
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<ProfileUiEffect.ShowRawNotification?>(null) }
-    var notificationLocalized by remember { mutableStateOf<ProfileUiEffect.ShowLocalizedNotification?>(null) }
+    var notificationLocalized by remember {
+        mutableStateOf<ProfileUiEffect.ShowLocalizedNotification?>(
+            null
+        )
+    }
 
     LaunchedEffect(effects) {
         effects.onEach { effect ->
@@ -90,12 +108,22 @@ fun EditeProfileScene(onNavigate: (Route) -> Unit) {
         }
     }
 
-    EditeProfileContent(state,viewModel)
+    EditeProfileContent(state, viewModel)
 }
 
 
 @Composable
 fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
+    val selectedImageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
+    val selectedImageByteArray = remember { mutableStateOf<ByteArray?>(null) }
+    var launchGallery by remember { mutableStateOf(value = false) }
+
+    LaunchedEffect(selectedImageByteArray.value){
+        selectedImageByteArray.value?.let {
+            viewmodel.uploadImage(it)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,7 +131,6 @@ fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top section with profile image and details
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,19 +140,30 @@ fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(contentAlignment = Alignment.BottomEnd) {
-                // Placeholder for profile image
                 Box(
                     modifier = Modifier
                         .size(100.dp)
                         .clip(CircleShape)
                         .background(Color(0xFFEAEAEA))
+                        .clickable(onClick = {
+                            launchGallery = true
+                        })
                         .border(1.dp, Color(0xFFCCCCCC), CircleShape)
                 ) {
-                    Image(
-                        painter = painterResource(Res.drawable.test_avatar), // Replace with your image resource
-                        contentDescription = "Profile Image",
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    if (selectedImageBitmap.value != null)
+                        Image(
+                            bitmap = selectedImageBitmap.value!!,
+                            contentDescription = "Profile Image",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    else
+                        AsyncImage(
+                            model = "$BASE_URL${state.avatar}",
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
                 }
                 Icon(
                     imageVector = vectorResource(Res.drawable.ic_add_photo),
@@ -134,6 +172,7 @@ fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
+                        .clickable(onClick = {launchGallery = true})
                         .background(Color.White)
                         .padding(4.dp)
                 )
@@ -175,6 +214,59 @@ fun EditeProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
             backgroundColor = Primary
         )
     }
+    val coroutineScope = rememberCoroutineScope()
+
+    var launchSetting by remember { mutableStateOf(value = false) }
+
+
+    val permissionsManager = createPermissionsManager(object : PermissionCallback {
+        override fun onPermissionStatus(
+            permissionType: PermissionType,
+            status: PermissionStatus
+        ) {
+            when (status) {
+                PermissionStatus.GRANTED -> {
+                    when (permissionType) {
+                        PermissionType.GALLERY -> launchGallery = true
+                        PermissionType.CAMERA -> Unit
+                    }
+                }
+
+                else -> {
+                    launchSetting = true
+                }
+            }
+        }
+    })
+
+    val galleryManager = rememberGalleryManager {
+        coroutineScope.launch {
+            withContext(Dispatchers.Default) {
+                it?.toByteArray()?.let {
+                    selectedImageByteArray.value = it
+                }
+            }
+            withContext(Dispatchers.Default) {
+                it?.toImageBitmap()?.let {
+                    selectedImageBitmap.value = it
+                }
+            }
+        }
+        launchGallery = false
+    }
+
+
+    if (launchGallery) {
+        if (permissionsManager.isPermissionGranted(PermissionType.GALLERY))
+            galleryManager.launch()
+        else {
+            permissionsManager.askPermission(PermissionType.GALLERY)
+        }
+    }
+
+
+    if (launchSetting)
+        permissionsManager.launchSettings()
 }
 
 

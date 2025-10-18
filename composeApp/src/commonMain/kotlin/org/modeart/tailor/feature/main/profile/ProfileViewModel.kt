@@ -15,6 +15,7 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
 import org.modeart.tailor.api.TokenService
 import org.modeart.tailor.api.business.BusinessService
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiEffect
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiState
 import org.modeart.tailor.model.business.BusinessProfile
@@ -137,6 +138,24 @@ class ProfileViewModel(
                             avatar = response.data.profilePictureUrl ?: ""
                         )
                     }
+                }
+            }
+        }
+    }
+
+
+    fun uploadImage(byteArray: ByteArray) {
+        viewModelScope.launch {
+            val response = businessService.uploadImage(byteArray)
+            when (response) {
+                is ApiResult.Error -> effects.send(
+                    ProfileUiEffect.ShowRawNotification(
+                        msg = response.message, errorCode = response.code.toString()
+                    )
+                )
+
+                is ApiResult.Success -> {
+                    _uiState.update { it.copy(avatar = response.data.url) }
                 }
             }
         }

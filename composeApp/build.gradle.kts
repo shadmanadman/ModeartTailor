@@ -70,6 +70,9 @@ kotlin {
             implementation(libs.datastore.preferences)
 
             implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.coil.core)
+            implementation(libs.coil.http)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

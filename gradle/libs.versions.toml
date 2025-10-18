@@ -25,6 +25,7 @@ graphql-kotlin = "7.1.0"
 datastore = "1.1.7"
 startup = "1.2.0"
 accompanist-permissions = "0.32.0"
+coil = "3.3.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -76,6 +77,9 @@ graphql-kotlin-server = { module = "com.expediagroup:graphql-kotlin-server", ver
 # Gson
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
+
+coil-core = {module = "io.coil-kt.coil3:coil-compose", version.ref = "coil"}
+coil-http = {module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
