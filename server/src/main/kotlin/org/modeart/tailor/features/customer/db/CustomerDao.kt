@@ -12,6 +12,7 @@ interface CustomerDao {
     suspend fun findById(objectId: String): CustomerProfile?
 
     suspend fun findByPhone(phone: String): CustomerProfile?
+    suspend fun findByName(name: String): List<CustomerProfile>?
 
     suspend fun insertOne(customer: CustomerProfile): BsonValue?
 

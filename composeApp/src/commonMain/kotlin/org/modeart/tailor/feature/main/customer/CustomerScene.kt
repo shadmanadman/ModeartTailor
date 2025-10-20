@@ -82,6 +82,10 @@ fun CustomerScene(onNavigate: (Route) -> Unit) {
         }
     }
 
+    LaunchedEffect(state.searchQuery){
+        viewModel.searchForCustomers()
+    }
+
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         FilterTabs(viewModel::customerFilterChanged)
 

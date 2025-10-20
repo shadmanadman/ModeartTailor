@@ -33,6 +33,15 @@ class BottomNavViewModel : ViewModel() {
         effect.trySend(BottomNavUiEffect.Navigation.Profile)
     }
 
+    fun selectCurrentRoute(route: String){
+        when(route){
+            MainNavigation.home.fullPath -> _uiState.update { it.copy(selectedScreen = RootBottomNavId.Home) }
+            MainNavigation.measure.fullPath -> _uiState.update { it.copy(selectedScreen = RootBottomNavId.Measure) }
+            MainNavigation.note.fullPath -> _uiState.update { it.copy(selectedScreen = RootBottomNavId.Note) }
+            MainNavigation.customers.fullPath -> _uiState.update { it.copy(selectedScreen = RootBottomNavId.Customer) }
+        }
+    }
+
     fun openScreen(screen: RootBottomNavId) {
         viewModelScope.launch {
             _uiState.update { it.copy(selectedScreen = screen) }

@@ -234,8 +234,9 @@ fun HomeTopBar(
     avatar: String = "",
     onNavigateToProfile: () -> Unit,
     onNavigateToNotification: () -> Unit,
-    onSearchQueryCompleted: () -> Unit
+    onSearchQueryCompleted: (String) -> Unit
 ) {
+    val query = remember { mutableStateOf("") }
     Box(modifier = Modifier.fillMaxWidth()) {
 
         Box(
@@ -300,11 +301,11 @@ fun HomeTopBar(
         OutlinedTextFieldModeArt(
             width = 318.dp,
             modifier = Modifier.offset(y = 30.dp).align(Alignment.BottomCenter),
-            value = "",
+            value = query.value,
             leadingIcon = Res.drawable.ic_search,
-            onValueChange = { /* Handle text change */ },
+            onValueChange = { query.value = it },
             isSearch = true,
-            onSearchCompleted = { onSearchQueryCompleted() },
+            onSearchCompleted = onSearchQueryCompleted ,
             hint = stringResource(Res.string.search_in_customers)
         )
     }

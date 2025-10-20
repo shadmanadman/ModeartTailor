@@ -33,6 +33,11 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
             .find(Filters.eq("phone", phone))
             .firstOrNull()
 
+    override suspend fun findByName(name: String): List<CustomerProfile>? =
+        mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)
+            .find(Filters.all(CustomerProfile::name.name, name))
+            .toList()
+
     @OptIn(ExperimentalTime::class)
     override suspend fun insertOne(customer: CustomerProfile): BsonValue? {
         try {

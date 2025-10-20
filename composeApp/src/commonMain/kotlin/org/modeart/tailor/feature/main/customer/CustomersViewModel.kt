@@ -52,6 +52,10 @@ class CustomersViewModel(private val businessService: BusinessService): ViewMode
         _uiState.update { it.copy(selectedCustomer = customer) }
     }
 
+    fun searchQueryChanged(query: String){
+        _uiState.update { it.copy(searchQuery = query) }
+    }
+
     fun getBusinessCustomers() {
         viewModelScope.launch {
             val response = businessService.getBusinessCustomers()
@@ -62,6 +66,25 @@ class CustomersViewModel(private val businessService: BusinessService): ViewMode
                     )
                 )
 
+                is ApiResult.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            businessCustomers = response.data
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun searchForCustomers(){
+        viewModelScope.launch {
+            val response = businessService.searchCustomers(_uiState.value.searchQuery)
+            when(response){
+                is ApiResult.Error -> effects.send(
+                    CustomerUiEffect.ShowRawNotification(
+                        msg = response.message, errorCode = response.code.toString()
+                    ))
                 is ApiResult.Success -> {
                     _uiState.update {
                         it.copy(

@@ -56,6 +56,7 @@ fun OutlinedTextFieldModeArt(
             null
         },
         onValueChange = onValueChange,
+        singleLine = isSearch,
         shape = RoundedCornerShape(roundedCorner),
         keyboardOptions = when {
             isSearch -> KeyboardOptions.Default.copy(

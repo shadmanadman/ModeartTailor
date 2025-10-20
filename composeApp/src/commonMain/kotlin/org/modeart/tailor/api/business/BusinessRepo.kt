@@ -23,6 +23,9 @@ class BusinessRepo(private val client: HttpClient) : BusinessService {
     override suspend fun businessProfile(): ApiResult<BusinessProfile> =
         safeRequest { client.get("/business/profile").body() }
 
+    override suspend fun searchCustomers(query: String): ApiResult<List<CustomerProfile>> =
+        safeRequest { client.get("/customer/search/${query}").body() }
+
     override suspend fun updateBusinessProfile(
         businessProfile: BusinessProfile,
         id: String

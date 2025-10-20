@@ -45,6 +45,7 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.modeart.tailor.feature.main.customer.CustomerScene
+import org.modeart.tailor.feature.main.customer.CustomersViewModel
 import org.modeart.tailor.feature.main.home.HomeScene
 import org.modeart.tailor.feature.main.home.HomeTopBar
 import org.modeart.tailor.feature.main.home.HomeViewModel
@@ -64,6 +65,8 @@ import org.modeart.tailor.theme.appTypography
 fun BottomNavScene(onNavigate: (Route) -> Unit) {
     val viewModel = koinViewModel(BottomNavViewModel::class)
     val homeViewModel = koinViewModel(HomeViewModel::class)
+    val customersViewModel = koinViewModel(CustomersViewModel::class)
+
     val homeState by homeViewModel.uiState.collectAsState()
     val state by viewModel.state.collectAsState()
     val effect = viewModel.effect.receiveAsFlow()
@@ -73,6 +76,14 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
         currentSelected = state.selectedScreen,
         openScreen = viewModel::openScreen
     )
+
+    val currentEntry by navigator.currentEntry.collectAsState(null)
+    LaunchedEffect(currentEntry) {
+        val route = currentEntry?.route?.route
+        route?.let {
+            viewModel.selectCurrentRoute(route)
+        }
+    }
 
     LaunchedEffect(effect) {
         effect.onEach { effect ->
@@ -98,7 +109,10 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
                 avatar = homeState.avatar,
                 onNavigateToProfile = viewModel::navigateToProfile,
                 onNavigateToNotification = {},
-                onSearchQueryCompleted = {}
+                onSearchQueryCompleted = {
+                    viewModel.openScreen(RootBottomNavId.Customer)
+                    customersViewModel.searchQueryChanged(it)
+                }
             )
             NavHost(
                 modifier = Modifier.padding(innerPadding),

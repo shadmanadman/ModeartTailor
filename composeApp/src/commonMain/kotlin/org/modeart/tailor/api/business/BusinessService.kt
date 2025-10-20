@@ -17,5 +17,6 @@ interface BusinessService {
 
     suspend fun getBusinessCustomers(): ApiResult<List<CustomerProfile>>
 
+    suspend fun searchCustomers(query: String): ApiResult<List<CustomerProfile>>
     suspend fun uploadImage(byteArray: ByteArray): ApiResult<ImageUploadResponse>
 }

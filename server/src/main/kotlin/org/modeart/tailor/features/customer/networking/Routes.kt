@@ -46,6 +46,18 @@ fun Route.customerRouting() {
                 } ?: call.respondText("No records found for businessId $userId")
             }
 
+            get("/search/{query?}"){
+                val query = call.parameters["query"]
+                if (query.isNullOrEmpty())
+                    return@get call.respondText(
+                        text = "Missing query",
+                        status = HttpStatusCode.BadRequest
+                    )
+                repository.findByName(query)?.let { list->
+                    call.respond(list)
+                }?: call.respondText("No records found for query $query")
+            }
+
             get("/{id?}") {
                 val id = call.parameters["id"]
                 if (id.isNullOrEmpty()) {
