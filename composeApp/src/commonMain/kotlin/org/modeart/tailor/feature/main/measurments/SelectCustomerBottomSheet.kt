@@ -28,23 +28,25 @@ import modearttailor.composeapp.generated.resources.search_in_customers
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.customer.CustomersViewModel
 import org.modeart.tailor.feature.main.home.CustomerItem
 import org.modeart.tailor.theme.appTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCustomerBottomSheet() {
+fun SelectCustomerBottomSheet(onDismiss: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
+    val newCustomerViewModel = koinViewModel(NewCustomerViewModel::class)
     val viewModel = koinViewModel(CustomersViewModel::class)
     val state by viewModel.uiState.collectAsState()
     var filterCustomer by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
-    //viewModel.getBusinessCustomers()
+    viewModel.getBusinessCustomers()
 
     ModalBottomSheet(
-        onDismissRequest = { scope.launch { sheetState.hide() } },
+        onDismissRequest =onDismiss,
         sheetState = sheetState,
         content = {
             Column(
@@ -62,9 +64,9 @@ fun SelectCustomerBottomSheet() {
                     value = filterCustomer
                 )
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    items(state.businessCustomers) { customer ->
+                    items(state.businessCustomers.filter { it.name == filterCustomer }) { customer ->
                         CustomerItem(customerProfile = customer, onCustomerClicked = {
-                            viewModel.selectedCustomer(customer)
+                            newCustomerViewModel.setSelectedCustomer(customer)
                             scope.launch { sheetState.hide() }
                         })
                     }

@@ -37,10 +37,8 @@ class MeasurementViewModel: ViewModel() {
 
     fun customerTypeSelected(customerType: MeasurementSelectedCustomer){
         _uiState.update { it.copy(customerType = customerType) }
-    }
-
-    fun customerSelected(customer: CustomerProfile) {
-        _uiState.update { it.copy(selectedCustomer = customer) }
+        if (customerType == MeasurementSelectedCustomer.OldCustomer)
+            effect.trySend(MeasurementUiEffect.ShowSelectCustomerBottomSheet)
     }
 
     fun measurementTypeSelected(measurementType: MeasurementType){

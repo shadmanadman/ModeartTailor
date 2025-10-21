@@ -52,6 +52,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.InAppNotification
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementSelectedCustomer
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementStage
@@ -69,9 +70,12 @@ fun MeasurementScene(onNavigate: (Route) -> Unit) {
     val viewModel = koinViewModel(MeasurementViewModel::class)
     val state by viewModel.state.collectAsState()
     val effects = viewModel.effect.receiveAsFlow()
+    val showCustomerSelectionBottomSheet = remember { mutableStateOf(false) }
 
-    if (state.customerType == MeasurementSelectedCustomer.OldCustomer)
-        SelectCustomerBottomSheet()
+    if (showCustomerSelectionBottomSheet.value)
+        SelectCustomerBottomSheet{
+            showCustomerSelectionBottomSheet.value = false
+        }
 
     var notification by remember { mutableStateOf<MeasurementUiEffect.ShowRawNotification?>(null) }
 
@@ -84,6 +88,7 @@ fun MeasurementScene(onNavigate: (Route) -> Unit) {
                 }
 
                 is MeasurementUiEffect.ShowLocalizedNotification -> {}
+                MeasurementUiEffect.ShowSelectCustomerBottomSheet -> {showCustomerSelectionBottomSheet.value = true}
             }
         }.collect()
     }

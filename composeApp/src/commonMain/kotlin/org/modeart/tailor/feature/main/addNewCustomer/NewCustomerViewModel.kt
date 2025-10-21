@@ -39,10 +39,9 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
     var effects = Channel<NewCustomerUiEffect>(Channel.UNLIMITED)
         private set
 
-    private val selectedCustomer = MutableStateFlow<CustomerProfile?>(null)
 
     fun setSelectedCustomer(customer: CustomerProfile) {
-        selectedCustomer.value = customer
+        _uiState.update { it.copy(customer = customer, aOldCustomerSelected = true)}
     }
 
 
@@ -128,12 +127,11 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
                 )
             )
         }
-        if (selectedCustomer.value == null)
-            newCustomer()
+
+        if (_uiState.value.aOldCustomerSelected)
+            updateCustomer()
         else
-            selectedCustomer.value?.let {
-                updateCustomer(it.id)
-            }
+            newCustomer()
     }
 
     fun upperSizeChanged(upperBodySizes: CustomerProfile.UpperBodySizes) {
@@ -149,7 +147,7 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
     }
 
 
-    fun updateCustomer(customerId: String) {
+    fun updateCustomer() {
         viewModelScope.launch {
             val response = customerService.updateCustomer(_uiState.value.customer)
             when (response) {

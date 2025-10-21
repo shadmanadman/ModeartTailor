@@ -8,4 +8,5 @@ sealed interface MeasurementUiEffect {
     data class ShowLocalizedNotification(val msg: StringResource) : MeasurementUiEffect
 
     data class Navigation(val screen: Route) : MeasurementUiEffect
+    data object ShowSelectCustomerBottomSheet: MeasurementUiEffect
 }

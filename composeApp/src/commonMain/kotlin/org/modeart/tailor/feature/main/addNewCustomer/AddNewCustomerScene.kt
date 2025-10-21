@@ -31,6 +31,7 @@ import org.modeart.tailor.feature.main.addNewCustomer.info.StyleFeatures
 import org.modeart.tailor.feature.main.addNewCustomer.info.SupplementaryInformationScreen
 import org.modeart.tailor.feature.main.home.HomeViewModel
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
+import org.modeart.tailor.feature.main.measurments.MeasurementViewModel
 import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Background
@@ -38,7 +39,6 @@ import org.modeart.tailor.theme.Background
 @Composable
 @Preview
 fun AddNewCustomerScene(onNavigate: (Route) -> Unit) {
-
     val viewModel = koinViewModel(NewCustomerViewModel::class)
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
