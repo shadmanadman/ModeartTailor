@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
-import modearttailor.composeapp.generated.resources.next
+import modearttailor.composeapp.generated.resources.save_and_next
 import modearttailor.composeapp.generated.resources.register_new_customer
 import modearttailor.composeapp.generated.resources.select_customer_size
 import modearttailor.composeapp.generated.resources.vector_fast_size
@@ -105,7 +105,7 @@ fun SizeSelectionContent(fastSizeSelected:(Int)-> Unit) {
             }
         }
 
-        RoundedCornerButton(isEnabled = true, text = stringResource(Res.string.next)) {
+        RoundedCornerButton(isEnabled = true, text = stringResource(Res.string.save_and_next)) {
 
         }
     }

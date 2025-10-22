@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import modearttailor.composeapp.generated.resources.Res
+import modearttailor.composeapp.generated.resources.customer_saved_successfully
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.modeart.tailor.api.ApiResult
@@ -41,7 +43,7 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
 
 
     fun setSelectedCustomer(customer: CustomerProfile) {
-        _uiState.update { it.copy(customer = customer, aOldCustomerSelected = true)}
+        _uiState.update { it.copy(customer = customer)}
     }
 
 
@@ -127,11 +129,6 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
                 )
             )
         }
-
-        if (_uiState.value.aOldCustomerSelected)
-            updateCustomer()
-        else
-            newCustomer()
     }
 
     fun upperSizeChanged(upperBodySizes: CustomerProfile.UpperBodySizes) {
@@ -146,6 +143,12 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
         _uiState.update { it.copy(customer = it.customer.copy(sleevesSizes = sleevesSizes)) }
     }
 
+    fun saveCustomer(){
+        if (_uiState.value.customer.id.isNotEmpty())
+            updateCustomer()
+        else
+            newCustomer()
+    }
 
     fun updateCustomer() {
         viewModelScope.launch {
@@ -158,6 +161,11 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
                 )
 
                 is ApiResult.Success -> {
+                    effects.send(
+                        NewCustomerUiEffect.ShowLocalizedNotification(
+                            msg = Res.string.customer_saved_successfully, isError = false
+                        )
+                    )
                 }
             }
         }
@@ -174,6 +182,11 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
                 )
 
                 is ApiResult.Success -> {
+                    effects.send(
+                        NewCustomerUiEffect.ShowLocalizedNotification(
+                            msg = Res.string.customer_saved_successfully, isError = false
+                        )
+                    )
                 }
             }
         }

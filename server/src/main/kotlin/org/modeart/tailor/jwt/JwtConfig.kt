@@ -14,7 +14,6 @@ object JwtConfig {
             .withAudience(tokenConfig.audience)
             .withIssuer(tokenConfig.issuer)
             .withClaim("userId", userId)
-            .withExpiresAt(Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
             .sign(Algorithm.HMAC256(tokenConfig.secret))
 
     fun generateRefreshToken(userId: String, tokenConfig: TokenConfig): String =
@@ -22,7 +21,6 @@ object JwtConfig {
             .withAudience(tokenConfig.audience)
             .withIssuer(tokenConfig.issuer)
             .withClaim("userId", userId)
-            .withExpiresAt(Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
             .sign(Algorithm.HMAC256(tokenConfig.secret))
 
     fun verifyToken(token: String, tokenConfig: TokenConfig): DecodedJWT? =

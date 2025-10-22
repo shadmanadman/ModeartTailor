@@ -45,11 +45,12 @@ import modearttailor.composeapp.generated.resources.ic_note
 import modearttailor.composeapp.generated.resources.ic_search
 import modearttailor.composeapp.generated.resources.ic_user_star
 import modearttailor.composeapp.generated.resources.is_old_customer
-import modearttailor.composeapp.generated.resources.next
+import modearttailor.composeapp.generated.resources.save_and_next
 import modearttailor.composeapp.generated.resources.no
 import modearttailor.composeapp.generated.resources.notes_about_customer
 import modearttailor.composeapp.generated.resources.notes_hint
 import modearttailor.composeapp.generated.resources.referred_by
+import modearttailor.composeapp.generated.resources.save_customer
 import modearttailor.composeapp.generated.resources.search_in_customers
 import modearttailor.composeapp.generated.resources.title_supplementary_information
 import modearttailor.composeapp.generated.resources.yes
@@ -60,7 +61,10 @@ import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.model.customer.CustomerBodyForm
 import org.modeart.tailor.model.customer.CustomerColor
+import org.modeart.tailor.model.customer.CustomerShoulder
+import org.modeart.tailor.model.customer.CustomerStyle
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Hint
@@ -210,19 +214,36 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
                 customerNotes = it
             })
 
-        RoundedCornerButton(
-            modifier = Modifier.padding(top = 24.dp),
-            width = 332,
-            isEnabled = true,
-            text = stringResource(Res.string.next),
-            onClick = {
-                viewModel.supplementaryInfoChanged(
-                    customerColor = selectedColor ?: CustomerColor.Black,
-                    isOldCustomer = isOldCustomer ?: false,
-                    referredBy = referredBy ?: "",
-                    overallNote = customerNotes ?: ""
-                )
-            })
+        Row(modifier = Modifier.padding(top = 24.dp)) {
+            RoundedCornerButton(
+                modifier = Modifier.padding(end = 24.dp),
+                width = 232,
+                isEnabled = true,
+                text = stringResource(Res.string.save_and_next),
+                onClick = {
+                    viewModel.supplementaryInfoChanged(
+                        customerColor = selectedColor ?: CustomerColor.Black,
+                        isOldCustomer = isOldCustomer ?: false,
+                        referredBy = referredBy ?: "",
+                        overallNote = customerNotes ?: ""
+                    )
+                })
+            RoundedCornerButton(
+                width = 132,
+                isEnabled = true,
+                backgroundColor = Accent,
+                textColor = Color.Black,
+                text = stringResource(Res.string.save_customer),
+                onClick = {
+                    viewModel.supplementaryInfoChanged(
+                        customerColor = selectedColor ?: CustomerColor.Black,
+                        isOldCustomer = isOldCustomer ?: false,
+                        referredBy = referredBy ?: "",
+                        overallNote = customerNotes ?: ""
+                    )
+                    viewModel.saveCustomer()
+                })
+        }
     }
 }
 

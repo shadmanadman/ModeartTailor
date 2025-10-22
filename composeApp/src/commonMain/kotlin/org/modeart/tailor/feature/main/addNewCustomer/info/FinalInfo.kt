@@ -42,7 +42,6 @@ import kotlinx.coroutines.withContext
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.add_photo
 import modearttailor.composeapp.generated.resources.body_dress_pattern_measurement
-import modearttailor.composeapp.generated.resources.fabric_name
 import modearttailor.composeapp.generated.resources.fit_fit
 import modearttailor.composeapp.generated.resources.ic_add_photo
 import modearttailor.composeapp.generated.resources.ic_arrow_down
@@ -52,11 +51,10 @@ import modearttailor.composeapp.generated.resources.ic_note
 import modearttailor.composeapp.generated.resources.ic_upload
 import modearttailor.composeapp.generated.resources.important_note
 import modearttailor.composeapp.generated.resources.loose_fit
-import modearttailor.composeapp.generated.resources.next
-import modearttailor.composeapp.generated.resources.notes_about_customer
-import modearttailor.composeapp.generated.resources.notes_example
+import modearttailor.composeapp.generated.resources.save_and_next
 import modearttailor.composeapp.generated.resources.notes_hint
 import modearttailor.composeapp.generated.resources.register_title
+import modearttailor.composeapp.generated.resources.save_customer
 import modearttailor.composeapp.generated.resources.seam_allowance
 import modearttailor.composeapp.generated.resources.title_measurement_freedom_level
 import modearttailor.composeapp.generated.resources.title_measurement_source
@@ -155,7 +153,7 @@ fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
         RoundedCornerButton(
             width = 332,
             isEnabled = true,
-            text = stringResource(Res.string.next),
+            text = stringResource(Res.string.save_customer),
             onClick = {
                 viewModel.finalInfoChanged(
                     sizeSource = customerSizeSource ?: CustomerSizeSource.Body,
@@ -163,6 +161,7 @@ fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                     extraPhoto = "",
                     importantNote = importantNote ?: ""
                 )
+                viewModel.saveCustomer()
             })
     }
 }

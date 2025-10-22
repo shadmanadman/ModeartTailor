@@ -122,8 +122,9 @@
     <string name="compare_with_prev_size">مقایسه با اندازه قبلی</string>
     <string name="prev_size">اندازه قبلی</string>
 
-    <string name="next">ادامه</string>
-
+    <string name="save_and_next">ثبت و ادامه</string>
+    <string name="save_customer">ثبت مشتری</string>
+    <string name="customer_saved_successfully">مشتری با موفقیت ثبت شد.</string>
     // Main titles and subtitles
     <string name="select_subscription">انتخاب پلن اشتراک</string>
     <string name="subtitle_digital_notebook">دسترسی به دفترچه دیجیتال اندازه‌گیری</string>
@@ -170,7 +171,7 @@
     <string name="oldest">قدیمی‌ترین</string>
 
     <string name="select_customer_size">انتخاب سایز مشتری</string>
-    <string name="register_new_customer">ثبت مشتری جدید</string>
+    <string name="register_new_customer">ثبت مشتری</string>
     <string name="see_all">نمایش همه</string>
     <string name="last_notes">اخرین یادداشت</string>
     <string name="last_customers">اخرین مشتری</string>

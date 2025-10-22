@@ -58,8 +58,9 @@ import modearttailor.composeapp.generated.resources.ic_sholder_type_3
 import modearttailor.composeapp.generated.resources.ic_style
 import modearttailor.composeapp.generated.resources.loose_style
 import modearttailor.composeapp.generated.resources.modern
-import modearttailor.composeapp.generated.resources.next
+import modearttailor.composeapp.generated.resources.save_and_next
 import modearttailor.composeapp.generated.resources.relaxed
+import modearttailor.composeapp.generated.resources.save_customer
 import modearttailor.composeapp.generated.resources.shoulder_model
 import modearttailor.composeapp.generated.resources.title_personal_and_style_features
 import org.jetbrains.compose.resources.DrawableResource
@@ -75,6 +76,7 @@ import org.modeart.tailor.model.customer.CustomerBodyForm
 import org.modeart.tailor.model.customer.CustomerGender
 import org.modeart.tailor.model.customer.CustomerShoulder
 import org.modeart.tailor.model.customer.CustomerStyle
+import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Hint
@@ -199,19 +201,37 @@ fun StyleFeatures(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
         }
 
 
-        RoundedCornerButton(
-            modifier = Modifier.padding(top = 24.dp),
-            width = 332,
-            isEnabled = true,
-            text = stringResource(Res.string.next),
-            onClick = {
-                viewModel.styleInfoChanged(
-                    customerStyle = selectedStyle?.type as CustomerStyle,
-                    customerBodyType = selectedBodyType?.type as CustomerBodyForm,
-                    customerShoulderType = selectedShoulder?.type as CustomerShoulder,
-                    fabricSensitivity = fabricSensitivity ?: ""
-                )
-            })
+        Row(modifier = Modifier.padding(top = 24.dp)) {
+            RoundedCornerButton(
+                modifier = Modifier.padding(end = 16.dp),
+                width = 232,
+                isEnabled = true,
+                text = stringResource(Res.string.save_and_next),
+                onClick = {
+                    viewModel.styleInfoChanged(
+                        customerStyle = selectedStyle?.type as CustomerStyle,
+                        customerBodyType = selectedBodyType?.type as CustomerBodyForm,
+                        customerShoulderType = selectedShoulder?.type as CustomerShoulder,
+                        fabricSensitivity = fabricSensitivity ?: ""
+                    )
+                })
+
+
+            RoundedCornerButton(
+                isEnabled = true,
+                backgroundColor = Accent,
+                textColor = Color.Black,
+                text = stringResource(Res.string.save_customer),
+                onClick = {
+                    viewModel.styleInfoChanged(
+                        customerStyle = selectedStyle?.type as CustomerStyle,
+                        customerBodyType = selectedBodyType?.type as CustomerBodyForm,
+                        customerShoulderType = selectedShoulder?.type as CustomerShoulder,
+                        fabricSensitivity = fabricSensitivity ?: ""
+                    )
+                    viewModel.saveCustomer()
+                })
+        }
     }
 }
 

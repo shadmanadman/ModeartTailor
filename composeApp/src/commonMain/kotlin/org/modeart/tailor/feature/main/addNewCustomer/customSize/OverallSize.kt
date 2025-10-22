@@ -1,32 +1,32 @@
 package org.modeart.tailor.feature.main.addNewCustomer.customSize
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
-import modearttailor.composeapp.generated.resources.next
+import modearttailor.composeapp.generated.resources.save_and_next
+import modearttailor.composeapp.generated.resources.save_customer
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
-import org.modeart.tailor.model.customer.CustomerSizeFreedom
-import org.modeart.tailor.model.customer.CustomerSizeSource
+import org.modeart.tailor.model.customer.CustomerBodyForm
+import org.modeart.tailor.model.customer.CustomerShoulder
+import org.modeart.tailor.model.customer.CustomerStyle
+import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.Background
 
 enum class BodyPart {
@@ -46,13 +46,24 @@ fun OverallSize(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     ) {
         HeaderSection()
 
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Row(Modifier.fillMaxWidth()) {
             RoundedCornerButton(
-                width = 332,
+                modifier = Modifier.padding(end = 16.dp),
+                width = 232,
                 isEnabled = true,
-                text = stringResource(Res.string.next),
+                text = stringResource(Res.string.save_and_next),
                 onClick = {
                     viewModel.updateStep(NewCustomerSteps.FinalInfo)
+                })
+
+            RoundedCornerButton(
+                isEnabled = true,
+                backgroundColor = Accent,
+                textColor = Color.Black,
+                text = stringResource(Res.string.save_customer),
+                onClick = {
+                    viewModel.updateStep(NewCustomerSteps.FinalInfo)
+                    viewModel.saveCustomer()
                 })
         }
         UpperBodyMeasurementScreen(

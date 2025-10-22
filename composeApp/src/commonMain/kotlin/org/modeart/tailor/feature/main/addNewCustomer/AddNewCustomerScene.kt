@@ -38,11 +38,12 @@ import org.modeart.tailor.theme.Background
 
 @Composable
 @Preview
-fun AddNewCustomerScene(onNavigate: (Route) -> Unit) {
+fun AddNewCustomerScene(onNavigate: (Route) -> Unit,onBack:()-> Unit) {
     val viewModel = koinViewModel(NewCustomerViewModel::class)
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<NewCustomerUiEffect.ShowRawNotification?>(null) }
+    var localizedNotification by remember { mutableStateOf<NewCustomerUiEffect.ShowLocalizedNotification?>(null) }
 
     LaunchedEffect(effects) {
         effects.onEach { effect ->
@@ -51,6 +52,8 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit) {
                 is NewCustomerUiEffect.ShowRawNotification -> {
                     notification = effect
                 }
+
+                is NewCustomerUiEffect.ShowLocalizedNotification -> localizedNotification = effect
             }
         }.collect()
     }
@@ -59,12 +62,18 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit) {
             notification = null
         }
     }
+    localizedNotification?.let { notif ->
+        InAppNotification(message = stringResource(notif.msg), isError = notif.isError) {
+            localizedNotification = null
+        }
+    }
+
 
 
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
         MainToolbar(stringResource(Res.string.register_new_customer)) {
             when (state.step) {
-                NewCustomerSteps.BasicInfo -> onNavigate(MainNavigation.home)
+                NewCustomerSteps.BasicInfo -> onBack()
                 NewCustomerSteps.StyleFeature -> viewModel.updateStep(NewCustomerSteps.BasicInfo)
                 NewCustomerSteps.SupplementaryInfo -> viewModel.updateStep(NewCustomerSteps.StyleFeature)
                 NewCustomerSteps.FinalInfo -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)

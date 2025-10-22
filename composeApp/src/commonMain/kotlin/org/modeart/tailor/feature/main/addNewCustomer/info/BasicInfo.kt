@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import modearttailor.composeapp.generated.resources.Res
@@ -48,7 +47,8 @@ import modearttailor.composeapp.generated.resources.ic_man
 import modearttailor.composeapp.generated.resources.ic_upload
 import modearttailor.composeapp.generated.resources.ic_woman
 import modearttailor.composeapp.generated.resources.mobile_number_customer
-import modearttailor.composeapp.generated.resources.next
+import modearttailor.composeapp.generated.resources.save_and_next
+import modearttailor.composeapp.generated.resources.save_customer
 import modearttailor.composeapp.generated.resources.vector_register_new_customer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -64,6 +64,7 @@ import org.modeart.tailor.platform.PermissionType
 import org.modeart.tailor.platform.createPermissionsManager
 import org.modeart.tailor.platform.rememberCameraManager
 import org.modeart.tailor.platform.rememberGalleryManager
+import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
@@ -221,18 +222,38 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             }
         }
 
-        RoundedCornerButton(
-            width = 332,
-            isEnabled = true,
-            text = stringResource(Res.string.next),
-            onClick = {
-                viewModel.basicInfoChanged(
-                    gender = selectedGender ?: CustomerGender.MALE,
-                    fullName = customerName ?: "",
-                    phoneNumber = customerPhoneNumber ?: "",
-                    birth = customerBirthday ?: "",
-                )
-            })
+        Row {
+            RoundedCornerButton(
+                modifier = Modifier.padding( end = 16.dp),
+                width = 250,
+                isEnabled = true,
+                text = stringResource(Res.string.save_and_next),
+                onClick = {
+                    viewModel.basicInfoChanged(
+                        gender = selectedGender ?: CustomerGender.MALE,
+                        fullName = customerName ?: "",
+                        phoneNumber = customerPhoneNumber ?: "",
+                        birth = customerBirthday ?: "",
+                    )
+                })
+
+            RoundedCornerButton(
+                width = 132,
+                isEnabled = true,
+                backgroundColor = Accent,
+                textColor = Color.Black,
+                text = stringResource(Res.string.save_customer),
+                onClick = {
+                    viewModel.basicInfoChanged(
+                        gender = selectedGender ?: CustomerGender.MALE,
+                        fullName = customerName ?: "",
+                        phoneNumber = customerPhoneNumber ?: "",
+                        birth = customerBirthday ?: "",
+                    )
+                    viewModel.saveCustomer()
+                })
+
+        }
     }
 
     val permissionsManager = createPermissionsManager(object : PermissionCallback {

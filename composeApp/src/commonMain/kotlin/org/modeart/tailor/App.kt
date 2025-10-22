@@ -27,7 +27,7 @@ import org.modeart.tailor.navigation.OnBoardingNavigation
 @Preview
 internal fun App() {
     KoinApplication(application = { modules(modules = appModule()) }) {
-        
+
         PreComposeApp {
             val navigator = rememberNavigator()
             NavHost(
@@ -66,7 +66,7 @@ internal fun App() {
                 scene(route = MainNavigation.newNote.fullPath) {
                     NewNoteScene(
                         onNavigate = { navigator.navigate(it.fullPath) },
-                        onBack = { navigator.goBack() })
+                        onBack = { navigator.popBackStack() })
                 }
                 //************************ Profile *********************************//
                 scene(route = MainNavigation.profile.fullPath) {
@@ -76,8 +76,10 @@ internal fun App() {
                     EditeProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
                 //************************ Customer *********************************//
-                scene(route = MainNavigation.newCustomer.fullPath){
-                    AddNewCustomerScene(onNavigate = {navigator.navigate(it.fullPath)})
+                scene(route = MainNavigation.newCustomer.fullPath) {
+                    AddNewCustomerScene(
+                        onNavigate = { navigator.navigate(it.fullPath) },
+                        onBack = { navigator.popBackStack() })
                 }
             }
         }
