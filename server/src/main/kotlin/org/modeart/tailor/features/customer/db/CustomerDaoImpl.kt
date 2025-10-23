@@ -112,6 +112,7 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
             addUpdateIfNotEmpty(CustomerProfile::address, customer.address)
             addUpdateIfNotEmpty(CustomerProfile::gender, customer.gender)
             addUpdateIfNotEmpty(CustomerProfile::birthday, customer.birthday)
+            addUpdateIfNotEmpty(CustomerProfile::age, customer.age)
             addUpdateIfNotEmpty(CustomerProfile::sizeSource, customer.sizeSource)
             addUpdateIfNotEmpty(CustomerProfile::importantNote, customer.importantNote)
             addUpdateIfNotEmpty(CustomerProfile::sizeFreedom, customer.sizeFreedom)

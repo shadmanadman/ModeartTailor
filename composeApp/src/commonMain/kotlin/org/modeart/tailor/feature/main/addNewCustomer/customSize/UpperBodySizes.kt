@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.age
 import modearttailor.composeapp.generated.resources.back_armhole
@@ -73,7 +74,14 @@ import org.modeart.tailor.theme.appTypography
 
 
 @Composable
-fun HeaderSection() {
+fun HeaderSection(
+    age: String = "0",
+    style: String = "",
+    size: String = "0",
+    name: String = "",
+    phoneNumber: String = "",
+    avatar: String = ""
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,7 +93,7 @@ fun HeaderSection() {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                "۳۸",
+                age,
                 color = Color.Black,
                 style = appTypography().body14,
                 textAlign = TextAlign.Center,
@@ -101,7 +109,7 @@ fun HeaderSection() {
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                "مدرن", color = Color.Black, style = appTypography().body14,
+                style, color = Color.Black, style = appTypography().body14,
                 textAlign = TextAlign.Center,
 
                 modifier = Modifier
@@ -129,7 +137,7 @@ fun HeaderSection() {
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                "۳۸",
+                size,
                 color = Color.Black,
                 style = appTypography().body14,
                 textAlign = TextAlign.Center,
@@ -150,16 +158,14 @@ fun HeaderSection() {
                 horizontalAlignment = Alignment.End,
                 modifier = Modifier.padding(end = 8.dp)
             ) {
-                Text("مریم احمدی", color = Color.White, style = appTypography().body13)
-                Text("0912*******", color = Color.Gray, style = appTypography().body13)
+                Text(name, color = Color.White, style = appTypography().body13)
+                Text(phoneNumber, color = Color.Gray, style = appTypography().body13)
             }
-            Image(
-                painter = painterResource(Res.drawable.test_avatar),
-                contentDescription = null,
+            AsyncImage(model = avatar,contentDescription = null,
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-            )
+                )
         }
     }
 }
@@ -243,21 +249,21 @@ fun UpperBodyMeasurementScreen(
                     items(fields) { label ->
                         OutlinedTextFieldModeArt(
                             modifier = Modifier.padding(top = 12.dp),
-                            value = when(label){
-                                fields[0] -> values?.shoulderWidth?:""
-                                fields[1] -> values?.smallShoulder?:""
-                                fields[2] -> values?.neckCircumference?:""
-                                fields[3] -> values?.chestHeight?:""
-                                fields[4] -> values?.chestCircumference?:""
-                                fields[5] -> values?.chestDistance?:""
-                                fields[6] -> values?.frontLengthToWaist?:""
-                                fields[7] -> values?.waistCircumference?:""
-                                fields[8] -> values?.smallHipCircumference?:""
-                                fields[9] -> values?.largeHipCircumference?:""
-                                fields[10] -> values?.hipHeight?:""
-                                fields[11] -> values?.frontShoulderWidth?:""
-                                fields[12] -> values?.backShoulderWidth?:""
-                                fields[13] -> values?.backLengthNeckToWaist?:""
+                            value = when (label) {
+                                fields[0] -> values?.shoulderWidth ?: ""
+                                fields[1] -> values?.smallShoulder ?: ""
+                                fields[2] -> values?.neckCircumference ?: ""
+                                fields[3] -> values?.chestHeight ?: ""
+                                fields[4] -> values?.chestCircumference ?: ""
+                                fields[5] -> values?.chestDistance ?: ""
+                                fields[6] -> values?.frontLengthToWaist ?: ""
+                                fields[7] -> values?.waistCircumference ?: ""
+                                fields[8] -> values?.smallHipCircumference ?: ""
+                                fields[9] -> values?.largeHipCircumference ?: ""
+                                fields[10] -> values?.hipHeight ?: ""
+                                fields[11] -> values?.frontShoulderWidth ?: ""
+                                fields[12] -> values?.backShoulderWidth ?: ""
+                                fields[13] -> values?.backLengthNeckToWaist ?: ""
                                 else -> ""
                             },
                             onValueChange = { newValue ->

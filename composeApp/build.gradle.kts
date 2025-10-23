@@ -73,6 +73,8 @@ kotlin {
 
             implementation(libs.coil.core)
             implementation(libs.coil.http)
+
+            implementation(libs.kotlinx.date.time)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

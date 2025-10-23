@@ -192,7 +192,7 @@
 
     <string name="complete_measurement_title">اندازه گیری کامل</string>
     <string name="complete_measurement_description">پرونده‌ای دیجیتالی مشتری با همه اندازه‌ها، فرم بدن و استایل شخصی.</string>
-    <string name="if_no_customer_selected_then_new_one_will_get_create">اگر مشتری انتخاب نکنید اندازه‌ها برای مشتری یک جدید ثبت می‌شود.</string>
+    <string name="if_no_customer_selected_then_new_one_will_get_create">اگر مشتری انتخاب نکنید اندازه‌ها برای یک مشتری جدید ثبت می‌شود.</string>
     <string name="plan_upgrade">به روزرسانی پلن</string>
     <string name="active_plan">در حال استفاده</string>
     <string name="expired_plan">پایان یافته</string>

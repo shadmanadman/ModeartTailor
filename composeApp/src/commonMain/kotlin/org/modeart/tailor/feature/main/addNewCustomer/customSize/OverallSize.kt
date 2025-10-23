@@ -44,7 +44,12 @@ fun OverallSize(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
         modifier = Modifier.padding(bottom = 72.dp).fillMaxSize().background(Background)
             .padding(horizontal = 16.dp)
     ) {
-        HeaderSection()
+        HeaderSection(
+            age = state.customer.age?:"0",
+            name = state.customer.name?:"",
+            phoneNumber = state.customer.phoneNumber?:"",
+            avatar = state.customer.avatar?:""
+        )
 
         Row(Modifier.fillMaxWidth()) {
             RoundedCornerButton(

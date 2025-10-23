@@ -3,6 +3,7 @@ package org.modeart.tailor.feature.main.addNewCustomer.info
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,10 +17,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,7 +98,12 @@ fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeaderSection()
+        HeaderSection(
+            age = state.customer.age ?: "",
+            name = state.customer.name ?: "",
+            phoneNumber = state.customer.phoneNumber ?: "",
+            avatar = state.customer.avatar ?: ""
+        )
         // Measurement Source Section
         FormSectionTitle(
             title = stringResource(Res.string.title_measurement_source),
@@ -266,8 +277,8 @@ fun AddPhotoSection() {
     var launchGallery by remember { mutableStateOf(value = false) }
     var launchCamera by remember { mutableStateOf(value = false) }
     var launchSetting by remember { mutableStateOf(value = false) }
-    var selectedImageBitmap = remember { mutableListOf<ImageBitmap>() }
-    var selectedImageByteArray = remember { mutableListOf<ByteArray>() }
+    val selectedImageBitmap =  remember { mutableListOf<ImageBitmap>() }
+    val selectedImageByteArray = remember { mutableListOf<ByteArray>() }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -280,11 +291,30 @@ fun AddPhotoSection() {
             modifier = Modifier.weight(1f).padding(end = 16.dp)
         )
 
+        LazyRow {
+            items(selectedImageBitmap.size) {
+                Box(
+                    modifier = Modifier.padding(end = 8.dp).size(64.dp)
+                        .clip(shape = RoundedCornerShape(16.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    IconButton(onClick = { selectedImageBitmap.removeAt(it) }, modifier = Modifier.size(8.dp)) {
+                        Image(Icons.Default.Close, contentDescription = null)
+                    }
+                    Image(
+                        selectedImageBitmap[it],
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
+
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            AddPhotoButton(iconRes = Res.drawable.ic_add_photo){
+            AddPhotoButton(iconRes = Res.drawable.ic_add_photo) {
                 launchCamera = true
             }
-            AddPhotoButton(iconRes = Res.drawable.ic_upload){
+            AddPhotoButton(iconRes = Res.drawable.ic_upload) {
                 launchGallery = true
             }
         }
@@ -303,6 +333,7 @@ fun AddPhotoSection() {
                         PermissionType.CAMERA -> launchCamera = true
                     }
                 }
+
                 else -> {
                     launchSetting = true
                 }
@@ -364,13 +395,13 @@ fun AddPhotoSection() {
 }
 
 @Composable
-fun AddPhotoButton(iconRes: DrawableResource,onClick: () -> Unit) {
+fun AddPhotoButton(iconRes: DrawableResource, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(50.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(AccentLight)
-            .clickable { onClick()},
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Icon(

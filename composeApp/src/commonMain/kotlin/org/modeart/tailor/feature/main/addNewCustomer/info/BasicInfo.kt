@@ -17,8 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,12 +37,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import modearttailor.composeapp.generated.resources.Res
+import modearttailor.composeapp.generated.resources.age
 import modearttailor.composeapp.generated.resources.birth_date
 import modearttailor.composeapp.generated.resources.choose_gender
 import modearttailor.composeapp.generated.resources.customer_basic_info
@@ -68,6 +80,8 @@ import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 
 @Composable
@@ -77,7 +91,10 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     var customerName by remember { mutableStateOf(state.customer.name) }
     var customerPhoneNumber by remember { mutableStateOf(state.customer.phoneNumber) }
     var customerBirthday by remember { mutableStateOf(state.customer.birthday) }
+    var customerAge by remember { mutableStateOf(state.customer.age) }
 
+    var showDatePicker by remember { mutableStateOf(false) }
+    var selectedBirthdayInDate by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
 
     var launchGallery by remember { mutableStateOf(value = false) }
@@ -86,7 +103,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     val selectedImageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
     val selectedImageByteArray = remember { mutableStateOf<ByteArray?>(null) }
 
-    LaunchedEffect(selectedImageByteArray.value){
+    LaunchedEffect(selectedImageByteArray.value) {
         selectedImageByteArray.value?.let {
             viewModel.uploadImage(it)
         }
@@ -125,10 +142,10 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             Box(
                 modifier = Modifier.width(140.dp).height(tabHeight)
                     .background(color = AccentLight, shape = RoundedCornerShape(12.dp))
-                    .clickable(interactionSource = null,indication = null,onClick = {
-                        selectedGender = if (selectedGender===CustomerGender.MALE) {
+                    .clickable(interactionSource = null, indication = null, onClick = {
+                        selectedGender = if (selectedGender === CustomerGender.MALE) {
                             CustomerGender.FEMALE
-                        }else {
+                        } else {
                             CustomerGender.MALE
                         }
                     })
@@ -161,20 +178,34 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             OutlinedTextFieldModeArt(
-                value = state.customer.name.toString(),
-                onValueChange = {},
+                value = customerName.toString(),
+                onValueChange = {
+                    customerName = it
+                },
                 hint = stringResource(Res.string.customer_name_family_name)
             )
             OutlinedTextFieldModeArt(
-                value = state.customer.phoneNumber.toString(),
-                onValueChange = {},
+                value = customerPhoneNumber.toString(),
+                onValueChange = { customerPhoneNumber = it },
                 hint = stringResource(Res.string.mobile_number_customer)
             )
+
             OutlinedTextFieldModeArt(
-                value = state.customer.birthday.toString(),
-                onValueChange = {},
-                hint = stringResource(Res.string.birth_date)
+                isEnabled = false,
+                value = customerAge?:"",
+                isNumberOnly = true,
+                onValueChange = {customerAge = it},
+                hint = stringResource(Res.string.age)
             )
+//                OutlinedTextFieldModeArt(
+//                    isEnabled = false,
+//                    onClick = {showDatePicker = true},
+//                    value = if (customerBirthday.isNullOrEmpty()) "" else convertMillisToDate(
+//                        customerBirthday?.toLong() ?: 0
+//                    ),
+//                    onValueChange = {},
+//                    hint = stringResource(Res.string.birth_date)
+//                )
         }
 
 
@@ -192,7 +223,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             Box(
                 modifier = Modifier.padding(end = 8.dp).size(64.dp)
                     .clip(shape = RoundedCornerShape(16.dp))
-                    .clickable(onClick = {launchGallery = true}),
+                    .clickable(onClick = { launchGallery = true }),
                 contentAlignment = Alignment.Center
             ) {
                 selectedImageBitmap.value?.let {
@@ -203,7 +234,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             Box(
                 modifier = Modifier.padding(end = 16.dp).size(64.dp)
                     .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
-                    .clickable(onClick = {launchGallery = true}),
+                    .clickable(onClick = { launchGallery = true }),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(painter = painterResource(Res.drawable.ic_upload), contentDescription = null)
@@ -212,7 +243,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             Box(
                 modifier = Modifier.size(64.dp)
                     .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
-                    .clickable(onClick = {launchCamera = true}),
+                    .clickable(onClick = { launchCamera = true }),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -224,7 +255,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
 
         Row {
             RoundedCornerButton(
-                modifier = Modifier.padding( end = 16.dp),
+                modifier = Modifier.padding(end = 16.dp),
                 width = 250,
                 isEnabled = true,
                 text = stringResource(Res.string.save_and_next),
@@ -268,6 +299,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                         PermissionType.CAMERA -> launchCamera = true
                     }
                 }
+
                 else -> {
                     launchSetting = true
                 }
@@ -278,7 +310,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
 
     val galleryManager = rememberGalleryManager {
         coroutineScope.launch {
-             withContext(Dispatchers.Default) {
+            withContext(Dispatchers.Default) {
                 selectedImageByteArray.value = it?.toByteArray()
             }
             withContext(Dispatchers.Default) {
@@ -318,4 +350,54 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
 
     if (launchSetting)
         permissionsManager.launchSettings()
+
+    if (showDatePicker)
+        BirthDayPicker(onDateSelected = { millis ->
+            customerBirthday = millis.toString()
+        }, onDismiss = {
+            showDatePicker = false
+        })
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BirthDayPicker(onDateSelected: (Long) -> Unit, onDismiss: () -> Unit) {
+    val datePickerState = rememberDatePickerState()
+    val dateFormatter = remember { DatePickerDefaults.dateFormatter() }
+    DatePickerDialog(
+        onDismissRequest = {
+            onDismiss()
+            onDateSelected(datePickerState.selectedDateMillis ?: 0)
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismiss()
+                    onDateSelected(datePickerState.selectedDateMillis ?: 0)
+                }
+            ) {
+                Text("OK")
+            }
+        }
+    ) {
+        DatePicker(
+            state = datePickerState,
+            dateFormatter = dateFormatter,
+            modifier = Modifier
+                .fillMaxWidth()
+                .graphicsLayer(
+                    scaleX = 1f,
+                    scaleY = 1f,
+                    transformOrigin = TransformOrigin(0f, 0f)
+                )
+        )
+    }
+}
+
+@OptIn(ExperimentalTime::class)
+fun convertMillisToDate(millis: Long): String {
+    val instant = Instant.fromEpochMilliseconds(millis)
+    val dateTimeInLocalZone = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${dateTimeInLocalZone.month.name} ${dateTimeInLocalZone.day}, ${dateTimeInLocalZone.year}"
 }
