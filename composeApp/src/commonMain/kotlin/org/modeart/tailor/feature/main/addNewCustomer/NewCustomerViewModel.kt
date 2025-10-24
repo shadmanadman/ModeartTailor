@@ -1,5 +1,6 @@
 package org.modeart.tailor.feature.main.addNewCustomer
 
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,7 +29,10 @@ import org.modeart.tailor.model.customer.CustomerSizeSource
 import org.modeart.tailor.model.customer.CustomerStyle
 import kotlin.toString
 
-class NewCustomerViewModel(private val customerService: CustomerService,private val businessService: BusinessService) : ViewModel() {
+class NewCustomerViewModel(
+    private val customerService: CustomerService,
+    private val businessService: BusinessService
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NewCustomerUiState())
 
@@ -42,12 +46,19 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
         private set
 
 
+    private val extraPhotos: MutableList<String> = mutableListOf()
+
+    fun removeExtraPhoto(index: Int) {
+        if (index <= extraPhotos.size)
+            extraPhotos.removeAt(index)
+    }
+
     fun setSelectedCustomer(customer: CustomerProfile) {
-        _uiState.update { it.copy(customer = customer)}
+        _uiState.update { it.copy(customer = customer) }
     }
 
 
-    fun fastSizeSelected(size: Int){
+    fun fastSizeSelected(size: Int) {
         _uiState.update { it.copy(selectedFastSize = size) }
     }
 
@@ -116,7 +127,6 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
     fun finalInfoChanged(
         sizeSource: CustomerSizeSource,
         sizeFreedom: CustomerSizeFreedom,
-        extraPhoto: String,
         importantNote: String
     ) {
         _uiState.update {
@@ -124,7 +134,7 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
                 customer = it.customer.copy(
                     sizeSource = sizeSource,
                     sizeFreedom = sizeFreedom,
-                    extraPhoto = extraPhoto,
+                    extraPhoto = extraPhotos,
                     importantNote = importantNote
                 )
             )
@@ -143,7 +153,7 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
         _uiState.update { it.copy(customer = it.customer.copy(sleevesSizes = sleevesSizes)) }
     }
 
-    fun saveCustomer(){
+    fun saveCustomer() {
         if (_uiState.value.customer.id.isNotEmpty())
             updateCustomer()
         else
@@ -191,7 +201,8 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
             }
         }
     }
-    fun uploadImage(byteArray: ByteArray) {
+
+    fun uploadImage(isAvatar: Boolean, byteArray: ByteArray) {
         viewModelScope.launch {
             val response = businessService.uploadImage(byteArray)
             when (response) {
@@ -202,7 +213,11 @@ class NewCustomerViewModel(private val customerService: CustomerService,private 
                 )
 
                 is ApiResult.Success -> {
-                    _uiState.update { it.copy(customer = it.customer.copy(avatar = response.data.url)) }
+                    if (isAvatar)
+                        _uiState.update { it.copy(customer = it.customer.copy(avatar = response.data.url)) }
+                    else {
+                        extraPhotos.add(response.data.url)
+                    }
                 }
             }
         }

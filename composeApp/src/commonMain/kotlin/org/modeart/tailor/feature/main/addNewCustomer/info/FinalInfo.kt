@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,17 +18,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,7 +59,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.add_photo
+import modearttailor.composeapp.generated.resources.body
 import modearttailor.composeapp.generated.resources.body_dress_pattern_measurement
+import modearttailor.composeapp.generated.resources.distance
+import modearttailor.composeapp.generated.resources.dress
 import modearttailor.composeapp.generated.resources.fit_fit
 import modearttailor.composeapp.generated.resources.ic_add_photo
 import modearttailor.composeapp.generated.resources.ic_arrow_down
@@ -59,11 +74,17 @@ import modearttailor.composeapp.generated.resources.important_note
 import modearttailor.composeapp.generated.resources.loose_fit
 import modearttailor.composeapp.generated.resources.save_and_next
 import modearttailor.composeapp.generated.resources.notes_hint
+import modearttailor.composeapp.generated.resources.others
+import modearttailor.composeapp.generated.resources.pattern
+import modearttailor.composeapp.generated.resources.personal
 import modearttailor.composeapp.generated.resources.register_title
 import modearttailor.composeapp.generated.resources.save_customer
 import modearttailor.composeapp.generated.resources.seam_allowance
 import modearttailor.composeapp.generated.resources.title_measurement_freedom_level
 import modearttailor.composeapp.generated.resources.title_measurement_source
+import modearttailor.composeapp.generated.resources.to_remove_picture_click_on_it
+import modearttailor.composeapp.generated.resources.work_and_customer
+import modearttailor.composeapp.generated.resources.you_can_select_multiple_pictures
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -73,6 +94,7 @@ import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.feature.main.addNewCustomer.customSize.HeaderSection
+import org.modeart.tailor.model.business.NoteCategory
 import org.modeart.tailor.model.customer.CustomerSizeFreedom
 import org.modeart.tailor.model.customer.CustomerSizeSource
 import org.modeart.tailor.platform.PermissionCallback
@@ -109,7 +131,9 @@ fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             title = stringResource(Res.string.title_measurement_source),
             Res.drawable.ic_meaure_source
         )
-        DropdownField(hint = stringResource(Res.string.body_dress_pattern_measurement))
+        CustomerSizeSource { sizeSource ->
+            customerSizeSource = sizeSource
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -143,7 +167,18 @@ fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Add Photo Section
-        AddPhotoSection()
+        Text(
+            text = stringResource(Res.string.you_can_select_multiple_pictures),
+            style = appTypography().body14
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        AddPhotoSection(viewModel)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(Res.string.to_remove_picture_click_on_it),
+            style = appTypography().body14,
+            color = Color.Red
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -169,7 +204,6 @@ fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                 viewModel.finalInfoChanged(
                     sizeSource = customerSizeSource ?: CustomerSizeSource.Body,
                     sizeFreedom = selectedFit ?: CustomerSizeFreedom.WithAllowance,
-                    extraPhoto = "",
                     importantNote = importantNote ?: ""
                 )
                 viewModel.saveCustomer()
@@ -271,14 +305,14 @@ fun SelectableButton(
 }
 
 @Composable
-fun AddPhotoSection() {
+fun AddPhotoSection(viewModel: NewCustomerViewModel) {
     val coroutineScope = rememberCoroutineScope()
 
     var launchGallery by remember { mutableStateOf(value = false) }
     var launchCamera by remember { mutableStateOf(value = false) }
     var launchSetting by remember { mutableStateOf(value = false) }
-    val selectedImageBitmap =  remember { mutableListOf<ImageBitmap>() }
-    val selectedImageByteArray = remember { mutableListOf<ByteArray>() }
+    val selectedImageBitmap by remember { mutableStateOf(mutableStateListOf<ImageBitmap>()) }
+    val selectedImageByteArray by remember { mutableStateOf(mutableListOf<ByteArray>()) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -294,13 +328,14 @@ fun AddPhotoSection() {
         LazyRow {
             items(selectedImageBitmap.size) {
                 Box(
-                    modifier = Modifier.padding(end = 8.dp).size(64.dp)
-                        .clip(shape = RoundedCornerShape(16.dp)),
+                    modifier = Modifier.padding(end = 8.dp).size(54.dp)
+                        .clip(shape = RoundedCornerShape(16.dp))
+                        .clickable(onClick = {
+                            selectedImageBitmap.removeAt(it)
+                            viewModel.removeExtraPhoto(it)
+                        }),
                     contentAlignment = Alignment.Center
                 ) {
-                    IconButton(onClick = { selectedImageBitmap.removeAt(it) }, modifier = Modifier.size(8.dp)) {
-                        Image(Icons.Default.Close, contentDescription = null)
-                    }
                     Image(
                         selectedImageBitmap[it],
                         contentDescription = null,
@@ -347,6 +382,7 @@ fun AddPhotoSection() {
             withContext(Dispatchers.Default) {
                 it?.toByteArray()?.let {
                     selectedImageByteArray.add(it)
+                    viewModel.uploadImage(isAvatar = false, it)
                 }
             }
             withContext(Dispatchers.Default) {
@@ -363,6 +399,7 @@ fun AddPhotoSection() {
             withContext(Dispatchers.Default) {
                 it?.toByteArray()?.let {
                     selectedImageByteArray.add(it)
+                    viewModel.uploadImage(isAvatar = false, it)
                 }
             }
             withContext(Dispatchers.Default) {
@@ -426,6 +463,119 @@ fun NoteTextField(hint: String, importantNote: String) {
     ) {
         Text(text = hint, color = Color.Gray, fontSize = 14.sp)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CustomerSizeSource(onCategorySelected: (CustomerSizeSource) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val categoryOptions = mapOf(
+        CustomerSizeSource.Body to Res.string.body,
+        CustomerSizeSource.Dress to Res.string.dress,
+        CustomerSizeSource.Pattern to Res.string.pattern,
+        CustomerSizeSource.Distance to Res.string.distance
+    )
+    var selectedOption by remember { mutableStateOf(categoryOptions.entries.first()) }
+
+    Column {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            // --- 1. The Main (Selected) Category Box ---
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    // The main box has a light background and rounded corners
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .height(55.dp)
+                    .clickable(
+                        interactionSource = null,
+                        indication = null,
+                        onClick = { expanded = true })
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.width(64.dp))
+
+                Box(
+                    modifier = Modifier
+                        .wrapContentSize(Alignment.Center)
+                        .background(
+                            color = AccentLight,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        text = stringResource(selectedOption.value),
+                        style = appTypography().body14
+                    )
+                }
+            }
+        }
+
+        if (expanded) {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(8.dp),
+            ) {
+                categoryOptions.forEach { option ->
+                    DropdownMenuItem(
+                        onClick = {
+
+                        },
+                        contentPadding = PaddingValues(0.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        text = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable(interactionSource = null, indication = null) {
+                                        onCategorySelected(option.key)
+                                        selectedOption = option
+                                        expanded = false
+                                    }
+                                    .background(
+                                        color = if (option.key == selectedOption.key) AccentLight else Color.Transparent,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                horizontalArrangement = Arrangement.End // Align text to the right
+                            ) {
+                                Text(
+                                    text = stringResource(option.value),
+                                    style = appTypography().body13 // Use your defined style
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+
 }
 
 @Composable

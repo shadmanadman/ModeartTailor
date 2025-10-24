@@ -107,6 +107,10 @@
 
     <string name="title_measurement_source">منبع اندازه گیری</string>
     <string name="body_dress_pattern_measurement">بدن / لباس / الگو / از راه دور</string>
+    <string name="body">بدن</string>
+    <string name="dress">لباس</string>
+    <string name="pattern">الگو</string>
+    <string name="distance">از راه دور</string>
     <string name="title_measurement_freedom_level">سطح آزادی اندازه گیری</string>
     <string name="seam_allowance">با جای دوخت</string>
     <string name="loose_fit">آزاد</string>
@@ -198,4 +202,6 @@
     <string name="expired_plan">پایان یافته</string>
     <string name="pending_plan">منتظر شروع</string>
     <string name="current_plan">پلن فعلی شما</string>
+    <string name="you_can_select_multiple_pictures">می‌توانید چند تصویر انتخاب کنید</string>
+    <string name="to_remove_picture_click_on_it">برای حذف تصویر روی ان کلیک کنید</string>
 </resources>

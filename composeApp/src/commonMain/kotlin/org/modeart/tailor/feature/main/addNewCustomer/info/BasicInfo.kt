@@ -105,7 +105,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
 
     LaunchedEffect(selectedImageByteArray.value) {
         selectedImageByteArray.value?.let {
-            viewModel.uploadImage(it)
+            viewModel.uploadImage(isAvatar = true,it)
         }
     }
 
