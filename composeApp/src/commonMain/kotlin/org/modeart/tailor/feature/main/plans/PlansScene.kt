@@ -1,6 +1,7 @@
 package org.modeart.tailor.feature.main.plans
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +19,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,9 +43,12 @@ import modearttailor.composeapp.generated.resources.yearly_plan_customers
 import modearttailor.composeapp.generated.resources.yearly_plan_notes
 import modearttailor.composeapp.generated.resources.yearly_plan_price
 import modearttailor.composeapp.generated.resources.yearly_plan_title
+import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.feature.main.plans.contract.SubscriptionsStep
+import org.modeart.tailor.model.business.PlanType
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Hint
@@ -51,12 +57,17 @@ import org.modeart.tailor.theme.appTypography
 
 @Composable
 fun PlansScene() {
-
+    val viewModel  = koinViewModel(PlansViewModel::class)
+    val state by viewModel.uiState.collectAsState()
+    when(state.currentStep){
+        SubscriptionsStep.SelectType -> SubscriptionsContent(viewModel)
+        SubscriptionsStep.TypeDetails -> PlansDetailsScene()
+    }
 }
 
 @Preview
 @Composable
-fun SubscriptionScreen() {
+fun SubscriptionsContent(viewModel: PlansViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,7 +101,9 @@ fun SubscriptionScreen() {
             contentColor = Background,
             icon = vectorResource(Res.drawable.ic_calendar_date_monthly),
             buttonBackgroundColor = Accent
-        )
+        ){
+            viewModel.setSelectedPlan(PlanType.MONTHLY)
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -105,7 +118,9 @@ fun SubscriptionScreen() {
             contentColor = Primary,
             icon = vectorResource(Res.drawable.ic_calender_date_yearly),
             buttonBackgroundColor = Primary
-        )
+        ){
+            viewModel.setSelectedPlan(PlanType.YEARLY)
+        }
     }
 }
 
@@ -119,13 +134,15 @@ fun SubscriptionCard(
     backgroundColor: Color,
     contentColor: Color,
     icon: ImageVector,
-    buttonBackgroundColor: Color
+    buttonBackgroundColor: Color,
+    onCardClicked:()-> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .background(backgroundColor, RoundedCornerShape(20.dp))
-            .padding(20.dp)
+            .padding(20.dp).
+        clickable(interactionSource = null,indication = null, onClick = onCardClicked)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -204,10 +221,4 @@ fun SubscriptionDetail(text: String, textColor: Color, bulletPointColor: Color) 
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text, style = appTypography().title16, color = textColor)
     }
-}
-
-@Preview
-@Composable
-fun PreviewSubscriptionScreen() {
-    SubscriptionScreen()
 }

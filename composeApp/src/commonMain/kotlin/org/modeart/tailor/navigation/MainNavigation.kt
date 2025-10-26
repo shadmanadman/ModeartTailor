@@ -15,6 +15,8 @@ object MainNavigation : Navigation {
     val contact = Route(name = "contact")
     val about = Route(name = "about")
 
+    val planHistory = Route(name = "planHistory")
+    val plan = Route(name = "plan")
 
     // Note
     val newNote = Route(name = "newNote")

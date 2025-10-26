@@ -23,6 +23,8 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.active_plan
 import modearttailor.composeapp.generated.resources.current_plan
@@ -39,6 +43,7 @@ import modearttailor.composeapp.generated.resources.pending_plan
 import modearttailor.composeapp.generated.resources.plan_upgrade
 import modearttailor.composeapp.generated.resources.subtitle_digital_notebook
 import modearttailor.composeapp.generated.resources.yearly_plan_title
+import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.MainToolbar
@@ -50,18 +55,21 @@ import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Composable
-fun PlanHistoryScene() {
-
+fun PlanHistoryScene(onBack: () -> Unit) {
+    val viewModel = koinViewModel(ProfileViewModel::class)
+    val state by viewModel.uiState.collectAsState()
+    PlanHistoryContent(state.plans, state.remainingPlanInDays.toString(),onBack)
 }
 
 @Composable
-@Preview
-fun PlanHistoryContent() {
+fun PlanHistoryContent(plans: List<BusinessProfile.Plan>, remainingDays: String,onBack:()-> Unit) {
     Column(modifier = Modifier.background(Background)) {
         MainToolbar(stringResource(Res.string.plan_upgrade)) {
-
+            onBack()
         }
 
         Box(Modifier.fillMaxWidth().background(AccentLight).padding(12.dp)) {
@@ -77,28 +85,32 @@ fun PlanHistoryContent() {
                     text = stringResource(Res.string.subtitle_digital_notebook),
                     style = appTypography().body14
                 )
-                CurrentPlanCard(isMonthly = true)
+                CurrentPlanCard(plans.first { it.planStatus == PlanStatus.ACTIVE }, remainingDays)
             }
         }
 
         LazyColumn {
-
+            items(plans.size){
+                HistoryItem(plans[it])
+            }
         }
     }
 }
 
 
 @Composable
-@Preview
-fun CurrentPlanCard(isMonthly: Boolean) {
+fun CurrentPlanCard(plan: BusinessProfile.Plan, remainingDays: String) {
     val planType =
-        if (isMonthly) stringResource(Res.string.monthly_plan_title) else stringResource(Res.string.yearly_plan_title)
-    val daysLeft = if (isMonthly) "۲۸ روز باقیمانده" else "۳۶۵ روز باقیمانده"
-    val activationDate = "فعال شده در ۲۵ مرداد ۱۴۰۴"
-    val icon = if (isMonthly) Icons.Default.Schedule else Icons.Default.CalendarToday
-    val backgroundColor = if (isMonthly) Primary else Accent
-    val textColor = if (isMonthly) Color.White else Primary
-    val iconTint = if (isMonthly) AccentLight else Primary
+        if (plan.planType == PlanType.MONTHLY) stringResource(Res.string.monthly_plan_title) else stringResource(
+            Res.string.yearly_plan_title
+        )
+    val daysLeft = remainingDays
+    val activationDate = convertMillisToDate(plan.dateOfPurchase)
+    val icon =
+        if (plan.planType == PlanType.MONTHLY) Icons.Default.Schedule else Icons.Default.CalendarToday
+    val backgroundColor = if (plan.planType == PlanType.MONTHLY) Primary else Accent
+    val textColor = if (plan.planType == PlanType.MONTHLY) Color.White else Primary
+    val iconTint = if (plan.planType == PlanType.MONTHLY) AccentLight else Primary
 
 
     Card(
@@ -221,7 +233,7 @@ fun HistoryItem(item: BusinessProfile.Plan) {
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = item.dateOfPurchase,
+                text = convertMillisToDate(item.dateOfPurchase),
                 color = Primary.copy(alpha = 0.6f),
                 fontSize = 14.sp,
                 textAlign = TextAlign.Right,
@@ -230,4 +242,11 @@ fun HistoryItem(item: BusinessProfile.Plan) {
         }
     }
     Divider(color = Primary, thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
+}
+
+@OptIn(ExperimentalTime::class)
+fun convertMillisToDate(millis: Long): String {
+    val instant = Instant.fromEpochMilliseconds(millis)
+    val dateTimeInLocalZone = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${dateTimeInLocalZone.month.name} ${dateTimeInLocalZone.day}, ${dateTimeInLocalZone.year}"
 }

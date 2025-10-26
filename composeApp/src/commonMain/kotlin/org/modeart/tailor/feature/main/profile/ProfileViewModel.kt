@@ -16,11 +16,18 @@ import org.modeart.tailor.api.ApiResult
 import org.modeart.tailor.api.TokenService
 import org.modeart.tailor.api.business.BusinessService
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiEffect
+import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
 import org.modeart.tailor.feature.main.profile.contract.ProfileUiState
 import org.modeart.tailor.model.business.BusinessProfile
+import org.modeart.tailor.model.business.PlanStatus
 import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.OnBoardingNavigation
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlin.toString
 
 class ProfileViewModel(
@@ -40,6 +47,7 @@ class ProfileViewModel(
 
     init {
         getProfile()
+        getBusinessCustomers()
     }
 
     fun navigateToEditProfile() {
@@ -135,7 +143,43 @@ class ProfileViewModel(
                             businessName = response.data.businessName ?: "",
                             phone = response.data.phoneNumber ?: "",
                             address = response.data.city ?: "",
-                            avatar = response.data.profilePictureUrl ?: ""
+                            avatar = response.data.profilePictureUrl ?: "",
+                            plans = response.data.plan ?: emptyList(),
+                            remainingPlanInDays = remainingDaysFromMillis(
+                                response.data.plan?.first { it.planStatus == PlanStatus.ACTIVE }?.dateOfPurchase
+                                    ?: 0L
+                            )
+
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalTime::class)
+    fun remainingDaysFromMillis(targetMillis: Long): Long {
+        val now = Clock.System.now()
+        val targetInstant = Instant.fromEpochMilliseconds(targetMillis)
+
+        val duration = targetInstant - now
+        return duration.toDouble(DurationUnit.DAYS).toLong()
+    }
+
+    fun getBusinessCustomers() {
+        viewModelScope.launch {
+            val response = businessService.getBusinessCustomers()
+            when (response) {
+                is ApiResult.Error -> effects.send(
+                    ProfileUiEffect.ShowRawNotification(
+                        msg = response.message, errorCode = response.code.toString()
+                    )
+                )
+
+                is ApiResult.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            customerCount = response.data.size
                         )
                     }
                 }

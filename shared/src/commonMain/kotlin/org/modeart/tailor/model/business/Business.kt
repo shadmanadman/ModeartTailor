@@ -15,13 +15,12 @@ data class BusinessProfile(
     val businessName: String? = "",
     val city: String? = "",
     val state: String? = "",
-    val plan: Plan? = Plan(),
+    val plan: List<Plan>? = emptyList(),
     val notes: List<Notes>? = emptyList(),
     val createdAt: String? = "",
     val updatedAt: String? = "",
     val deletedAt: String? = "",
-    val deleted: Boolean? = false,
-    val planEndDate: String? = ""
+    val deleted: Boolean? = false
 ) {
     @Serializable
     data class Notes(
@@ -38,7 +37,7 @@ data class BusinessProfile(
     data class Plan(
         val planStatus: PlanStatus = PlanStatus.EXPIRED,
         val planType: PlanType = PlanType.NONE,
-        val dateOfPurchase:String = ""
+        val dateOfPurchase:Long = 0
     )
 }
 

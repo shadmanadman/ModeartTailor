@@ -9,12 +9,15 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.modeart.tailor.feature.main.addNewCustomer.AddNewCustomerScene
+import org.modeart.tailor.feature.main.contact.ContactUsScene
 import org.modeart.tailor.feature.main.home.HomeScene
 import org.modeart.tailor.feature.main.main.BottomNavScene
 import org.modeart.tailor.feature.main.measurments.MeasurementScene
 import org.modeart.tailor.feature.main.note.NewNoteScene
+import org.modeart.tailor.feature.main.plans.PlansScene
 import org.modeart.tailor.feature.main.profile.EditeProfileScene
 import org.modeart.tailor.feature.main.profile.MainProfileScene
+import org.modeart.tailor.feature.main.profile.PlanHistoryScene
 import org.modeart.tailor.feature.onboarding.login.LoginScene
 import org.modeart.tailor.feature.onboarding.signup.SignupScene
 import org.modeart.tailor.feature.onboarding.splash.SplashScene
@@ -74,6 +77,15 @@ internal fun App() {
                 }
                 scene(route = MainNavigation.editProfile.fullPath) {
                     EditeProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
+                }
+                scene(route = MainNavigation.contact.fullPath){
+                    ContactUsScene()
+                }
+                scene(route = MainNavigation.planHistory.fullPath){
+                    PlanHistoryScene(onBack = {navigator.popBackStack()})
+                }
+                scene(route = MainNavigation.plan.fullPath){
+                    PlansScene()
                 }
                 //************************ Customer *********************************//
                 scene(route = MainNavigation.newCustomer.fullPath) {

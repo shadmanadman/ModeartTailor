@@ -17,6 +17,7 @@ import org.modeart.tailor.feature.main.home.HomeViewModel
 import org.modeart.tailor.feature.main.main.BottomNavViewModel
 import org.modeart.tailor.feature.main.measurments.MeasurementViewModel
 import org.modeart.tailor.feature.main.note.NoteViewModel
+import org.modeart.tailor.feature.main.plans.PlansViewModel
 import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.prefs.PrefsDataStore
 import org.modeart.tailor.prefs.rememberDataStore
@@ -29,6 +30,7 @@ val mainModule = module {
     single { CustomersViewModel(get()) }
     single { MeasurementViewModel() }
     single { NewCustomerViewModel(get(),get()) }
+    single { PlansViewModel() }
     singleOf(::BusinessRepo).bind<BusinessService>()
     singleOf(::CustomerRepo).bind<CustomerService>()
     singleOf(::OnBoardingRepo).bind<OnBoardingService>()

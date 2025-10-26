@@ -11,4 +11,6 @@ data class ProfileUiState(
     val address: String = "",
     val avatar:String = "",
     val customerCount: Int = 0,
+    val plans:List<BusinessProfile.Plan> = emptyList(),
+    val remainingPlanInDays : Long = 0
 )

@@ -35,6 +35,7 @@ import org.modeart.tailor.theme.appTypography
 
 @Composable
 fun ContactUsScene() {
+    ContactUs()
 }
 
 
