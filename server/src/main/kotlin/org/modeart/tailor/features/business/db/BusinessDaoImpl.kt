@@ -101,7 +101,6 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
                 businessProfile.notes
             )
             addUpdateIfNotEmpty(BusinessProfile::updatedAt, Clock.System.now().toString())
-            addUpdateIfNotEmpty(BusinessProfile::planEndDate, businessProfile.planEndDate)
 
 
             if (updates.isEmpty()) {

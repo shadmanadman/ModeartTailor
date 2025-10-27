@@ -145,10 +145,11 @@ class ProfileViewModel(
                             address = response.data.city ?: "",
                             avatar = response.data.profilePictureUrl ?: "",
                             plans = response.data.plan ?: emptyList(),
-                            remainingPlanInDays = remainingDaysFromMillis(
-                                response.data.plan?.first { it.planStatus == PlanStatus.ACTIVE }?.dateOfPurchase
-                                    ?: 0L
-                            )
+                            remainingPlanInDays = 0
+//                                remainingDaysFromMillis(
+//                                response.data.plan?.first { it.planStatus == PlanStatus.ACTIVE }?.dateOfPurchase
+//                                    ?: 0L
+//                            )
 
                         )
                     }

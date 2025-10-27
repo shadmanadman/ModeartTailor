@@ -264,7 +264,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                         gender = selectedGender ?: CustomerGender.MALE,
                         fullName = customerName ?: "",
                         phoneNumber = customerPhoneNumber ?: "",
-                        birth = customerBirthday ?: "",
+                        birth = customerAge ?: "",
                     )
                 })
 
@@ -279,7 +279,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                         gender = selectedGender ?: CustomerGender.MALE,
                         fullName = customerName ?: "",
                         phoneNumber = customerPhoneNumber ?: "",
-                        birth = customerBirthday ?: "",
+                        birth = customerAge ?: "",
                     )
                     viewModel.saveCustomer()
                 })

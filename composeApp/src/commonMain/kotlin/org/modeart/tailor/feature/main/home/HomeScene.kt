@@ -35,9 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -63,6 +65,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.api.BASE_URL
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
@@ -249,15 +252,12 @@ fun HomeTopBar(
 
 
                 // Profile Picture
-                Image(
-                    painter = painterResource(Res.drawable.ic_add_photo),
-                    contentDescription = "Profile Picture",
+                AsyncImage("$BASE_URL$avatar",contentDescription = null, contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .size(60.dp)
                         .background(Color.White, shape = CircleShape)
-                        .clickable(onClick = onNavigateToProfile)
-                )
+                        .clickable(onClick = onNavigateToProfile))
                 // User Info
                 Column(
                     modifier = Modifier.weight(1f)

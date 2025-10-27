@@ -1,6 +1,7 @@
 package org.modeart.tailor.feature.main.addNewCustomer
 
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,15 +37,10 @@ class NewCustomerViewModel(
 
     private val _uiState = MutableStateFlow(NewCustomerUiState())
 
-    val uiState: StateFlow<NewCustomerUiState> = _uiState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = _uiState.value,
-    )
+    val uiState: StateFlow<NewCustomerUiState> = _uiState
 
     var effects = Channel<NewCustomerUiEffect>(Channel.UNLIMITED)
         private set
-
 
     private val extraPhotos: MutableList<String> = mutableListOf()
 
@@ -72,14 +68,14 @@ class NewCustomerViewModel(
         phoneNumber: String,
         birth: String,
     ) {
-
+        updateStep(NewCustomerSteps.StyleFeature)
         _uiState.update {
             it.copy(
                 customer = it.customer.copy(
                     gender = gender,
                     name = fullName,
                     phoneNumber = phoneNumber,
-                    birthday = birth,
+                    age = birth,
                 ),
                 step = NewCustomerSteps.StyleFeature
             )

@@ -182,7 +182,7 @@ fun Route.configureUpload() {
                         val file = File("uploads/$name")
                         file.parentFile.mkdirs()
                         part.streamProvider().use { it.copyTo(file.outputStream()) }
-                        imageUrl = "/uploads/$name"
+                        imageUrl = "uploads/$name"
                     }
 
                     else -> Unit
