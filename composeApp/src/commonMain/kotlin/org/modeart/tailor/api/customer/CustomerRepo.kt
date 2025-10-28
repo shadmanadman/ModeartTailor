@@ -9,10 +9,11 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import org.modeart.tailor.api.ApiResult
 import org.modeart.tailor.api.safeRequest
+import org.modeart.tailor.model.customer.CustomerCreatedSuccessResponse
 import org.modeart.tailor.model.customer.CustomerProfile
 
 class CustomerRepo(private val client: HttpClient) : CustomerService {
-    override suspend fun createCustomer(customerProfile: CustomerProfile): ApiResult<Unit> =
+    override suspend fun createCustomer(customerProfile: CustomerProfile): ApiResult<CustomerCreatedSuccessResponse> =
         safeRequest {
             client.post("/customer") {
                 setBody(customerProfile)

@@ -30,7 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -44,6 +46,7 @@ import modearttailor.composeapp.generated.resources.work_and_customer
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.api.BASE_URL
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
 import org.modeart.tailor.feature.main.customer.contract.CustomerUiState
@@ -54,6 +57,7 @@ import org.modeart.tailor.feature.main.note.NewNote
 import org.modeart.tailor.feature.main.note.NoteItem
 import org.modeart.tailor.feature.main.note.convertToNoteCategory
 import org.modeart.tailor.model.business.NoteCategory
+import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.AccentLight
@@ -82,8 +86,9 @@ fun CustomerScene(onNavigate: (Route) -> Unit) {
         }
     }
 
-    LaunchedEffect(state.searchQuery){
-        viewModel.searchForCustomers()
+    LaunchedEffect(state.searchQuery) {
+        if (state.searchQuery.isNotEmpty())
+            viewModel.searchForCustomers()
     }
 
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -96,7 +101,9 @@ fun CustomerScene(onNavigate: (Route) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(state.businessCustomers.size) {
-                NoteItem(title = "", content = "")
+                CustomerItem(state.businessCustomers[it]) {
+
+                }
             }
         }
     }
@@ -174,22 +181,36 @@ fun FilterTabs(onSelectedTab: (CustomerFilter) -> Unit) {
 }
 
 @Composable
-fun CustomerItem() {
+fun CustomerItem(customerProfile: CustomerProfile, onCustomerClick: (CustomerProfile) -> Unit) {
     Box(
-        modifier = Modifier.size(115.dp, 144.dp)
+        modifier = Modifier
             .background(color = Color.White, shape = RoundedCornerShape(12.dp))
+            .clickable(
+                indication = null,
+                interactionSource = null,
+                onClick = { onCustomerClick(customerProfile) })
     ) {
         Column {
             Box(
-                modifier = Modifier.fillMaxSize(fraction = 0.5f).padding(2.dp)
+                modifier = Modifier.size(106.dp, 82.dp).padding(2.dp)
                     .background(color = AccentLight, shape = RoundedCornerShape(10.dp))
             ) {
-                // Avatar
+                AsyncImage(
+                    model = "$BASE_URL${customerProfile.avatar}",
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
             }
             // Name
-            Text(text = "", style = appTypography().body13)
+            Text(
+                text = customerProfile.name.toString(),
+                style = appTypography().title16,
+                modifier = Modifier.padding(8.dp)
+            )
             // Phone
-            Text(text = "", style = appTypography().body13)
+            Text(text = customerProfile.phoneNumber.toString(), style = appTypography().title16,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }

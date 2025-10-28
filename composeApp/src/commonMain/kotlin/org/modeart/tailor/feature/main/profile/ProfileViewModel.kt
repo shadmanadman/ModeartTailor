@@ -36,11 +36,7 @@ class ProfileViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
 
-    val uiState: StateFlow<ProfileUiState> = _uiState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = _uiState.value,
-    )
+    val uiState: StateFlow<ProfileUiState> = _uiState
 
     var effects = Channel<ProfileUiEffect>(Channel.UNLIMITED)
         private set

@@ -95,7 +95,6 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
             val query = Filters.eq("id", objectId)
             val updates = mutableListOf<org.bson.conversions.Bson>()
 
-            // Helper function to add update if value is not null or empty
             fun <T> addUpdateIfNotEmpty(
                 field: kotlin.reflect.KProperty1<CustomerProfile, T?>,
                 value: T?

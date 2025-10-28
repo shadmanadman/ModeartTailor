@@ -396,29 +396,22 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClicked: (CustomerP
         modifier = Modifier.clickable(onClick = { onCustomerClicked(customerProfile) })
     ) {
         Box(modifier = Modifier.size(68.dp).clip(shape = RoundedCornerShape(16.dp))) {
-            Image(painter = painterResource(Res.drawable.test_avatar), contentDescription = null)
+            AsyncImage(
+                model = "$BASE_URL${customerProfile.avatar}",
+                contentDescription = null, contentScale = ContentScale.Crop)
         }
         Text(
             modifier = Modifier.padding(top = 8.dp),
-            text = "Name",
+            text = customerProfile.name.toString(),
             style = appTypography().body14.copy(fontWeight = FontWeight.Bold)
         )
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            text = customerProfile.name.toString(),
-            style = appTypography().body14.copy(
-                color = Color.LightGray,
-                fontWeight = FontWeight.Bold
-            )
-        )
-
     }
 }
 
 @Composable
 fun LatestCustomerSection(latestCustomers: List<CustomerProfile>, firstCustomer: () -> Unit) {
     if (latestCustomers.isNotEmpty())
-        LazyRow {
+        LazyRow(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             items(latestCustomers.size) {
                 CustomerItem(latestCustomers[it]) {}
             }

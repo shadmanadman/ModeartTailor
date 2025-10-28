@@ -6,5 +6,6 @@ enum class NewCustomerSteps { BasicInfo, StyleFeature, SupplementaryInfo, FinalI
 data class NewCustomerUiState(
     val step: NewCustomerSteps = NewCustomerSteps.BasicInfo,
     val customer: CustomerProfile = CustomerProfile(),
+    val currentBusinessId: String = "",
     val selectedFastSize: Int = 0
 )

@@ -50,6 +50,7 @@ import modearttailor.composeapp.generated.resources.no
 import modearttailor.composeapp.generated.resources.notes_about_customer
 import modearttailor.composeapp.generated.resources.notes_hint
 import modearttailor.composeapp.generated.resources.referred_by
+import modearttailor.composeapp.generated.resources.referrer_name
 import modearttailor.composeapp.generated.resources.save_customer
 import modearttailor.composeapp.generated.resources.search_in_customers
 import modearttailor.composeapp.generated.resources.title_supplementary_information
@@ -181,8 +182,9 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
             )
         }
         OutlinedTextFieldModeArt(
+            isEnabled = false,
             modifier = Modifier.fillMaxWidth(),
-            hint = stringResource(Res.string.search_in_customers),
+            hint = stringResource(Res.string.referrer_name),
             value = state.customer.referredBy ?: "",
             leadingIcon = Res.drawable.ic_search,
             onValueChange = {

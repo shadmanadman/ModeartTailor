@@ -87,7 +87,7 @@ import kotlin.time.Instant
 @Composable
 @Preview
 fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
-    var selectedGender by remember { mutableStateOf(state.customer.gender) }
+    var selectedGender by remember { mutableStateOf(state.customer.gender?: CustomerGender.MALE) }
     var customerName by remember { mutableStateOf(state.customer.name) }
     var customerPhoneNumber by remember { mutableStateOf(state.customer.phoneNumber) }
     var customerBirthday by remember { mutableStateOf(state.customer.birthday) }
@@ -191,21 +191,11 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             )
 
             OutlinedTextFieldModeArt(
-                isEnabled = false,
                 value = customerAge?:"",
                 isNumberOnly = true,
                 onValueChange = {customerAge = it},
                 hint = stringResource(Res.string.age)
             )
-//                OutlinedTextFieldModeArt(
-//                    isEnabled = false,
-//                    onClick = {showDatePicker = true},
-//                    value = if (customerBirthday.isNullOrEmpty()) "" else convertMillisToDate(
-//                        customerBirthday?.toLong() ?: 0
-//                    ),
-//                    onValueChange = {},
-//                    hint = stringResource(Res.string.birth_date)
-//                )
         }
 
 

@@ -58,6 +58,7 @@ import org.modeart.tailor.feature.main.measurments.contracts.MeasurementSelected
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementStage
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementType
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementUiEffect
+import org.modeart.tailor.feature.main.profile.ProfileViewModel
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
@@ -68,6 +69,8 @@ import org.modeart.tailor.theme.appTypography
 @Composable
 fun MeasurementScene(onNavigate: (Route) -> Unit) {
     val viewModel = koinViewModel(MeasurementViewModel::class)
+    val profileViewModel = koinViewModel(ProfileViewModel::class)
+    val newCustomerViewModel = koinViewModel(NewCustomerViewModel::class)
     val state by viewModel.state.collectAsState()
     val effects = viewModel.effect.receiveAsFlow()
     val showCustomerSelectionBottomSheet = remember { mutableStateOf(false) }
@@ -104,7 +107,7 @@ fun MeasurementScene(onNavigate: (Route) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (state.currentStage == MeasurementStage.SelectCustomer)
-                CustomerTypeSelection(viewModel)
+                CustomerTypeSelection(viewModel,profileViewModel,newCustomerViewModel)
             else
                 MeasurementTypeSelection(viewModel)
         }
@@ -113,7 +116,7 @@ fun MeasurementScene(onNavigate: (Route) -> Unit) {
 
 @Composable
 @Preview
-fun CustomerTypeSelection(viewModel: MeasurementViewModel) {
+fun CustomerTypeSelection(viewModel: MeasurementViewModel,profileViewModel: ProfileViewModel,newCustomerViewModel: NewCustomerViewModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(stringResource(Res.string.select_customer), style = appTypography().title16)
         Text(stringResource(Res.string.select_customer_sub), style = appTypography().body14)
@@ -129,6 +132,7 @@ fun CustomerTypeSelection(viewModel: MeasurementViewModel) {
             ) {
                 viewModel.customerTypeSelected(customerType = MeasurementSelectedCustomer.NewCustomer)
                 viewModel.measurementStageChanged(MeasurementStage.SelectMeasurementType)
+                newCustomerViewModel.setCurrentBusinessId(profileViewModel.uiState.value.id)
             }
             CustomerSelectionCard(
                 label = stringResource(Res.string.old_customer),

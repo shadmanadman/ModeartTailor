@@ -32,6 +32,9 @@ class CustomersViewModel(private val businessService: BusinessService): ViewMode
     var effects = Channel<CustomerUiEffect>(Channel.UNLIMITED)
         private set
 
+    init {
+        getBusinessCustomers()
+    }
     fun navigateToProfile() {
         effects.trySend(CustomerUiEffect.Navigation(MainNavigation.profile))
     }

@@ -372,6 +372,7 @@ fun FabricSensitivitySection(
     fabricSensitivity: String = "",
     onFabricSensitivityChanged: (String) -> Unit
 ) {
+    var fabricSensitivityName by remember { mutableStateOf(fabricSensitivity) }
     Row(
         Modifier.padding(bottom = 12.dp).fillMaxWidth().height(32.dp)
             .background(color = Hint.copy(alpha = 0.5f), shape = RoundedCornerShape(8.dp))
@@ -390,8 +391,11 @@ fun FabricSensitivitySection(
 
     OutlinedTextFieldModeArt(
         modifier = Modifier.fillMaxWidth(),
-        value = fabricSensitivity,
-        onValueChange = onFabricSensitivityChanged,
+        value = fabricSensitivityName,
+        onValueChange = {
+            fabricSensitivityName = it
+            onFabricSensitivityChanged(it)
+        },
         hint = stringResource(Res.string.fabric_name)
     )
 

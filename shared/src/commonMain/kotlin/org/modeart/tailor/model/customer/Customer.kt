@@ -34,7 +34,7 @@ data class CustomerProfile(
     val deletedAt: String? = "",
     val deleted: Boolean? = false,
     val avatar: String? = "",
-    val customerOf: List<String>? = emptyList()
+    val customerOf: String = ""
 ) {
     @Serializable
     data class Sizes(
@@ -85,6 +85,8 @@ data class CustomerProfile(
     )
 }
 
+@Serializable
+data class CustomerCreatedSuccessResponse(val id: String)
 enum class CustomerGender { MALE, FEMALE, OTHER }
 enum class CustomerStyle { CLASSIC, MODERN, FIT, CASUAL, FORMAL, LOOSE }
 enum class CustomerBodyForm { InvertedTriangle, Hourglass, Rectangle, Pear, Circle }

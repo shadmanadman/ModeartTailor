@@ -15,6 +15,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.bson.types.ObjectId
 import org.modeart.tailor.features.customer.di.CustomerModule
+import org.modeart.tailor.model.customer.CustomerCreatedSuccessResponse
 import org.modeart.tailor.model.customer.CustomerProfile
 import java.util.UUID
 
@@ -111,7 +112,12 @@ fun Route.customerRouting() {
                 val customer = call.receive<CustomerProfile>()
                 val businessId = UUID.randomUUID().toString()
                 val insertedId = repository.insertOne(customer.copy(id = businessId))
-                call.respond(HttpStatusCode.Created, "Created customer with id $insertedId")
+                if (insertedId == null)
+                    return@post call.respondText(
+                        text = "Error inserting customer",
+                        status = HttpStatusCode.InternalServerError
+                    )
+                call.respond(HttpStatusCode.Created, CustomerCreatedSuccessResponse(businessId))
             }
         }
     }

@@ -29,6 +29,7 @@ import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.customer.CustomersViewModel
 import org.modeart.tailor.feature.main.home.CustomerItem
 import org.modeart.tailor.theme.appTypography
@@ -46,7 +47,7 @@ fun SelectCustomerBottomSheet(onDismiss: () -> Unit) {
     viewModel.getBusinessCustomers()
 
     ModalBottomSheet(
-        onDismissRequest =onDismiss,
+        onDismissRequest = onDismiss,
         sheetState = sheetState,
         content = {
             Column(

@@ -23,6 +23,7 @@
     <string name="customer">مشتری</string>
     <string name="note">یادداشت</string>
     <string name="search_in_customers">جستجو در مشتریان</string>
+    <string name="referred_name">نام معرف</string>
     <string name="all_customer">همه مشتریان</string>
     <string name="this_month_customer">مشتریان این ماه</string>
     <string name="first_note">اولین یادداشت</string>
@@ -61,7 +62,7 @@
     <string name="yes">بله</string>
     <string name="no">خیر</string>
     <string name="referred_by">معرف یا نسبت با</string>
-    <string name="referrer_name">نام مشتری</string>
+    <string name="referrer_name">نام معرف</string>
     <string name="notes_about_customer">یادداشت کلی درباره مشتری</string>
     <string name="notes_hint">مانند : رابطه، سلیقه، رفتار، نیازها</string>
 
