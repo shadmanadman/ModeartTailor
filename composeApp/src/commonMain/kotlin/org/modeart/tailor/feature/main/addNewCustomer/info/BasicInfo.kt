@@ -90,7 +90,6 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     var selectedGender by remember { mutableStateOf(state.customer.gender?: CustomerGender.MALE) }
     var customerName by remember { mutableStateOf(state.customer.name) }
     var customerPhoneNumber by remember { mutableStateOf(state.customer.phoneNumber) }
-    var customerBirthday by remember { mutableStateOf(state.customer.birthday) }
     var customerAge by remember { mutableStateOf(state.customer.age) }
 
     var showDatePicker by remember { mutableStateOf(false) }
@@ -251,7 +250,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                 text = stringResource(Res.string.save_and_next),
                 onClick = {
                     viewModel.basicInfoChanged(
-                        gender = selectedGender ?: CustomerGender.MALE,
+                        gender = selectedGender,
                         fullName = customerName ?: "",
                         phoneNumber = customerPhoneNumber ?: "",
                         birth = customerAge ?: "",
@@ -266,7 +265,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                 text = stringResource(Res.string.save_customer),
                 onClick = {
                     viewModel.basicInfoChanged(
-                        gender = selectedGender ?: CustomerGender.MALE,
+                        gender = selectedGender,
                         fullName = customerName ?: "",
                         phoneNumber = customerPhoneNumber ?: "",
                         birth = customerAge ?: "",
@@ -343,7 +342,6 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
 
     if (showDatePicker)
         BirthDayPicker(onDateSelected = { millis ->
-            customerBirthday = millis.toString()
         }, onDismiss = {
             showDatePicker = false
         })

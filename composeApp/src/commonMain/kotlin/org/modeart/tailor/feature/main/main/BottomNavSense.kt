@@ -130,7 +130,7 @@ fun BottomNavScene(onNavigate: (Route) -> Unit) {
                     CustomerScene(onNavigate = { onNavigate(it) })
                 }
                 scene(route = MainNavigation.measure.fullPath) {
-                    MeasurementScene(onNavigate = { onNavigate(it) })
+                    MeasurementScene(onNavigate = { onNavigate(it) }, onBack = {navigator.popBackStack()})
                 }
             }
         }

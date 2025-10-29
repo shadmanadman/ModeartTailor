@@ -131,7 +131,7 @@ fun FinalInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             title = stringResource(Res.string.title_measurement_source),
             Res.drawable.ic_meaure_source
         )
-        CustomerSizeSource { sizeSource ->
+        CustomerSizeSource(state.customer.sizeSource?: CustomerSizeSource.Body) { sizeSource ->
             customerSizeSource = sizeSource
         }
 
@@ -467,7 +467,7 @@ fun NoteTextField(hint: String, importantNote: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomerSizeSource(onCategorySelected: (CustomerSizeSource) -> Unit) {
+fun CustomerSizeSource(customerSizeSource: CustomerSizeSource,onCategorySelected: (CustomerSizeSource) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     val categoryOptions = mapOf(
         CustomerSizeSource.Body to Res.string.body,
@@ -475,7 +475,7 @@ fun CustomerSizeSource(onCategorySelected: (CustomerSizeSource) -> Unit) {
         CustomerSizeSource.Pattern to Res.string.pattern,
         CustomerSizeSource.Distance to Res.string.distance
     )
-    var selectedOption by remember { mutableStateOf(categoryOptions.entries.first()) }
+    var selectedOption by remember { mutableStateOf(categoryOptions[customerSizeSource]?: Res.string.body) }
 
     Column {
         ExposedDropdownMenuBox(
@@ -522,7 +522,7 @@ fun CustomerSizeSource(onCategorySelected: (CustomerSizeSource) -> Unit) {
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     Text(
-                        text = stringResource(selectedOption.value),
+                        text = stringResource(selectedOption),
                         style = appTypography().body14
                     )
                 }
@@ -554,19 +554,19 @@ fun CustomerSizeSource(onCategorySelected: (CustomerSizeSource) -> Unit) {
                                     .fillMaxWidth()
                                     .clickable(interactionSource = null, indication = null) {
                                         onCategorySelected(option.key)
-                                        selectedOption = option
+                                        selectedOption = option.value
                                         expanded = false
                                     }
                                     .background(
-                                        color = if (option.key == selectedOption.key) AccentLight else Color.Transparent,
+                                        color = if (option.value == selectedOption) AccentLight else Color.Transparent,
                                         shape = RoundedCornerShape(8.dp)
                                     )
                                     .padding(horizontal = 16.dp, vertical = 12.dp),
-                                horizontalArrangement = Arrangement.End // Align text to the right
+                                horizontalArrangement = Arrangement.End
                             ) {
                                 Text(
                                     text = stringResource(option.value),
-                                    style = appTypography().body13 // Use your defined style
+                                    style = appTypography().body13
                                 )
                             }
                         }

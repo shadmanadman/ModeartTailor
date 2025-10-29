@@ -19,13 +19,7 @@ import org.modeart.tailor.navigation.MainNavigation
 class MeasurementViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MeasurementUiState())
 
-    val state: StateFlow<MeasurementUiState> =
-        _uiState
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly,
-                initialValue = _uiState.value,
-            )
+    val state: StateFlow<MeasurementUiState> = _uiState
 
     var effect = Channel<MeasurementUiEffect>(Channel.UNLIMITED)
         private set

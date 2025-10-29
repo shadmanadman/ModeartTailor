@@ -144,9 +144,9 @@ fun StyleFeatures(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
         SelectionItem(id = 3, imageResId = StyleRes.shoulder_3, type = CustomerShoulder.Sloping)
     )
 
-    var selectedStyle by remember { mutableStateOf<SelectionItem?>(customerStyles.first()) }
-    var selectedBodyType by remember { mutableStateOf<SelectionItem?>(bodyTypes.first()) }
-    var selectedShoulder by remember { mutableStateOf<SelectionItem?>(shoulderModels.first()) }
+    var selectedStyle by remember { mutableStateOf<SelectionItem?>(customerStyles.first{it.type == state.customer.customerStyle}) }
+    var selectedBodyType by remember { mutableStateOf<SelectionItem?>(bodyTypes.first{it.type == state.customer.customerBodyType}) }
+    var selectedShoulder by remember { mutableStateOf<SelectionItem?>(shoulderModels.first{it.type == state.customer.customerShoulderType}) }
     var fabricSensitivity by remember { mutableStateOf(state.customer.fabricSensitivity) }
     Column(
         modifier = Modifier

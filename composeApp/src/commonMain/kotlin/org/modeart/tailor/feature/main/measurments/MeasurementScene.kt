@@ -47,6 +47,7 @@ import modearttailor.composeapp.generated.resources.select_customer_sub
 import modearttailor.composeapp.generated.resources.subtitle_quick_or_complete
 import modearttailor.composeapp.generated.resources.title_select_measurement_type
 import moe.tlaster.precompose.koin.koinViewModel
+import moe.tlaster.precompose.navigation.BackHandler
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -67,10 +68,8 @@ import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun MeasurementScene(onNavigate: (Route) -> Unit) {
+fun MeasurementScene(onNavigate: (Route) -> Unit,onBack: () -> Unit) {
     val viewModel = koinViewModel(MeasurementViewModel::class)
-    val profileViewModel = koinViewModel(ProfileViewModel::class)
-    val newCustomerViewModel = koinViewModel(NewCustomerViewModel::class)
     val state by viewModel.state.collectAsState()
     val effects = viewModel.effect.receiveAsFlow()
     val showCustomerSelectionBottomSheet = remember { mutableStateOf(false) }
@@ -101,13 +100,19 @@ fun MeasurementScene(onNavigate: (Route) -> Unit) {
         }
     }
 
+    BackHandler {
+        if (state.currentStage == MeasurementStage.SelectMeasurementType)
+            viewModel.measurementStageChanged(MeasurementStage.SelectCustomer)
+        else
+            onBack()
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.padding(bottom = 60.dp).align(Alignment.BottomCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (state.currentStage == MeasurementStage.SelectCustomer)
-                CustomerTypeSelection(viewModel,profileViewModel,newCustomerViewModel)
+                CustomerTypeSelection(viewModel)
             else
                 MeasurementTypeSelection(viewModel)
         }
@@ -116,7 +121,7 @@ fun MeasurementScene(onNavigate: (Route) -> Unit) {
 
 @Composable
 @Preview
-fun CustomerTypeSelection(viewModel: MeasurementViewModel,profileViewModel: ProfileViewModel,newCustomerViewModel: NewCustomerViewModel) {
+fun CustomerTypeSelection(viewModel: MeasurementViewModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(stringResource(Res.string.select_customer), style = appTypography().title16)
         Text(stringResource(Res.string.select_customer_sub), style = appTypography().body14)
@@ -132,7 +137,6 @@ fun CustomerTypeSelection(viewModel: MeasurementViewModel,profileViewModel: Prof
             ) {
                 viewModel.customerTypeSelected(customerType = MeasurementSelectedCustomer.NewCustomer)
                 viewModel.measurementStageChanged(MeasurementStage.SelectMeasurementType)
-                newCustomerViewModel.setCurrentBusinessId(profileViewModel.uiState.value.id)
             }
             CustomerSelectionCard(
                 label = stringResource(Res.string.old_customer),

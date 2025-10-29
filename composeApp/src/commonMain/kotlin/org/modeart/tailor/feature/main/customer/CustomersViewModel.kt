@@ -23,11 +23,7 @@ import kotlin.toString
 class CustomersViewModel(private val businessService: BusinessService): ViewModel() {
     private val _uiState = MutableStateFlow(CustomerUiState())
 
-    val uiState: StateFlow<CustomerUiState> = _uiState.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = _uiState.value,
-    )
+    val uiState: StateFlow<CustomerUiState> = _uiState
 
     var effects = Channel<CustomerUiEffect>(Channel.UNLIMITED)
         private set

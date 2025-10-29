@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,6 +12,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,10 +44,14 @@ fun SelectCustomerBottomSheet(onDismiss: () -> Unit) {
     val viewModel = koinViewModel(CustomersViewModel::class)
     val state by viewModel.uiState.collectAsState()
     var filterCustomer by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
+    var businessCustomers  by remember { mutableStateOf(state.businessCustomers) }
 
     viewModel.getBusinessCustomers()
 
+    LaunchedEffect(filterCustomer){
+        if (filterCustomer.isNotEmpty())
+            businessCustomers = state.businessCustomers.filter { it.name!!.contains(filterCustomer, ignoreCase = true) }
+    }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
@@ -64,11 +70,11 @@ fun SelectCustomerBottomSheet(onDismiss: () -> Unit) {
                     onValueChange = { filterCustomer = it },
                     value = filterCustomer
                 )
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    items(state.businessCustomers.filter { it.name == filterCustomer }) { customer ->
+                LazyColumn(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                    items(businessCustomers) { customer ->
                         CustomerItem(customerProfile = customer, onCustomerClicked = {
                             newCustomerViewModel.setSelectedCustomer(customer)
-                            scope.launch { sheetState.hide() }
+                            onDismiss()
                         })
                     }
                 }

@@ -53,10 +53,6 @@ class NewCustomerViewModel(
         _uiState.update { it.copy(customer = customer) }
     }
 
-    fun setCurrentBusinessId(id: String) {
-        _uiState.update { it.copy(customer = it.customer.copy(customerOf = id)) }
-    }
-
     fun fastSizeSelected(size: Int) {
         _uiState.update { it.copy(selectedFastSize = size) }
     }

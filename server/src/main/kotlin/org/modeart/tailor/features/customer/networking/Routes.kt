@@ -13,7 +13,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import org.bson.types.ObjectId
 import org.modeart.tailor.features.customer.di.CustomerModule
 import org.modeart.tailor.model.customer.CustomerCreatedSuccessResponse
 import org.modeart.tailor.model.customer.CustomerProfile
@@ -109,15 +108,23 @@ fun Route.customerRouting() {
             }
 
             post {
+                val principal = call.principal<JWTPrincipal>()
+                val userId = principal?.payload?.getClaim("userId")?.asString()
+                if (userId.isNullOrEmpty()) {
+                    return@post call.respondText(
+                        text = "Missing businessId",
+                        status = HttpStatusCode.BadRequest
+                    )
+                }
                 val customer = call.receive<CustomerProfile>()
-                val businessId = UUID.randomUUID().toString()
-                val insertedId = repository.insertOne(customer.copy(id = businessId))
+                val customerId = UUID.randomUUID().toString()
+                val insertedId = repository.insertOne(customer.copy(id = customerId, customerOf = userId))
                 if (insertedId == null)
                     return@post call.respondText(
                         text = "Error inserting customer",
                         status = HttpStatusCode.InternalServerError
                     )
-                call.respond(HttpStatusCode.Created, CustomerCreatedSuccessResponse(businessId))
+                call.respond(HttpStatusCode.Created, CustomerCreatedSuccessResponse(customerId))
             }
         }
     }

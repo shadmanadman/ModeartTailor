@@ -74,7 +74,7 @@ import org.modeart.tailor.theme.appTypography
 @Composable
 fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     var selectedColor by remember { mutableStateOf(state.customer.customerColor) }
-    var isOldCustomer by remember { mutableStateOf<Boolean?>(null) }
+    var isOldCustomer by remember { mutableStateOf(state.customer.isOldCustomer) }
     var customerNotes by remember { mutableStateOf(state.customer.overallNote) }
     var referredBy by remember { mutableStateOf(state.customer.referredBy) }
     Column(
@@ -185,7 +185,7 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
             isEnabled = false,
             modifier = Modifier.fillMaxWidth(),
             hint = stringResource(Res.string.referrer_name),
-            value = state.customer.referredBy ?: "",
+            value = referredBy ?: "",
             leadingIcon = Res.drawable.ic_search,
             onValueChange = {
                 referredBy = it

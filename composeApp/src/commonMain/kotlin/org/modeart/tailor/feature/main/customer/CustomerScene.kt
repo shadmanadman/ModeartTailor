@@ -95,7 +95,7 @@ fun CustomerScene(onNavigate: (Route) -> Unit) {
         FilterTabs(viewModel::customerFilterChanged)
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -192,7 +192,7 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClick: (CustomerPro
     ) {
         Column {
             Box(
-                modifier = Modifier.size(106.dp, 82.dp).padding(2.dp)
+                modifier = Modifier.fillMaxWidth().height(82.dp).padding(4.dp)
                     .background(color = AccentLight, shape = RoundedCornerShape(10.dp))
             ) {
                 AsyncImage(
@@ -209,7 +209,8 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClick: (CustomerPro
             )
             // Phone
             Text(text = customerProfile.phoneNumber.toString(), style = appTypography().title16,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                color = Color.Gray
             )
         }
     }
