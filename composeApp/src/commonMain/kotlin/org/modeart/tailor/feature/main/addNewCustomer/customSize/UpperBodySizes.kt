@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -34,7 +35,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -243,12 +247,19 @@ fun UpperBodyMeasurementScreen(
             )
 
             AnimatedVisibility(visible = isSelected) {
+                val focusManager = LocalFocusManager.current
+                val focusRequesters = remember {
+                    List(fields.size) { FocusRequester() }
+                }
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth().padding(start = 38.dp, end = 12.dp)
                 ) {
-                    items(fields) { label ->
+                    itemsIndexed(fields) { index,label ->
                         OutlinedTextFieldModeArt(
-                            modifier = Modifier.padding(top = 12.dp),
+                            oneLine = true,
+                            textStyle = appTypography().title15,
+                            modifier = Modifier.padding(top = 12.dp)
+                                .focusRequester(focusRequesters[index]),
                             value = when (label) {
                                 fields[0] -> values?.shoulderWidth ?: ""
                                 fields[1] -> values?.smallShoulder ?: ""
@@ -287,7 +298,14 @@ fun UpperBodyMeasurementScreen(
                                 onUpperBodySizeChanged(upperBodySize)
                             },
                             isNumberOnly = true,
-                            hint = label
+                            hint = label,
+                            onDone = {
+                                if (index < fields.size - 1) {
+                                    focusRequesters[index + 1].requestFocus()
+                                } else {
+                                    focusManager.clearFocus()
+                                }
+                            }
                         )
                     }
 

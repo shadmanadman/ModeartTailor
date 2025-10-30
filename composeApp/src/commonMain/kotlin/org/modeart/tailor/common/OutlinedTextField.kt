@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
@@ -34,9 +35,11 @@ fun OutlinedTextFieldModeArt(
     roundedCorner: Dp = 18.dp,
     hint: String,
     hintColor: Color = Hint,
+    textStyle: TextStyle = appTypography().body13,
     isSearch: Boolean = false,
     isNumberOnly: Boolean = false,
     isEnabled: Boolean = true,
+    oneLine: Boolean = false,
     leadingIcon: DrawableResource? = null,
     onValueChange: (String) -> Unit,
     onSearchCompleted: (String) -> Unit = {},
@@ -54,8 +57,9 @@ fun OutlinedTextFieldModeArt(
                 )
             },
         value = value,
+        maxLines = if (oneLine) 1 else Int.MAX_VALUE,
         readOnly = isEnabled.not(),
-        textStyle = appTypography().body13,
+        textStyle = textStyle,
         leadingIcon = if (leadingIcon != null) {
             {
                 androidx.compose.material3.Icon(
@@ -74,7 +78,7 @@ fun OutlinedTextFieldModeArt(
                 imeAction = ImeAction.Search
             )
 
-            isNumberOnly -> KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            isNumberOnly -> KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
             else -> KeyboardOptions.Default
         },
         keyboardActions = KeyboardActions(
