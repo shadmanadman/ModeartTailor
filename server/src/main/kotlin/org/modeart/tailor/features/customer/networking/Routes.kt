@@ -14,11 +14,15 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import org.modeart.tailor.features.customer.di.CustomerModule
+import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerCreatedSuccessResponse
 import org.modeart.tailor.model.customer.CustomerProfile
 import java.util.UUID
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 
+@OptIn(ExperimentalTime::class)
 fun Route.customerRouting() {
     val repository = CustomerModule.customerDao()
     authenticate("auth-jwt") {
@@ -46,16 +50,16 @@ fun Route.customerRouting() {
                 } ?: call.respondText("No records found for businessId $userId")
             }
 
-            get("/search/{query?}"){
+            get("/search/{query?}") {
                 val query = call.parameters["query"]
                 if (query.isNullOrEmpty())
                     return@get call.respondText(
                         text = "Missing query",
                         status = HttpStatusCode.BadRequest
                     )
-                repository.findByName(query)?.let { list->
+                repository.findByName(query)?.let { list ->
                     call.respond(list)
-                }?: call.respondText("No records found for query $query")
+                } ?: call.respondText("No records found for query $query")
             }
 
             get("/{id?}") {
@@ -93,6 +97,22 @@ fun Route.customerRouting() {
 
             }
 
+            post("/size/{id?}") {
+                val id = call.parameters["id"] ?: return@post call.respondText(
+                    text = "Missing customer id",
+                    status = HttpStatusCode.BadRequest
+                )
+                val size = call.receive<CustomerProfile.Size>()
+                val insertedId = repository.addSize(
+                    id,
+                    size.copy(
+                        id = UUID.randomUUID().toString(),
+                        createdAt = Clock.System.now().toString()
+                    )
+                )
+                call.respond(HttpStatusCode.Created, "Size added successfully with id $insertedId")
+            }
+
             patch("/{id?}") {
                 val id = call.parameters["id"] ?: return@patch call.respondText(
                     text = "Missing customer id",
@@ -118,7 +138,8 @@ fun Route.customerRouting() {
                 }
                 val customer = call.receive<CustomerProfile>()
                 val customerId = UUID.randomUUID().toString()
-                val insertedId = repository.insertOne(customer.copy(id = customerId, customerOf = userId))
+                val insertedId =
+                    repository.insertOne(customer.copy(id = customerId, customerOf = userId))
                 if (insertedId == null)
                     return@post call.respondText(
                         text = "Error inserting customer",

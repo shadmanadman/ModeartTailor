@@ -13,7 +13,7 @@ data class CustomerProfile(
     val gender: CustomerGender? = CustomerGender.MALE,
     val birthday: String? = "",
     val age : String? = "",
-    val sizes: Sizes? = Sizes(),
+    val sizes: List<Size>? = emptyList(),
     val sizeSource: CustomerSizeSource? = CustomerSizeSource.Body,
     val sizeFreedom: CustomerSizeFreedom? = CustomerSizeFreedom.Free,
     val extraPhoto: List<String>? = emptyList(),
@@ -37,10 +37,12 @@ data class CustomerProfile(
     val customerOf: String = ""
 ) {
     @Serializable
-    data class Sizes(
-        @SerialName("_id")
+    data class Size(
         val id: String? = "",
-
+        val createdAt: String? = "",
+        val upperBodySizes: UpperBodySizes? = null,
+        val lowerBodySizes: LowerBodySizes? = null,
+        val sleevesSizes: SleevesSizes? = null,
     )
     @Serializable
     data class UpperBodySizes(

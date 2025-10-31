@@ -23,4 +23,5 @@ interface CustomerDao {
     suspend fun updateOne(objectId: String, customer: CustomerProfile): Long
 
     suspend fun findByBusiness(businessId: String): List<CustomerProfile>?
+    suspend fun addSize(objectId: String, size: CustomerProfile.Size) :Long
 }

@@ -137,15 +137,18 @@ class NewCustomerViewModel(
     }
 
     fun upperSizeChanged(upperBodySizes: CustomerProfile.UpperBodySizes) {
-        _uiState.update { it.copy(customer = it.customer.copy(upperBodySizes = upperBodySizes)) }
+        _uiState.update { it.copy(size = CustomerProfile.Size(upperBodySizes = upperBodySizes)) }
+        //_uiState.update { it.copy(customer = it.customer.copy(upperBodySizes = upperBodySizes)) }
     }
 
     fun lowerSizeChanged(lowerBodySizes: CustomerProfile.LowerBodySizes) {
-        _uiState.update { it.copy(customer = it.customer.copy(lowerBodySizes = lowerBodySizes)) }
+        _uiState.update { it.copy(size = CustomerProfile.Size(lowerBodySizes = lowerBodySizes)) }
+        //_uiState.update { it.copy(customer = it.customer.copy(lowerBodySizes = lowerBodySizes)) }
     }
 
     fun sleevesSizeChanged(sleevesSizes: CustomerProfile.SleevesSizes) {
-        _uiState.update { it.copy(customer = it.customer.copy(sleevesSizes = sleevesSizes)) }
+        _uiState.update { it.copy(size = CustomerProfile.Size(sleevesSizes = sleevesSizes)) }
+        //_uiState.update { it.copy(customer = it.customer.copy(sleevesSizes = sleevesSizes)) }
     }
 
     fun saveCustomer() {
@@ -219,4 +222,20 @@ class NewCustomerViewModel(
         }
     }
 
+    fun addSize(){
+        viewModelScope.launch {
+            val response = customerService.addSize(_uiState.value.customer.id,_uiState.value.size)
+            when (response) {
+                is ApiResult.Error -> effects.send(
+                    NewCustomerUiEffect.ShowRawNotification(
+                        msg = response.message, errorCode = response.code.toString()
+                    )
+                )
+
+                is ApiResult.Success -> {
+
+                }
+            }
+        }
+    }
 }

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.save_and_next
 import modearttailor.composeapp.generated.resources.save_customer
+import modearttailor.composeapp.generated.resources.save_size
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.RoundedCornerButton
@@ -37,7 +38,7 @@ enum class BodyPart {
 
 @Preview
 @Composable
-fun OverallSize(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
+fun OverallSize(isRegisterNewSize:Boolean,state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
     val selectedBodyParts = remember { mutableStateOf(mapOf<BodyPart, Boolean>()) }
 
     Column(
@@ -52,24 +53,36 @@ fun OverallSize(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
         )
 
         Row(Modifier.fillMaxWidth()) {
-            RoundedCornerButton(
-                modifier = Modifier.padding(end = 16.dp),
-                width = 232,
-                isEnabled = true,
-                text = stringResource(Res.string.save_and_next),
-                onClick = {
-                    viewModel.updateStep(NewCustomerSteps.FinalInfo)
-                })
+            if (isRegisterNewSize)
+                RoundedCornerButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    backgroundColor = Accent,
+                    textColor = Color.Black,
+                    isEnabled = true,
+                    text = stringResource(Res.string.save_size),
+                    onClick = {
+                        viewModel.addSize()
+                    })
+            else {
+                RoundedCornerButton(
+                    modifier = Modifier.padding(end = 16.dp),
+                    width = 232,
+                    isEnabled = true,
+                    text = stringResource(Res.string.save_and_next),
+                    onClick = {
+                        viewModel.updateStep(NewCustomerSteps.FinalInfo)
+                    })
 
-            RoundedCornerButton(
-                isEnabled = true,
-                backgroundColor = Accent,
-                textColor = Color.Black,
-                text = stringResource(Res.string.save_customer),
-                onClick = {
-                    viewModel.updateStep(NewCustomerSteps.FinalInfo)
-                    viewModel.saveCustomer()
-                })
+                RoundedCornerButton(
+                    isEnabled = true,
+                    backgroundColor = Accent,
+                    textColor = Color.Black,
+                    text = stringResource(Res.string.save_customer),
+                    onClick = {
+                        viewModel.updateStep(NewCustomerSteps.FinalInfo)
+                        viewModel.addSize()
+                    })
+            }
         }
         UpperBodyMeasurementScreen(
             state = state,

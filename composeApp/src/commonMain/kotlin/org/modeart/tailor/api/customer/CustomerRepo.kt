@@ -31,4 +31,14 @@ class CustomerRepo(private val client: HttpClient) : CustomerService {
 
     override suspend fun deleteCustomer(customerId: String): HttpResponse =
         client.delete("/customer/$customerId").body()
+
+    override suspend fun addSize(
+        customerId: String,
+        size: CustomerProfile.Size
+    ): ApiResult<Unit> = safeRequest {
+        client.post("/customer/size/$customerId") {
+            setBody(size)
+        }
+    }
+
 }

@@ -4,11 +4,14 @@ import com.mongodb.MongoException
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.UpdateOptions
 import com.mongodb.client.model.Updates
+import com.mongodb.client.result.UpdateResult
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import org.bson.BsonValue
 import org.bson.types.ObjectId
+import org.modeart.tailor.features.business.db.BusinessDaoImpl.Companion.BUSINESS_COLLECTION
+import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -155,5 +158,21 @@ class CustomerDaoImpl(private val mongoDatabase: MongoDatabase) : CustomerDao {
         mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)
             .find(Filters.all(CustomerProfile::customerOf.name, businessId))
             .toList()
+
+
+    override suspend fun addSize(objectId: String, size: CustomerProfile.Size): Long {
+        return try {
+            val collection = mongoDatabase.getCollection<CustomerProfile>(CUSTOMER_COLLECTION)
+            val query = Filters.eq("id", objectId)
+            val update =
+                Updates.push(CustomerProfile::sizes.name, size)
+
+            val result: UpdateResult = collection.updateOne(query, update)
+            result.modifiedCount
+        } catch (e: MongoException) {
+            System.err.println("Error adding size to customer $objectId: $e")
+            0L
+        }
+    }
 
 }

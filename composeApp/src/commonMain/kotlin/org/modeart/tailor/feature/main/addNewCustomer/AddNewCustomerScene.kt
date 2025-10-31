@@ -31,31 +31,37 @@ import org.modeart.tailor.feature.main.addNewCustomer.info.BasicInfo
 import org.modeart.tailor.feature.main.addNewCustomer.info.FinalInfo
 import org.modeart.tailor.feature.main.addNewCustomer.info.StyleFeatures
 import org.modeart.tailor.feature.main.addNewCustomer.info.SupplementaryInformationScreen
+import org.modeart.tailor.feature.main.measurments.MeasurementViewModel
+import org.modeart.tailor.feature.main.measurments.contracts.MeasurementSelectedCustomer
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Background
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
-fun AddNewCustomerScene(onNavigate: (Route) -> Unit,onBack:()-> Unit) {
+fun AddNewCustomerScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
     val viewModel = koinViewModel(NewCustomerViewModel::class)
+    val viewModelMeasurement = koinViewModel(MeasurementViewModel::class)
+
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
+    val isRegisteringNewSize =
+        viewModelMeasurement.state.value.customerType == MeasurementSelectedCustomer.OldCustomer
     var notification by remember { mutableStateOf<NewCustomerUiEffect.ShowRawNotification?>(null) }
-    var localizedNotification by remember { mutableStateOf<NewCustomerUiEffect.ShowLocalizedNotification?>(null) }
-
-    BackHandler {
-        when (state.step) {
-            NewCustomerSteps.BasicInfo -> onBack()
-            NewCustomerSteps.StyleFeature -> viewModel.updateStep(NewCustomerSteps.BasicInfo)
-            NewCustomerSteps.SupplementaryInfo -> viewModel.updateStep(NewCustomerSteps.StyleFeature)
-            NewCustomerSteps.FinalInfo -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
-            NewCustomerSteps.OverallSize -> viewModel.updateStep(NewCustomerSteps.FinalInfo)
-            NewCustomerSteps.FastSize -> viewModel.updateStep(NewCustomerSteps.OverallSize)
-        }
+    var localizedNotification by remember {
+        mutableStateOf<NewCustomerUiEffect.ShowLocalizedNotification?>(
+            null
+        )
     }
 
-    
+    BackHandler {
+        if (isRegisteringNewSize)
+            onBack()
+        else
+            handleBackStack(state.step, viewModel, onBack)
+    }
+
+
     LaunchedEffect(effects) {
         effects.onEach { effect ->
             when (effect) {
@@ -83,23 +89,33 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit,onBack:()-> Unit) {
 
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
         MainToolbar(stringResource(Res.string.register_new_customer)) {
-            when (state.step) {
-                NewCustomerSteps.BasicInfo -> onBack()
-                NewCustomerSteps.StyleFeature -> viewModel.updateStep(NewCustomerSteps.BasicInfo)
-                NewCustomerSteps.SupplementaryInfo -> viewModel.updateStep(NewCustomerSteps.StyleFeature)
-                NewCustomerSteps.FinalInfo -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
-                NewCustomerSteps.OverallSize -> viewModel.updateStep(NewCustomerSteps.FinalInfo)
-                NewCustomerSteps.FastSize -> viewModel.updateStep(NewCustomerSteps.FastSize)
-            }
+            if (isRegisteringNewSize)
+                onBack()
+            else
+                handleBackStack(state.step, viewModel, onBack)
         }
         when (state.step) {
             NewCustomerSteps.BasicInfo -> BasicInfo(state, viewModel)
             NewCustomerSteps.StyleFeature -> StyleFeatures(state, viewModel)
             NewCustomerSteps.SupplementaryInfo -> SupplementaryInformationScreen(state, viewModel)
             NewCustomerSteps.FinalInfo -> FinalInfo(state, viewModel)
-            NewCustomerSteps.OverallSize -> OverallSize(state, viewModel)
+            NewCustomerSteps.OverallSize -> OverallSize(isRegisteringNewSize, state, viewModel)
             NewCustomerSteps.FastSize -> FastSizeSelectionScreen(viewModel)
         }
     }
 }
 
+private fun handleBackStack(
+    steps: NewCustomerSteps,
+    viewModel: NewCustomerViewModel,
+    onBack: () -> Unit
+) {
+    when (steps) {
+        NewCustomerSteps.BasicInfo -> onBack()
+        NewCustomerSteps.StyleFeature -> viewModel.updateStep(NewCustomerSteps.BasicInfo)
+        NewCustomerSteps.SupplementaryInfo -> viewModel.updateStep(NewCustomerSteps.StyleFeature)
+        NewCustomerSteps.FinalInfo -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
+        NewCustomerSteps.OverallSize -> viewModel.updateStep(NewCustomerSteps.FinalInfo)
+        NewCustomerSteps.FastSize -> viewModel.updateStep(NewCustomerSteps.FastSize)
+    }
+}

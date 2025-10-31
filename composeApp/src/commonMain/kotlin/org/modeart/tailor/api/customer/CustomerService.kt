@@ -9,4 +9,5 @@ interface CustomerService {
     suspend fun createCustomer(customerProfile: CustomerProfile): ApiResult<CustomerCreatedSuccessResponse>
     suspend fun updateCustomer(customerProfile: CustomerProfile): ApiResult<Unit>
     suspend fun deleteCustomer(customerId: String): HttpResponse
+    suspend fun addSize(customerId: String, size: CustomerProfile.Size) : ApiResult<Unit>
 }

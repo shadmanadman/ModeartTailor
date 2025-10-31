@@ -54,6 +54,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementSelectedCustomer
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementStage
@@ -70,6 +71,8 @@ import org.modeart.tailor.theme.appTypography
 @Composable
 fun MeasurementScene(onNavigate: (Route) -> Unit,onBack: () -> Unit) {
     val viewModel = koinViewModel(MeasurementViewModel::class)
+    val viewModelNewCustomer = koinViewModel(NewCustomerViewModel::class)
+
     val state by viewModel.state.collectAsState()
     val effects = viewModel.effect.receiveAsFlow()
     val showCustomerSelectionBottomSheet = remember { mutableStateOf(false) }
@@ -112,7 +115,7 @@ fun MeasurementScene(onNavigate: (Route) -> Unit,onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (state.currentStage == MeasurementStage.SelectCustomer)
-                CustomerTypeSelection(viewModel)
+                CustomerTypeSelection(viewModel,viewModelNewCustomer)
             else
                 MeasurementTypeSelection(viewModel)
         }
@@ -121,7 +124,7 @@ fun MeasurementScene(onNavigate: (Route) -> Unit,onBack: () -> Unit) {
 
 @Composable
 @Preview
-fun CustomerTypeSelection(viewModel: MeasurementViewModel) {
+fun CustomerTypeSelection(viewModel: MeasurementViewModel,viewModelNewCustomer: NewCustomerViewModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(stringResource(Res.string.select_customer), style = appTypography().title16)
         Text(stringResource(Res.string.select_customer_sub), style = appTypography().body14)
@@ -147,6 +150,7 @@ fun CustomerTypeSelection(viewModel: MeasurementViewModel) {
                 iconBackgroundColor = Primary
             ) {
                 viewModel.customerTypeSelected(customerType = MeasurementSelectedCustomer.OldCustomer)
+                viewModelNewCustomer.updateStep(NewCustomerSteps.OverallSize)
                 viewModel.measurementStageChanged(MeasurementStage.SelectMeasurementType)
             }
         }
