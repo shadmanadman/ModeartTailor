@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,6 +25,12 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,24 +40,71 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import modearttailor.composeapp.generated.resources.Res
+import modearttailor.composeapp.generated.resources.acquaintance_period
+import modearttailor.composeapp.generated.resources.code
+import modearttailor.composeapp.generated.resources.measure
+import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.api.BASE_URL
+import org.modeart.tailor.common.InAppNotification
+import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
+import org.modeart.tailor.feature.main.customer.contract.CustomerUiState
+import org.modeart.tailor.model.business.BusinessProfile
+import org.modeart.tailor.model.customer.CustomerProfile
+import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
+import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Primary
+import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun CustomerProfileScene() {
+fun CustomerProfileScene(onNavigate: (Route) -> Unit) {
+    val viewModel = koinViewModel(CustomersViewModel::class)
+    val state by viewModel.uiState.collectAsState()
+    val effects = viewModel.effects.receiveAsFlow()
+    var notification by remember { mutableStateOf<CustomerUiEffect.ShowRawNotification?>(null) }
+
+    LaunchedEffect(effects) {
+        effects.onEach { effect ->
+            when (effect) {
+                is CustomerUiEffect.Navigation -> onNavigate(effect.screen)
+                is CustomerUiEffect.ShowRawNotification -> {
+                    notification = effect
+                }
+            }
+        }.collect()
+    }
+    notification?.let { notif ->
+        InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
+            notification = null
+        }
+    }
+
 
 }
 
 @Composable
-fun CustomerProfileContent() {
+fun CustomerProfileContent(state: CustomerUiState) {
+    Column(modifier = Modifier.fillMaxSize().background(Background)) {
+        ProfileHeaderCard(state.selectedCustomer ?: CustomerProfile())
+        LazyColumn {
+            items(state.selectedCustomer?.sizes?.size?:0) {
 
+            }
+        }
+    }
 }
 
-
+@Preview
 @Composable
-fun ProfileHeaderCard() {
+fun ProfileHeaderCard(customerProfile: CustomerProfile) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,16 +121,14 @@ fun ProfileHeaderCard() {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "پروفایل مریم احمدی",
+                    text = customerProfile.name.toString(),
                     color = Color.White,
-                    fontSize = 20.sp,
+                    style = appTypography().title18,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 8.dp) // Space for the icon
+                    modifier = Modifier.padding(end = 8.dp)
                 )
-                // Arrow Icon
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowRight,
                     contentDescription = "Go to profile",
@@ -88,7 +141,7 @@ fun ProfileHeaderCard() {
 
             // Profile Picture
             AsyncImage(
-                model = "",
+                model = "$BASE_URL${customerProfile.avatar}",
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(100.dp).clip(
@@ -100,26 +153,28 @@ fun ProfileHeaderCard() {
 
             // Phone Number
             Text(
-                text = "۰۹۱۷۱۷۴۹۱۱۷", // Phone number
+                text = customerProfile.phoneNumber.toString(),
                 color = Color.White,
-                fontSize = 18.sp,
+                style = appTypography().body14,
                 fontWeight = FontWeight.Medium
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Buttons Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ProfileActionButton(
-                    label = "مدت آشنایی",
+                    label = stringResource(Res.string.acquaintance_period),
                     value = "3 Years"
-                ) // Acquaintance Duration
-                ProfileActionButton(label = "اندازه گیری", value = "437") // Measurement
-                ProfileActionButton(label = "کد", value = "45") // Code
+                )
+                ProfileActionButton(label = stringResource(Res.string.measure), value = "437")
+                ProfileActionButton(
+                    label = stringResource(Res.string.code),
+                    value = customerProfile.code.toString()
+                )
             }
         }
     }
@@ -131,7 +186,7 @@ fun ProfileActionButton(label: String, value: String) {
     Card(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
-            .width(100.dp) // Fixed width for buttons
+            .width(100.dp)
             .height(70.dp)
             .background(AccentLight),
     ) {
@@ -145,13 +200,13 @@ fun ProfileActionButton(label: String, value: String) {
             Text(
                 text = label,
                 color = Primary,
-                fontSize = 13.sp,
+                style = appTypography().body13,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = value,
                 color = Primary,
-                fontSize = 16.sp,
+                style = appTypography().title16,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -172,7 +227,7 @@ fun MeasurementItem(date: String, type: String, tag: String) {
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween // Aligns items to ends
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Card(
                 modifier = Modifier.background(AccentLight),
@@ -187,7 +242,6 @@ fun MeasurementItem(date: String, type: String, tag: String) {
                 )
             }
 
-            // Right side (Date and Type) - This needs to be a Column and align to end for RTL
             Column(
                 horizontalAlignment = Alignment.End // Align text to the right for RTL
             ) {

@@ -71,6 +71,10 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
                 }
 
                 is NewCustomerUiEffect.ShowLocalizedNotification -> localizedNotification = effect
+                NewCustomerUiEffect.NavigateBack -> {
+                    viewModel.updateStep(NewCustomerSteps.BasicInfo)
+                    onBack()
+                }
             }
         }.collect()
     }

@@ -17,4 +17,5 @@ sealed interface NewCustomerUiEffect {
 
 
     data class Navigation(val screen: Route) : NewCustomerUiEffect
+    data object NavigateBack: NewCustomerUiEffect
 }

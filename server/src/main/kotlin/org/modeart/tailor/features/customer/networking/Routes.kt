@@ -138,8 +138,9 @@ fun Route.customerRouting() {
                 }
                 val customer = call.receive<CustomerProfile>()
                 val customerId = UUID.randomUUID().toString()
+                val code = (1000..9999).random()
                 val insertedId =
-                    repository.insertOne(customer.copy(id = customerId, customerOf = userId))
+                    repository.insertOne(customer.copy(id = customerId, customerOf = userId, code = code))
                 if (insertedId == null)
                     return@post call.respondText(
                         text = "Error inserting customer",

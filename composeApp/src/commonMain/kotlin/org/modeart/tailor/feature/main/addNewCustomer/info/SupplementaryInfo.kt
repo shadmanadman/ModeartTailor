@@ -182,7 +182,6 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
             )
         }
         OutlinedTextFieldModeArt(
-            isEnabled = false,
             modifier = Modifier.fillMaxWidth(),
             hint = stringResource(Res.string.referrer_name),
             value = referredBy ?: "",

@@ -138,17 +138,17 @@ class NewCustomerViewModel(
 
     fun upperSizeChanged(upperBodySizes: CustomerProfile.UpperBodySizes) {
         _uiState.update { it.copy(size = CustomerProfile.Size(upperBodySizes = upperBodySizes)) }
-        //_uiState.update { it.copy(customer = it.customer.copy(upperBodySizes = upperBodySizes)) }
+        _uiState.update { it.copy(customer = it.customer.copy(upperBodySizes = upperBodySizes)) }
     }
 
     fun lowerSizeChanged(lowerBodySizes: CustomerProfile.LowerBodySizes) {
         _uiState.update { it.copy(size = CustomerProfile.Size(lowerBodySizes = lowerBodySizes)) }
-        //_uiState.update { it.copy(customer = it.customer.copy(lowerBodySizes = lowerBodySizes)) }
+        _uiState.update { it.copy(customer = it.customer.copy(lowerBodySizes = lowerBodySizes)) }
     }
 
     fun sleevesSizeChanged(sleevesSizes: CustomerProfile.SleevesSizes) {
         _uiState.update { it.copy(size = CustomerProfile.Size(sleevesSizes = sleevesSizes)) }
-        //_uiState.update { it.copy(customer = it.customer.copy(sleevesSizes = sleevesSizes)) }
+        _uiState.update { it.copy(customer = it.customer.copy(sleevesSizes = sleevesSizes)) }
     }
 
     fun saveCustomer() {
@@ -190,12 +190,8 @@ class NewCustomerViewModel(
                 )
 
                 is ApiResult.Success -> {
-                    effects.send(
-                        NewCustomerUiEffect.ShowLocalizedNotification(
-                            msg = Res.string.customer_saved_successfully, isError = false
-                        )
-                    )
                     _uiState.update { it.copy(customer = it.customer.copy(id = response.data.id)) }
+                    addSize()
                 }
             }
         }
@@ -233,7 +229,14 @@ class NewCustomerViewModel(
                 )
 
                 is ApiResult.Success -> {
-
+                    effects.send(
+                        NewCustomerUiEffect.ShowLocalizedNotification(
+                            msg = Res.string.customer_saved_successfully, isError = false
+                        )
+                    )
+                    effects.send(
+                        NewCustomerUiEffect.NavigateBack
+                    )
                 }
             }
         }

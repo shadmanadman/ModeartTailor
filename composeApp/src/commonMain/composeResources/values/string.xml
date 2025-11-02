@@ -131,6 +131,8 @@
     <string name="save_size">ثبت اندازه</string>
     <string name="save_customer">ثبت مشتری</string>
     <string name="customer_saved_successfully">مشتری با موفقیت ثبت شد.</string>
+    <string name="size_saved_successfully">اندازه با موفقیت ثبت شد.</string>
+
     // Main titles and subtitles
     <string name="select_subscription">انتخاب پلن اشتراک</string>
     <string name="subtitle_digital_notebook">دسترسی به دفترچه دیجیتال اندازه‌گیری</string>
@@ -206,4 +208,6 @@
     <string name="current_plan">پلن فعلی شما</string>
     <string name="you_can_select_multiple_pictures">می‌توانید چند تصویر انتخاب کنید</string>
     <string name="to_remove_picture_click_on_it">برای حذف تصویر روی ان کلیک کنید</string>
+    <string name="acquaintance_period">مدت آشنایی</string>
+    <string name="code">کد</string>
 </resources>
