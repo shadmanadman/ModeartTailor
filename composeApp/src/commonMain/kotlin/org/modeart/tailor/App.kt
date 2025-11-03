@@ -10,6 +10,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.modeart.tailor.feature.main.addNewCustomer.AddNewCustomerScene
 import org.modeart.tailor.feature.main.contact.ContactUsScene
+import org.modeart.tailor.feature.main.customer.CustomerProfileScene
 import org.modeart.tailor.feature.main.home.HomeScene
 import org.modeart.tailor.feature.main.main.BottomNavScene
 import org.modeart.tailor.feature.main.measurments.MeasurementScene
@@ -92,6 +93,9 @@ internal fun App() {
                     AddNewCustomerScene(
                         onNavigate = { navigator.navigate(it.fullPath) },
                         onBack = { navigator.popBackStack() })
+                }
+                scene(route = MainNavigation.customerProfile.fullPath){
+                    CustomerProfileScene { navigator.navigate(it.fullPath) }
                 }
             }
         }

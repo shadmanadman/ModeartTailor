@@ -68,6 +68,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.api.BASE_URL
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
+import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.customer.CustomersViewModel
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
 import org.modeart.tailor.feature.main.main.BottomNavViewModel
 import org.modeart.tailor.feature.main.main.contract.RootBottomNavId
@@ -87,7 +89,7 @@ import org.modeart.tailor.theme.appTypography
 fun HomeScene(onNavigate: (Route) -> Unit) {
     val viewModel = koinViewModel(HomeViewModel::class)
     val bottomNavViewModel = koinViewModel(BottomNavViewModel::class)
-
+    val customerViewModel = koinViewModel(CustomersViewModel::class)
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<HomeUiEffect.ShowRawNotification?>(null) }
@@ -113,17 +115,20 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
             allCustomersCount = state.customerCount,
             thisMonthCustomer = state.thisMonthCustomer
         )
-        SectionTitle(stringResource(Res.string.last_notes)){
+        SectionTitle(stringResource(Res.string.last_notes)) {
             bottomNavViewModel.openScreen(RootBottomNavId.Note)
         }
         LastNoteItem(state.latestNotes) {
             onNavigate(MainNavigation.newNote)
         }
-        SectionTitle(stringResource(Res.string.last_customers)){
+        SectionTitle(stringResource(Res.string.last_customers)) {
             bottomNavViewModel.openScreen(RootBottomNavId.Customer)
         }
-        LatestCustomerSection(state.latestCustomers) {
+        LatestCustomerSection(state.latestCustomers, firstCustomer = {
             bottomNavViewModel.openScreen(RootBottomNavId.Measure)
+        }) {
+            customerViewModel.selectedCustomer(it)
+            onNavigate(MainNavigation.customerProfile)
         }
     }
 }
@@ -132,7 +137,7 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
 fun SectionTitle(title: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(22.dp)
-            .clickable(interactionSource = null, indication = null, onClick =  onClick),
+            .clickable(interactionSource = null, indication = null, onClick = onClick),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = title, style = appTypography().title15)
@@ -202,7 +207,7 @@ fun LastNoteItem(
                     }
                 }
             }
-            WelcomeIndicators(pageSize = pagerState.pageCount,pagerState.currentPage)
+            WelcomeIndicators(pageSize = pagerState.pageCount, pagerState.currentPage)
         }
     else
         EmptyNoteOrCustomer(isNote = true, onCardClicked = {
@@ -252,12 +257,14 @@ fun HomeTopBar(
 
 
                 // Profile Picture
-                AsyncImage("$BASE_URL$avatar",contentDescription = null, contentScale = ContentScale.Crop,
+                AsyncImage(
+                    "$BASE_URL$avatar", contentDescription = null, contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .size(60.dp)
                         .background(Color.White, shape = CircleShape)
-                        .clickable(onClick = onNavigateToProfile))
+                        .clickable(onClick = onNavigateToProfile)
+                )
                 // User Info
                 Column(
                     modifier = Modifier.weight(1f)
@@ -305,7 +312,7 @@ fun HomeTopBar(
             leadingIcon = Res.drawable.ic_search,
             onValueChange = { query.value = it },
             isSearch = true,
-            onSearchCompleted = onSearchQueryCompleted ,
+            onSearchCompleted = onSearchQueryCompleted,
             hint = stringResource(Res.string.search_in_customers)
         )
     }
@@ -398,7 +405,8 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClicked: (CustomerP
         Box(modifier = Modifier.size(68.dp).clip(shape = RoundedCornerShape(16.dp))) {
             AsyncImage(
                 model = "$BASE_URL${customerProfile.avatar}",
-                contentDescription = null, contentScale = ContentScale.Crop)
+                contentDescription = null, contentScale = ContentScale.Crop
+            )
         }
         Text(
             modifier = Modifier.padding(top = 8.dp),
@@ -409,11 +417,15 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClicked: (CustomerP
 }
 
 @Composable
-fun LatestCustomerSection(latestCustomers: List<CustomerProfile>, firstCustomer: () -> Unit) {
+fun LatestCustomerSection(
+    latestCustomers: List<CustomerProfile>,
+    firstCustomer: () -> Unit,
+    onCustomerClicked: (CustomerProfile) -> Unit
+) {
     if (latestCustomers.isNotEmpty())
         LazyRow(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             items(latestCustomers.size) {
-                CustomerItem(latestCustomers[it]) {}
+                CustomerItem(latestCustomers[it], onCustomerClicked)
             }
         }
     else

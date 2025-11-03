@@ -17,6 +17,7 @@ import org.modeart.tailor.features.customer.di.CustomerModule
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerCreatedSuccessResponse
 import org.modeart.tailor.model.customer.CustomerProfile
+import org.modeart.tailor.model.customer.SizeType
 import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -103,11 +104,24 @@ fun Route.customerRouting() {
                     status = HttpStatusCode.BadRequest
                 )
                 val size = call.receive<CustomerProfile.Size>()
+
+                val sizeTypes = emptyList<SizeType>()
+                if (size.sleevesSizes!=null) {
+                    sizeTypes.plus(SizeType.Sleeves)
+                }
+                if (size.upperBodySizes!=null) {
+                    sizeTypes.plus(SizeType.UpperBody)
+                }
+                if (size.lowerBodySizes!=null) {
+                    sizeTypes.plus(SizeType.LowerBody)
+                }
+
                 val insertedId = repository.addSize(
                     id,
                     size.copy(
                         id = UUID.randomUUID().toString(),
-                        createdAt = Clock.System.now().toString()
+                        createdAt = Clock.System.now().toString(),
+                        type = sizeTypes
                     )
                 )
                 call.respond(HttpStatusCode.Created, "Size added successfully with id $insertedId")

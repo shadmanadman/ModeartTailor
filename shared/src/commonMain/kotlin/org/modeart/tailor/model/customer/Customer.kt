@@ -41,6 +41,7 @@ data class CustomerProfile(
     data class Size(
         val id: String? = "",
         val createdAt: String? = "",
+        val type:List<SizeType> = emptyList(),
         val upperBodySizes: UpperBodySizes? = null,
         val lowerBodySizes: LowerBodySizes? = null,
         val sleevesSizes: SleevesSizes? = null,
@@ -91,6 +92,7 @@ data class CustomerProfile(
 
 @Serializable
 data class CustomerCreatedSuccessResponse(val id: String)
+enum class SizeType { UpperBody, LowerBody, Sleeves}
 enum class CustomerGender { MALE, FEMALE, OTHER }
 enum class CustomerStyle { CLASSIC, MODERN, FIT, CASUAL, FORMAL, LOOSE }
 enum class CustomerBodyForm { InvertedTriangle, Hourglass, Rectangle, Pear, Circle }

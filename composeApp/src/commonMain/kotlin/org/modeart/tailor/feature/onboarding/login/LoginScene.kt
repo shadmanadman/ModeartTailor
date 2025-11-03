@@ -124,6 +124,7 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
                 LoginStep.EnterPhoneNumber -> {
                     OutlinedTextFieldModeArt(
                         value = state.number,
+                        isNumberOnly = true,
                         hint = stringResource(Res.string.mobile_number),
                         onValueChange = viewModel::verifyPhoneNumber
                     )
@@ -138,6 +139,7 @@ fun LoginSceneContent(state: LoginScreenUiState, viewModel: LoginViewModel) {
                 LoginStep.EnterVerificationCode -> {
                     OutlinedTextFieldModeArt(
                         value = state.code,
+                        isNumberOnly = true,
                         hint = stringResource(Res.string.enter_code),
                         onValueChange = viewModel::onCodeUpdated
                     )

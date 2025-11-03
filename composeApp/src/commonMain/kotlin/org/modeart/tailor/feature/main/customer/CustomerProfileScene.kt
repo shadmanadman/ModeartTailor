@@ -1,5 +1,6 @@
 package org.modeart.tailor.feature.main.customer
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.content.MediaType.Companion.Image
@@ -21,6 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -57,6 +60,7 @@ import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
 import org.modeart.tailor.feature.main.customer.contract.CustomerUiState
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
+import org.modeart.tailor.model.customer.SizeType
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
@@ -88,15 +92,20 @@ fun CustomerProfileScene(onNavigate: (Route) -> Unit) {
     }
 
 
+    CustomerProfileContent(state.selectedCustomer ?: CustomerProfile())
 }
 
 @Composable
-fun CustomerProfileContent(state: CustomerUiState) {
+fun CustomerProfileContent(profile: CustomerProfile) {
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
-        ProfileHeaderCard(state.selectedCustomer ?: CustomerProfile())
+        ProfileHeaderCard(profile)
         LazyColumn {
-            items(state.selectedCustomer?.sizes?.size?:0) {
-
+            items(profile.sizes?.size ?: 0) {
+                MeasurementItem(
+                    profile.sizes?.get(it)?.createdAt ?: "",
+                    profile.sizes?.get(it)?.type ?: emptyList(),
+                    profile.sizes?.get(it)?.createdAt ?: ""
+                )
             }
         }
     }
@@ -104,13 +113,18 @@ fun CustomerProfileContent(state: CustomerUiState) {
 
 @Preview
 @Composable
-fun ProfileHeaderCard(customerProfile: CustomerProfile) {
+fun ProfileHeaderCard(customerProfile: CustomerProfile = CustomerProfile()) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(Primary),
-        shape = RoundedCornerShape(16.dp)
+            .clip(
+                RoundedCornerShape(
+                    bottomEnd = 16.dp,
+                    bottomStart = 16.dp,
+                    topEnd = 0.dp,
+                    topStart = 0.dp
+                )
+            ), colors = CardDefaults.cardColors(containerColor = Primary)
     ) {
         Column(
             modifier = Modifier
@@ -187,8 +201,7 @@ fun ProfileActionButton(label: String, value: String) {
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .width(100.dp)
-            .height(70.dp)
-            .background(AccentLight),
+            .height(70.dp), colors = CardDefaults.cardColors(containerColor = AccentLight)
     ) {
         Column(
             modifier = Modifier
@@ -214,13 +227,16 @@ fun ProfileActionButton(label: String, value: String) {
 }
 
 @Composable
-fun MeasurementItem(date: String, type: String, tag: String) {
+fun MeasurementItem(date: String, type: List<SizeType>, tag: String) {
+    var type = ""
+    type.forEach { type += "/$it" }
     Card(
         modifier = Modifier
+            .padding(18.dp)
             .fillMaxWidth()
-            .background(AccentLight)
+            .clip(RoundedCornerShape(12.dp))
             .clickable { /* Handle item click */ },
-        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, Accent),
     ) {
         Row(
             modifier = Modifier
@@ -243,7 +259,7 @@ fun MeasurementItem(date: String, type: String, tag: String) {
             }
 
             Column(
-                horizontalAlignment = Alignment.End // Align text to the right for RTL
+                horizontalAlignment = Alignment.End
             ) {
                 Text(
                     text = date,
