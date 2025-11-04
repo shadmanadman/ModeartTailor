@@ -115,12 +115,15 @@ fun Route.customerRouting() {
                 if (size.lowerBodySizes!=null) {
                     sizeTypes.plus(SizeType.LowerBody)
                 }
+                if(size.fastSize!=null){
+                    sizeTypes.plus(SizeType.FastSize)
+                }
 
                 val insertedId = repository.addSize(
                     id,
                     size.copy(
                         id = UUID.randomUUID().toString(),
-                        createdAt = Clock.System.now().toString(),
+                        createdAt = Clock.System.now().toEpochMilliseconds().toString(),
                         type = sizeTypes
                     )
                 )

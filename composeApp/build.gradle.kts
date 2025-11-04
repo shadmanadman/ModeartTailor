@@ -75,6 +75,7 @@ kotlin {
             implementation(libs.coil.http)
 
             implementation(libs.kotlinx.date.time)
+            implementation(libs.persian.date.time)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

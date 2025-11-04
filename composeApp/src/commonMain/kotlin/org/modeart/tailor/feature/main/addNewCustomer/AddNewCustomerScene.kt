@@ -104,7 +104,7 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
             NewCustomerSteps.SupplementaryInfo -> SupplementaryInformationScreen(state, viewModel)
             NewCustomerSteps.FinalInfo -> FinalInfo(state, viewModel)
             NewCustomerSteps.OverallSize -> OverallSize(isRegisteringNewSize, state, viewModel)
-            NewCustomerSteps.FastSize -> FastSizeSelectionScreen(viewModel)
+            NewCustomerSteps.FastSize -> FastSizeSelectionScreen(viewModel,onBack)
         }
     }
 }

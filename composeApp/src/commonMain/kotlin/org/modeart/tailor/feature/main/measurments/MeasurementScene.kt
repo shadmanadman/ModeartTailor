@@ -115,16 +115,16 @@ fun MeasurementScene(onNavigate: (Route) -> Unit,onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (state.currentStage == MeasurementStage.SelectCustomer)
-                CustomerTypeSelection(viewModel,viewModelNewCustomer)
+                CustomerTypeSelection(viewModel)
             else
-                MeasurementTypeSelection(viewModel)
+                MeasurementTypeSelection(viewModel,viewModelNewCustomer)
         }
     }
 }
 
 @Composable
 @Preview
-fun CustomerTypeSelection(viewModel: MeasurementViewModel,viewModelNewCustomer: NewCustomerViewModel) {
+fun CustomerTypeSelection(viewModel: MeasurementViewModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(stringResource(Res.string.select_customer), style = appTypography().title16)
         Text(stringResource(Res.string.select_customer_sub), style = appTypography().body14)
@@ -150,7 +150,6 @@ fun CustomerTypeSelection(viewModel: MeasurementViewModel,viewModelNewCustomer: 
                 iconBackgroundColor = Primary
             ) {
                 viewModel.customerTypeSelected(customerType = MeasurementSelectedCustomer.OldCustomer)
-                viewModelNewCustomer.updateStep(NewCustomerSteps.OverallSize)
                 viewModel.measurementStageChanged(MeasurementStage.SelectMeasurementType)
             }
         }
@@ -159,7 +158,7 @@ fun CustomerTypeSelection(viewModel: MeasurementViewModel,viewModelNewCustomer: 
 
 @Composable
 @Preview
-fun MeasurementTypeSelection(viewModel: MeasurementViewModel) {
+fun MeasurementTypeSelection(viewModel: MeasurementViewModel,viewModelNewCustomer: NewCustomerViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -176,6 +175,7 @@ fun MeasurementTypeSelection(viewModel: MeasurementViewModel) {
             labelColor = Accent,
             iconResId = Res.drawable.ic_fast_measure,
             onClick = {
+                viewModelNewCustomer.updateStep(NewCustomerSteps.FastSize)
                 viewModel.measurementTypeSelected(MeasurementType.FastSize)
             })
 
@@ -186,6 +186,7 @@ fun MeasurementTypeSelection(viewModel: MeasurementViewModel) {
             labelColor = Primary,
             iconResId = Res.drawable.ic_full_measure,
             onClick = {
+                viewModelNewCustomer.updateStep(NewCustomerSteps.OverallSize)
                 viewModel.measurementTypeSelected(MeasurementType.CustomSize)
             })
     }

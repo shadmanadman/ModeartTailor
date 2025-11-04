@@ -16,7 +16,7 @@ import org.modeart.tailor.feature.main.measurments.contracts.MeasurementUiState
 import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.navigation.MainNavigation
 
-class MeasurementViewModel: ViewModel() {
+class MeasurementViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(MeasurementUiState())
 
     val state: StateFlow<MeasurementUiState> = _uiState
@@ -25,20 +25,19 @@ class MeasurementViewModel: ViewModel() {
         private set
 
 
-    fun measurementStageChanged(measurementStage: MeasurementStage){
+    fun measurementStageChanged(measurementStage: MeasurementStage) {
         _uiState.update { it.copy(currentStage = measurementStage) }
     }
 
-    fun customerTypeSelected(customerType: MeasurementSelectedCustomer){
+    fun customerTypeSelected(customerType: MeasurementSelectedCustomer) {
         _uiState.update { it.copy(customerType = customerType) }
         if (customerType == MeasurementSelectedCustomer.OldCustomer)
             effect.trySend(MeasurementUiEffect.ShowSelectCustomerBottomSheet)
     }
 
-    fun measurementTypeSelected(measurementType: MeasurementType){
+    fun measurementTypeSelected(measurementType: MeasurementType) {
         _uiState.update { it.copy(measurementType = measurementType) }
-        if (measurementType== MeasurementType.CustomSize)
-            effect.trySend(MeasurementUiEffect.Navigation(MainNavigation.newCustomer))
+        effect.trySend(MeasurementUiEffect.Navigation(MainNavigation.newCustomer))
     }
 
 }

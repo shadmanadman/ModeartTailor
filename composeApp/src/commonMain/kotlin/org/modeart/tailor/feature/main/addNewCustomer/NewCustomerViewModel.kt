@@ -54,7 +54,9 @@ class NewCustomerViewModel(
     }
 
     fun fastSizeSelected(size: Int) {
+        _uiState.update { it.copy(size = CustomerProfile.Size(fastSize = size)) }
         _uiState.update { it.copy(selectedFastSize = size) }
+        addSize()
     }
 
     fun updateStep(step: NewCustomerSteps) {
@@ -219,6 +221,8 @@ class NewCustomerViewModel(
     }
 
     fun addSize(){
+        if (_uiState.value.customer.id.isBlank())
+            return
         viewModelScope.launch {
             val response = customerService.addSize(_uiState.value.customer.id,_uiState.value.size)
             when (response) {

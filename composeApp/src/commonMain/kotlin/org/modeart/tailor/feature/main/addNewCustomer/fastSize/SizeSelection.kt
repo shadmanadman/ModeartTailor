@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.save_and_next
 import modearttailor.composeapp.generated.resources.register_new_customer
+import modearttailor.composeapp.generated.resources.save_size
 import modearttailor.composeapp.generated.resources.select_customer_size
 import modearttailor.composeapp.generated.resources.vector_fast_size
 import org.jetbrains.compose.resources.painterResource
@@ -56,13 +57,15 @@ enum class CustomerSize(val value: Int) {
         return value.toString()
     }
 }
+
 @Composable
-fun FastSizeSelectionScreen(viewModel: NewCustomerViewModel) {
-    SizeSelectionContent(fastSizeSelected = viewModel::fastSizeSelected)
+fun FastSizeSelectionScreen(viewModel: NewCustomerViewModel,onBack: () -> Unit) {
+    SizeSelectionContent(fastSizeSelected = viewModel::fastSizeSelected,onBack)
 }
+
 @Composable
 @Preview
-fun SizeSelectionContent(fastSizeSelected:(Int)-> Unit) {
+fun SizeSelectionContent(fastSizeSelected: (Int) -> Unit,onBack: () -> Unit) {
     var selectedSize by remember { mutableStateOf(32) }
 
     Column(
@@ -105,8 +108,8 @@ fun SizeSelectionContent(fastSizeSelected:(Int)-> Unit) {
             }
         }
 
-        RoundedCornerButton(isEnabled = true, text = stringResource(Res.string.save_and_next)) {
-
+        RoundedCornerButton(isEnabled = true, text = stringResource(Res.string.save_size)) {
+            onBack()
         }
     }
 }

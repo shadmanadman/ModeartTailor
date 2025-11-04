@@ -43,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import io.github.faridsolgi.persiandatetime.domain.PersianDateTime
+import io.github.faridsolgi.persiandatetime.extensions.persianMonth
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -227,9 +229,10 @@ fun ProfileActionButton(label: String, value: String) {
 }
 
 @Composable
-fun MeasurementItem(date: String, type: List<SizeType>, tag: String) {
+fun MeasurementItem(date: String, types: List<SizeType>, tag: String) {
     var type = ""
-    type.forEach { type += "/$it" }
+    types.forEach { type += "/$it" }
+    val dateInPersian = PersianDateTime.parse(date.toLong())
     Card(
         modifier = Modifier
             .padding(18.dp)
@@ -245,24 +248,24 @@ fun MeasurementItem(date: String, type: List<SizeType>, tag: String) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Card(
-                modifier = Modifier.background(AccentLight),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = tag,
-                    color = Primary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                )
-            }
+//            Card(
+//                modifier = Modifier.background(AccentLight),
+//                shape = RoundedCornerShape(8.dp)
+//            ) {
+//                Text(
+//                    text = tag,
+//                    color = Primary,
+//                    fontSize = 12.sp,
+//                    fontWeight = FontWeight.Medium,
+//                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+//                )
+//            }
 
             Column(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = date,
+                    text = "${dateInPersian.day} ${dateInPersian.persianMonth().displayName} ${dateInPersian.year}",
                     color = Primary,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold

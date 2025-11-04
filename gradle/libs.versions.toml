@@ -82,6 +82,7 @@ coil-core = {module = "io.coil-kt.coil3:coil-compose", version.ref = "coil"}
 coil-http = {module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil"}
 
 kotlinx-date-time = {module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime"}
+persian-date-time = {module = "io.github.faridsolgi:persianDateTime", version = "0.2.3"}
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
