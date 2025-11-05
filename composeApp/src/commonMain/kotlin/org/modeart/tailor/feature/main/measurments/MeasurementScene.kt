@@ -186,7 +186,7 @@ fun MeasurementTypeSelection(viewModel: MeasurementViewModel,viewModelNewCustome
             labelColor = Primary,
             iconResId = Res.drawable.ic_full_measure,
             onClick = {
-                viewModelNewCustomer.updateStep(NewCustomerSteps.OverallSize)
+                viewModelNewCustomer.updateStep(NewCustomerSteps.BasicInfo)
                 viewModel.measurementTypeSelected(MeasurementType.CustomSize)
             })
     }

@@ -51,8 +51,14 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.acquaintance_period
 import modearttailor.composeapp.generated.resources.code
+import modearttailor.composeapp.generated.resources.fast_size
+import modearttailor.composeapp.generated.resources.login
+import modearttailor.composeapp.generated.resources.lower_body
 import modearttailor.composeapp.generated.resources.measure
+import modearttailor.composeapp.generated.resources.sleeve
+import modearttailor.composeapp.generated.resources.upper_body
 import moe.tlaster.precompose.koin.koinViewModel
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -231,7 +237,7 @@ fun ProfileActionButton(label: String, value: String) {
 @Composable
 fun MeasurementItem(date: String, types: List<SizeType>, tag: String) {
     var type = ""
-    types.forEach { type += "/$it" }
+    types.forEach { type += "/${it.toLocal()}" }
     val dateInPersian = PersianDateTime.parse(date.toLong())
     Card(
         modifier = Modifier
@@ -240,6 +246,7 @@ fun MeasurementItem(date: String, types: List<SizeType>, tag: String) {
             .clip(RoundedCornerShape(12.dp))
             .clickable { /* Handle item click */ },
         border = BorderStroke(1.dp, Accent),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Row(
             modifier = Modifier
@@ -262,20 +269,30 @@ fun MeasurementItem(date: String, types: List<SizeType>, tag: String) {
 //            }
 
             Column(
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "${dateInPersian.day} ${dateInPersian.persianMonth().displayName} ${dateInPersian.year}",
                     color = Primary,
-                    fontSize = 16.sp,
+                    style = appTypography().body14,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = type,
                     color = Color.Gray,
-                    fontSize = 13.sp
+                    style = appTypography().body13
                 )
             }
         }
+    }
+}
+
+private fun SizeType.toLocal(): StringResource{
+    return when(this){
+        SizeType.UpperBody -> Res.string.upper_body
+        SizeType.LowerBody -> Res.string.lower_body
+        SizeType.Sleeves -> Res.string.sleeve
+        SizeType.FastSize -> Res.string.fast_size
     }
 }

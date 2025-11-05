@@ -105,18 +105,18 @@ fun Route.customerRouting() {
                 )
                 val size = call.receive<CustomerProfile.Size>()
 
-                val sizeTypes = emptyList<SizeType>()
+                val sizeTypes = mutableListOf<SizeType>()
                 if (size.sleevesSizes!=null) {
-                    sizeTypes.plus(SizeType.Sleeves)
+                    sizeTypes.add(SizeType.Sleeves)
                 }
                 if (size.upperBodySizes!=null) {
-                    sizeTypes.plus(SizeType.UpperBody)
+                    sizeTypes.add(SizeType.UpperBody)
                 }
                 if (size.lowerBodySizes!=null) {
-                    sizeTypes.plus(SizeType.LowerBody)
+                    sizeTypes.add(SizeType.LowerBody)
                 }
                 if(size.fastSize!=null){
-                    sizeTypes.plus(SizeType.FastSize)
+                    sizeTypes.add(SizeType.FastSize)
                 }
 
                 val insertedId = repository.addSize(

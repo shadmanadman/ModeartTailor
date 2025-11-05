@@ -60,12 +60,12 @@ enum class CustomerSize(val value: Int) {
 
 @Composable
 fun FastSizeSelectionScreen(viewModel: NewCustomerViewModel,onBack: () -> Unit) {
-    SizeSelectionContent(fastSizeSelected = viewModel::fastSizeSelected,onBack)
+    SizeSelectionContent(viewModel = viewModel,fastSizeSelected = viewModel::fastSizeSelected,onBack)
 }
 
 @Composable
 @Preview
-fun SizeSelectionContent(fastSizeSelected: (Int) -> Unit,onBack: () -> Unit) {
+fun SizeSelectionContent(viewModel: NewCustomerViewModel,fastSizeSelected: (Int) -> Unit,onBack: () -> Unit) {
     var selectedSize by remember { mutableStateOf(32) }
 
     Column(
@@ -109,7 +109,7 @@ fun SizeSelectionContent(fastSizeSelected: (Int) -> Unit,onBack: () -> Unit) {
         }
 
         RoundedCornerButton(isEnabled = true, text = stringResource(Res.string.save_size)) {
-            onBack()
+            viewModel.addSize()
         }
     }
 }

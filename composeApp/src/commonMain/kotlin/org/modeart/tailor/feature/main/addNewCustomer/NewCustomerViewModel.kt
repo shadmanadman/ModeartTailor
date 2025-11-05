@@ -56,7 +56,6 @@ class NewCustomerViewModel(
     fun fastSizeSelected(size: Int) {
         _uiState.update { it.copy(size = CustomerProfile.Size(fastSize = size)) }
         _uiState.update { it.copy(selectedFastSize = size) }
-        addSize()
     }
 
     fun updateStep(step: NewCustomerSteps) {

@@ -210,4 +210,7 @@
     <string name="to_remove_picture_click_on_it">برای حذف تصویر روی ان کلیک کنید</string>
     <string name="acquaintance_period">مدت آشنایی</string>
     <string name="code">کد</string>
+    <string name="upper_body">بالاتنه</string>
+    <string name="sleeves">دست</string>
+    <string name="fast_size">اندازه سریع</string>
 </resources>
