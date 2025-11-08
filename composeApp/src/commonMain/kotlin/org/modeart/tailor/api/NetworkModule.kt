@@ -26,7 +26,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.Response
 
-const val BASE_URL = "http://10.0.2.2:8080/"
+const val BASE_URL = "http://194.60.231.174:8080/"
 private const val LOG_HTTP = "HTTP call"
 
 val networkModule = module {

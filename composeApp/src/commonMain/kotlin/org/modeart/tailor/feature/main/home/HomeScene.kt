@@ -94,8 +94,11 @@ fun HomeScene(onNavigate: (Route) -> Unit) {
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<HomeUiEffect.ShowRawNotification?>(null) }
 
-    viewModel.getProfile()
-    viewModel.getBusinessCustomers()
+    LaunchedEffect(Unit){
+        viewModel.getProfile()
+        viewModel.getBusinessCustomers()
+    }
+
     LaunchedEffect(effects) {
         effects.onEach { effect ->
             when (effect) {
