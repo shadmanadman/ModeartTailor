@@ -77,7 +77,7 @@ import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun CustomerProfileScene(onNavigate: (Route) -> Unit) {
+fun CustomerProfileScene(onNavigate: (Route) -> Unit,onBack:()-> Unit) {
     val viewModel = koinViewModel(CustomersViewModel::class)
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
@@ -100,13 +100,13 @@ fun CustomerProfileScene(onNavigate: (Route) -> Unit) {
     }
 
 
-    CustomerProfileContent(state.selectedCustomer ?: CustomerProfile())
+    CustomerProfileContent(state.selectedCustomer ?: CustomerProfile(),onBack)
 }
 
 @Composable
-fun CustomerProfileContent(profile: CustomerProfile) {
+fun CustomerProfileContent(profile: CustomerProfile,onBack: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
-        ProfileHeaderCard(profile)
+        ProfileHeaderCard(profile,onBack)
         LazyColumn {
             items(profile.sizes?.size ?: 0) {
                 MeasurementItem(
@@ -121,7 +121,7 @@ fun CustomerProfileContent(profile: CustomerProfile) {
 
 @Preview
 @Composable
-fun ProfileHeaderCard(customerProfile: CustomerProfile = CustomerProfile()) {
+fun ProfileHeaderCard(customerProfile: CustomerProfile = CustomerProfile(),onBack: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -141,7 +141,8 @@ fun ProfileHeaderCard(customerProfile: CustomerProfile = CustomerProfile()) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    .clickable(onClick = onBack),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(

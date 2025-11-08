@@ -65,7 +65,9 @@ internal fun App() {
                     HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
                 scene(route = MainNavigation.measure.fullPath) {
-                    MeasurementScene(onNavigate = { navigator.navigate(it.fullPath) }, onBack = {navigator.popBackStack()})
+                    MeasurementScene(
+                        onNavigate = { navigator.navigate(it.fullPath) },
+                        onBack = { navigator.popBackStack() })
                 }
                 scene(route = MainNavigation.newNote.fullPath) {
                     NewNoteScene(
@@ -79,13 +81,13 @@ internal fun App() {
                 scene(route = MainNavigation.editProfile.fullPath) {
                     EditeProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
                 }
-                scene(route = MainNavigation.contact.fullPath){
+                scene(route = MainNavigation.contact.fullPath) {
                     ContactUsScene()
                 }
-                scene(route = MainNavigation.planHistory.fullPath){
-                    PlanHistoryScene(onBack = {navigator.popBackStack()})
+                scene(route = MainNavigation.planHistory.fullPath) {
+                    PlanHistoryScene(onBack = { navigator.popBackStack() })
                 }
-                scene(route = MainNavigation.plan.fullPath){
+                scene(route = MainNavigation.plan.fullPath) {
                     PlansScene()
                 }
                 //************************ Customer *********************************//
@@ -94,8 +96,10 @@ internal fun App() {
                         onNavigate = { navigator.navigate(it.fullPath) },
                         onBack = { navigator.popBackStack() })
                 }
-                scene(route = MainNavigation.customerProfile.fullPath){
-                    CustomerProfileScene { navigator.navigate(it.fullPath) }
+                scene(route = MainNavigation.customerProfile.fullPath) {
+                    CustomerProfileScene(
+                        onNavigate = { navigator.navigate(it.fullPath) },
+                        onBack = { navigator.popBackStack() })
                 }
             }
         }
