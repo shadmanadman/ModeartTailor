@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -31,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.flow.collect
@@ -39,26 +39,15 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.alphabetic
 import modearttailor.composeapp.generated.resources.newest
+import modearttailor.composeapp.generated.resources.no_customer_founded
 import modearttailor.composeapp.generated.resources.oldest
-import modearttailor.composeapp.generated.resources.others
-import modearttailor.composeapp.generated.resources.personal
-import modearttailor.composeapp.generated.resources.work_and_customer
 import moe.tlaster.precompose.koin.koinViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.api.BASE_URL
 import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.feature.main.customer.contract.CustomerUiEffect
-import org.modeart.tailor.feature.main.customer.contract.CustomerUiState
-import org.modeart.tailor.feature.main.home.HomeTopBar
-import org.modeart.tailor.feature.main.home.HomeViewModel
-import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
-import org.modeart.tailor.feature.main.note.NewNote
-import org.modeart.tailor.feature.main.note.NoteItem
-import org.modeart.tailor.feature.main.note.convertToNoteCategory
-import org.modeart.tailor.model.business.NoteCategory
 import org.modeart.tailor.model.customer.CustomerProfile
-import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.appTypography
@@ -81,7 +70,11 @@ fun CustomerScene(onNavigate: (Route) -> Unit) {
         }.collect()
     }
     notification?.let { notif ->
-        InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
+        InAppNotification(
+            message = notif.msg,
+            localizedMessage = notif.msgLocalized,
+            networkErrorCode = notif.errorCode
+        ) {
             notification = null
         }
     }
@@ -93,6 +86,14 @@ fun CustomerScene(onNavigate: (Route) -> Unit) {
 
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         FilterTabs(viewModel::customerFilterChanged)
+
+        if (state.businessCustomers.isEmpty())
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(18.dp),
+                textAlign = TextAlign.Center,
+                text = stringResource(Res.string.no_customer_founded),
+                style = appTypography().title18
+            )
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
@@ -134,7 +135,7 @@ fun FilterTabs(onSelectedTab: (CustomerFilter) -> Unit) {
     )
 
     Box(
-        modifier = Modifier.width(360.dp).height(tabHeight)
+        modifier = Modifier.padding(top = 30.dp).width(360.dp).height(tabHeight)
             .background(color = AccentLight, shape = RoundedCornerShape(12.dp))
     ) {
         Row(
@@ -208,7 +209,8 @@ fun CustomerItem(customerProfile: CustomerProfile, onCustomerClick: (CustomerPro
                 modifier = Modifier.padding(8.dp)
             )
             // Phone
-            Text(text = customerProfile.phoneNumber.toString(), style = appTypography().title16,
+            Text(
+                text = customerProfile.phoneNumber.toString(), style = appTypography().title16,
                 modifier = Modifier.padding(8.dp),
                 color = Color.Gray
             )

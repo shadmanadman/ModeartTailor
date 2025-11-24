@@ -1,8 +1,11 @@
 package org.modeart.tailor.feature.main.addNewCustomer
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +36,7 @@ import org.modeart.tailor.feature.main.addNewCustomer.info.StyleFeatures
 import org.modeart.tailor.feature.main.addNewCustomer.info.SupplementaryInformationScreen
 import org.modeart.tailor.feature.main.measurments.MeasurementViewModel
 import org.modeart.tailor.feature.main.measurments.contracts.MeasurementSelectedCustomer
+import org.modeart.tailor.feature.main.measurments.contracts.MeasurementType
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Background
 
@@ -54,6 +58,9 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
         )
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.setMeasurementType(viewModelMeasurement.state.value.measurementType)
+    }
     BackHandler {
         if (isRegisteringNewSize)
             onBack()
@@ -91,7 +98,7 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
 
 
 
-    Column(modifier = Modifier.fillMaxSize().background(Background)) {
+    Column(modifier = Modifier.fillMaxSize().background(Background).scrollable(orientation = Orientation.Vertical,state = rememberScrollState())) {
         MainToolbar(stringResource(Res.string.register_new_customer)) {
             if (isRegisteringNewSize)
                 onBack()
@@ -104,7 +111,7 @@ fun AddNewCustomerScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
             NewCustomerSteps.SupplementaryInfo -> SupplementaryInformationScreen(state, viewModel)
             NewCustomerSteps.FinalInfo -> FinalInfo(state, viewModel)
             NewCustomerSteps.OverallSize -> OverallSize(isRegisteringNewSize, state, viewModel)
-            NewCustomerSteps.FastSize -> FastSizeSelectionScreen(viewModel,onBack)
+            NewCustomerSteps.FastSize -> FastSizeSelectionScreen(viewModel)
         }
     }
 }
@@ -118,8 +125,12 @@ private fun handleBackStack(
         NewCustomerSteps.BasicInfo -> onBack()
         NewCustomerSteps.StyleFeature -> viewModel.updateStep(NewCustomerSteps.BasicInfo)
         NewCustomerSteps.SupplementaryInfo -> viewModel.updateStep(NewCustomerSteps.StyleFeature)
-        NewCustomerSteps.FinalInfo -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
-        NewCustomerSteps.OverallSize -> viewModel.updateStep(NewCustomerSteps.FinalInfo)
-        NewCustomerSteps.FastSize -> viewModel.updateStep(NewCustomerSteps.FastSize)
+        NewCustomerSteps.FinalInfo -> if (viewModel.uiState.value.measurementType == MeasurementType.CustomSize) viewModel.updateStep(
+            NewCustomerSteps.OverallSize
+        )else viewModel.updateStep(NewCustomerSteps.FastSize)
+
+
+        NewCustomerSteps.OverallSize -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
+        NewCustomerSteps.FastSize -> viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
     }
 }

@@ -10,6 +10,7 @@ sealed interface NoteUiEffect {
     data class ShowLocalizedNotification(val msg: StringResource, val errorCode: String = "") :
         NoteUiEffect
 
+    data object OnBack: NoteUiEffect
 
     data class Navigation(val screen: Route) : NoteUiEffect
 }

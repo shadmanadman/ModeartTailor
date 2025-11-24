@@ -20,6 +20,7 @@ import androidx.compose.ui.zIndex
 import kotlinx.coroutines.delay
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.network_error
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.modeart.tailor.theme.appTypography
 
@@ -28,6 +29,7 @@ const val NOTIFICATION_DELAY = 3000L
 @Composable
 fun InAppNotification(
     message: String = "",
+    localizedMessage: StringResource?=null,
     isError: Boolean = false,
     isNetworkError: Boolean = false,
     networkErrorCode: String = "",
@@ -37,6 +39,8 @@ fun InAppNotification(
 
     val textMessage = if (isNetworkError)
         stringResource(Res.string.network_error)
+    else if (localizedMessage!=null)
+        stringResource(localizedMessage)
     else
         message
 

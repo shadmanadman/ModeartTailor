@@ -32,6 +32,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.info.SelectableButton
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.appTypography
@@ -59,14 +60,14 @@ enum class CustomerSize(val value: Int) {
 }
 
 @Composable
-fun FastSizeSelectionScreen(viewModel: NewCustomerViewModel,onBack: () -> Unit) {
-    SizeSelectionContent(viewModel = viewModel,fastSizeSelected = viewModel::fastSizeSelected,onBack)
+fun FastSizeSelectionScreen(viewModel: NewCustomerViewModel) {
+    SizeSelectionContent(viewModel = viewModel,fastSizeSelected = viewModel::fastSizeSelected)
 }
 
 @Composable
 @Preview
-fun SizeSelectionContent(viewModel: NewCustomerViewModel,fastSizeSelected: (Int) -> Unit,onBack: () -> Unit) {
-    var selectedSize by remember { mutableStateOf(32) }
+fun SizeSelectionContent(viewModel: NewCustomerViewModel,fastSizeSelected: (Int) -> Unit) {
+    var selectedSize by remember { mutableStateOf(viewModel.uiState.value.size.fastSize) }
 
     Column(
         modifier = Modifier.fillMaxSize().background(Background).padding(bottom = 32.dp),
@@ -109,6 +110,7 @@ fun SizeSelectionContent(viewModel: NewCustomerViewModel,fastSizeSelected: (Int)
         }
 
         RoundedCornerButton(isEnabled = true, text = stringResource(Res.string.save_size)) {
+            viewModel.updateStep(NewCustomerSteps.FinalInfo)
             viewModel.addSize()
         }
     }

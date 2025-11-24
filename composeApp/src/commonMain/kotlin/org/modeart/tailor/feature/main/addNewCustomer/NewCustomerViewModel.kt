@@ -20,6 +20,7 @@ import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiEffect
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.feature.main.home.contract.HomeUiEffect
+import org.modeart.tailor.feature.main.measurments.contracts.MeasurementType
 import org.modeart.tailor.model.customer.CustomerBodyForm
 import org.modeart.tailor.model.customer.CustomerColor
 import org.modeart.tailor.model.customer.CustomerGender
@@ -49,6 +50,9 @@ class NewCustomerViewModel(
             extraPhotos.removeAt(index)
     }
 
+    fun setMeasurementType(type: MeasurementType) {
+        _uiState.update { it.copy(measurementType = type) }
+    }
     fun setSelectedCustomer(customer: CustomerProfile) {
         _uiState.update { it.copy(customer = customer) }
     }
@@ -76,9 +80,7 @@ class NewCustomerViewModel(
                     name = fullName,
                     phoneNumber = phoneNumber,
                     age = birth,
-                ),
-                step = NewCustomerSteps.StyleFeature
-            )
+                ))
         }
     }
 
@@ -95,8 +97,7 @@ class NewCustomerViewModel(
                     customerBodyType = customerBodyType,
                     customerShoulderType = customerShoulderType,
                     fabricSensitivity = fabricSensitivity
-                ),
-                step = NewCustomerSteps.SupplementaryInfo
+                )
             )
         }
     }
@@ -114,9 +115,7 @@ class NewCustomerViewModel(
                     isOldCustomer = isOldCustomer,
                     referredBy = referredBy,
                     overallNote = overallNote
-                ),
-                step = NewCustomerSteps.OverallSize
-            )
+                ))
         }
     }
 
@@ -161,8 +160,7 @@ class NewCustomerViewModel(
 
     fun updateCustomer() {
         viewModelScope.launch {
-            val response = customerService.updateCustomer(_uiState.value.customer)
-            when (response) {
+            when (val response = customerService.updateCustomer(_uiState.value.customer)) {
                 is ApiResult.Error -> effects.send(
                     NewCustomerUiEffect.ShowRawNotification(
                         msg = response.message, errorCode = response.code.toString()
@@ -191,6 +189,11 @@ class NewCustomerViewModel(
                 )
 
                 is ApiResult.Success -> {
+                    effects.send(
+                        NewCustomerUiEffect.ShowLocalizedNotification(
+                            msg = Res.string.customer_saved_successfully, isError = false
+                        )
+                    )
                     _uiState.update { it.copy(customer = it.customer.copy(id = response.data.id)) }
                     addSize()
                 }

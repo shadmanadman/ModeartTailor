@@ -68,7 +68,9 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
     val effects = viewModel.effects.receiveAsFlow()
     var notification by remember { mutableStateOf<NoteUiEffect.ShowRawNotification?>(null) }
 
-    viewModel.getAllNotes()
+    LaunchedEffect(Unit){
+        viewModel.getAllNotes()
+    }
     LaunchedEffect(effects) {
         effects.onEach { effect ->
             when (effect) {
@@ -78,6 +80,7 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
                 }
 
                 is NoteUiEffect.ShowLocalizedNotification -> {}
+                NoteUiEffect.OnBack -> Unit
             }
         }.collect()
     }
@@ -97,7 +100,10 @@ fun NoteScene(onNavigate: (Route) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-                NewNote(onNewNote = { onNavigate(MainNavigation.newNote) })
+                NewNote(onNewNote = {
+                    viewModel.emptyNewNote()
+                    onNavigate(MainNavigation.newNote)
+                })
             }
             val notesBasedOnCategory =
                 state.allNotes.filter { it.category == state.currentCategory }

@@ -72,7 +72,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             implementation(libs.coil.core)
-            implementation(libs.coil.http)
+            //implementation(libs.coil.http)
 
             implementation(libs.kotlinx.date.time)
             implementation(libs.persian.date.time)

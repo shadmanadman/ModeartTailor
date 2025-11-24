@@ -61,7 +61,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
+import org.modeart.tailor.feature.main.measurments.contracts.MeasurementType
 import org.modeart.tailor.model.customer.CustomerBodyForm
 import org.modeart.tailor.model.customer.CustomerColor
 import org.modeart.tailor.model.customer.CustomerShoulder
@@ -228,6 +230,7 @@ fun SupplementaryInformationScreen(state: NewCustomerUiState, viewModel: NewCust
                         referredBy = referredBy ?: "",
                         overallNote = customerNotes ?: ""
                     )
+                    viewModel.updateStep(if (viewModel.uiState.value.measurementType == MeasurementType.CustomSize) NewCustomerSteps.OverallSize else NewCustomerSteps.FastSize)
                 })
             RoundedCornerButton(
                 width = 132,

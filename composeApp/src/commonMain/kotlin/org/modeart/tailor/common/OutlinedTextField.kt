@@ -29,7 +29,7 @@ import org.modeart.tailor.theme.appTypography
 fun OutlinedTextFieldModeArt(
     modifier: Modifier = Modifier,
     width: Dp = 256.dp,
-    height: Dp = 54.dp,
+    height: Dp = 64.dp,
     value: String,
     borderColor: Color = Hint,
     roundedCorner: Dp = 18.dp,

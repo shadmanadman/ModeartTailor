@@ -72,7 +72,7 @@ fun LowerBodyMeasurementScreen(
     )
     var lowerBodySize by remember { mutableStateOf(CustomerProfile.LowerBodySizes()) }
 
-    Column(modifier = Modifier.offset(x = 10.dp, y = -40.dp)) {
+    Column(modifier = Modifier.offset(x = 10.dp, y = (-40).dp)) {
 
         Spacer(modifier = Modifier.height(16.dp))
 

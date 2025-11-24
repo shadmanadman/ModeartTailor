@@ -96,6 +96,8 @@ fun NewNoteScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
                 is NoteUiEffect.ShowLocalizedNotification -> {
                     notificationLocalized = effect
                 }
+
+                NoteUiEffect.OnBack -> onBack()
             }
         }.collect()
     }

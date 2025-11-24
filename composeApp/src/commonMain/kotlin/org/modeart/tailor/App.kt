@@ -1,6 +1,9 @@
 package org.modeart.tailor
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.BackHandler
 import moe.tlaster.precompose.navigation.NavHost
@@ -32,74 +35,76 @@ import org.modeart.tailor.navigation.OnBoardingNavigation
 internal fun App() {
     KoinApplication(application = { modules(modules = appModule()) }) {
 
-        PreComposeApp {
-            val navigator = rememberNavigator()
-            NavHost(
-                navigator = navigator,
-                navTransition = NavTransition(),
-                initialRoute = OnBoardingNavigation.splash.fullPath
-            ) {
-                //********************** OnBoarding *********************************//
-                // Splash
-                scene(route = OnBoardingNavigation.splash.fullPath) {
-                    SplashScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
-                // Welcome
-                scene(route = OnBoardingNavigation.welcome.fullPath) {
-                    WelcomeScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
-                // Login
-                scene(route = OnBoardingNavigation.login.fullPath) {
-                    LoginScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
-                // Signup
-                scene(route = OnBoardingNavigation.signup.fullPath) {
-                    SignupScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
-                //************************ Main *********************************//
-                scene(route = MainNavigation.main.fullPath) {
-                    BottomNavScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+            PreComposeApp {
+                val navigator = rememberNavigator()
+                NavHost(
+                    navigator = navigator,
+                    navTransition = NavTransition(),
+                    initialRoute = OnBoardingNavigation.splash.fullPath
+                ) {
+                    //********************** OnBoarding *********************************//
+                    // Splash
+                    scene(route = OnBoardingNavigation.splash.fullPath) {
+                        SplashScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
+                    // Welcome
+                    scene(route = OnBoardingNavigation.welcome.fullPath) {
+                        WelcomeScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
+                    // Login
+                    scene(route = OnBoardingNavigation.login.fullPath) {
+                        LoginScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
+                    // Signup
+                    scene(route = OnBoardingNavigation.signup.fullPath) {
+                        SignupScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
+                    //************************ Main *********************************//
+                    scene(route = MainNavigation.main.fullPath) {
+                        BottomNavScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
 
-                scene(route = MainNavigation.home.fullPath) {
-                    HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
-                scene(route = MainNavigation.measure.fullPath) {
-                    MeasurementScene(
-                        onNavigate = { navigator.navigate(it.fullPath) },
-                        onBack = { navigator.popBackStack() })
-                }
-                scene(route = MainNavigation.newNote.fullPath) {
-                    NewNoteScene(
-                        onNavigate = { navigator.navigate(it.fullPath) },
-                        onBack = { navigator.popBackStack() })
-                }
-                //************************ Profile *********************************//
-                scene(route = MainNavigation.profile.fullPath) {
-                    MainProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
-                scene(route = MainNavigation.editProfile.fullPath) {
-                    EditeProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
-                }
-                scene(route = MainNavigation.contact.fullPath) {
-                    ContactUsScene()
-                }
-                scene(route = MainNavigation.planHistory.fullPath) {
-                    PlanHistoryScene(onBack = { navigator.popBackStack() })
-                }
-                scene(route = MainNavigation.plan.fullPath) {
-                    PlansScene()
-                }
-                //************************ Customer *********************************//
-                scene(route = MainNavigation.newCustomer.fullPath) {
-                    AddNewCustomerScene(
-                        onNavigate = { navigator.navigate(it.fullPath) },
-                        onBack = { navigator.popBackStack() })
-                }
-                scene(route = MainNavigation.customerProfile.fullPath) {
-                    CustomerProfileScene(
-                        onNavigate = { navigator.navigate(it.fullPath) },
-                        onBack = { navigator.popBackStack() })
+                    scene(route = MainNavigation.home.fullPath) {
+                        HomeScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
+                    scene(route = MainNavigation.measure.fullPath) {
+                        MeasurementScene(
+                            onNavigate = { navigator.navigate(it.fullPath) },
+                            onBack = { navigator.popBackStack() })
+                    }
+                    scene(route = MainNavigation.newNote.fullPath) {
+                        NewNoteScene(
+                            onNavigate = { navigator.navigate(it.fullPath) },
+                            onBack = { navigator.popBackStack() })
+                    }
+                    //************************ Profile *********************************//
+                    scene(route = MainNavigation.profile.fullPath) {
+                        MainProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
+                    scene(route = MainNavigation.editProfile.fullPath) {
+                        EditeProfileScene(onNavigate = { navigator.navigate(it.fullPath) })
+                    }
+                    scene(route = MainNavigation.contact.fullPath) {
+                        ContactUsScene()
+                    }
+                    scene(route = MainNavigation.planHistory.fullPath) {
+                        PlanHistoryScene(onBack = { navigator.popBackStack() })
+                    }
+                    scene(route = MainNavigation.plan.fullPath) {
+                        PlansScene()
+                    }
+                    //************************ Customer *********************************//
+                    scene(route = MainNavigation.newCustomer.fullPath) {
+                        AddNewCustomerScene(
+                            onNavigate = { navigator.navigate(it.fullPath) },
+                            onBack = { navigator.popBackStack() })
+                    }
+                    scene(route = MainNavigation.customerProfile.fullPath) {
+                        CustomerProfileScene(
+                            onNavigate = { navigator.navigate(it.fullPath) },
+                            onBack = { navigator.popBackStack() })
+                    }
                 }
             }
         }

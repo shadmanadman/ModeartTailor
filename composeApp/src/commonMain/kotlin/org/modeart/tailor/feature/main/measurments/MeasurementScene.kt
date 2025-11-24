@@ -175,7 +175,7 @@ fun MeasurementTypeSelection(viewModel: MeasurementViewModel,viewModelNewCustome
             labelColor = Accent,
             iconResId = Res.drawable.ic_fast_measure,
             onClick = {
-                viewModelNewCustomer.updateStep(NewCustomerSteps.FastSize)
+                viewModelNewCustomer.updateStep(NewCustomerSteps.BasicInfo)
                 viewModel.measurementTypeSelected(MeasurementType.FastSize)
             })
 

@@ -71,6 +71,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.model.customer.CustomerBodyForm
 import org.modeart.tailor.model.customer.CustomerGender
@@ -214,6 +215,7 @@ fun StyleFeatures(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                         customerShoulderType = selectedShoulder?.type as CustomerShoulder,
                         fabricSensitivity = fabricSensitivity ?: ""
                     )
+                    viewModel.updateStep(NewCustomerSteps.SupplementaryInfo)
                 })
 
 

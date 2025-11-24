@@ -69,12 +69,14 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
         effects.trySend(NoteUiEffect.Navigation(MainNavigation.editProfile))
     }
 
+    fun emptyNewNote(){
+        _uiState.update { it.copy(newNoteContent = "", newNoteCategory = NoteCategory.WORK, newNoteTitle = "") }
+    }
 
     fun getAllNotes() {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
-            val response = businessService.getBusinessNotes()
-            when (response) {
+            when (val response = businessService.getBusinessNotes()) {
                 is ApiResult.Error -> {
                     effects.send(
                         NoteUiEffect.ShowRawNotification(
@@ -120,6 +122,7 @@ class NoteViewModel(private val businessService: BusinessService) : ViewModel() 
                             msg = Res.string.note_registered
                         )
                     )
+                    effects.send(NoteUiEffect.OnBack)
                     _uiState.update { it.copy(isLoading = false) }
                 }
             }

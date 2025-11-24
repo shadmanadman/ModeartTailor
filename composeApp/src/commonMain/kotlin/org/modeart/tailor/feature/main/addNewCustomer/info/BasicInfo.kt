@@ -1,5 +1,6 @@
 package org.modeart.tailor.feature.main.addNewCustomer.info
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -22,6 +23,7 @@ import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -55,6 +57,7 @@ import modearttailor.composeapp.generated.resources.customer_basic_info
 import modearttailor.composeapp.generated.resources.customer_name_family_name
 import modearttailor.composeapp.generated.resources.customer_picture
 import modearttailor.composeapp.generated.resources.ic_add_photo
+import modearttailor.composeapp.generated.resources.ic_close
 import modearttailor.composeapp.generated.resources.ic_man
 import modearttailor.composeapp.generated.resources.ic_upload
 import modearttailor.composeapp.generated.resources.ic_woman
@@ -68,6 +71,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.OutlinedTextFieldModeArt
 import org.modeart.tailor.common.RoundedCornerButton
 import org.modeart.tailor.feature.main.addNewCustomer.NewCustomerViewModel
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerUiState
 import org.modeart.tailor.model.customer.CustomerGender
 import org.modeart.tailor.platform.PermissionCallback
@@ -87,7 +91,7 @@ import kotlin.time.Instant
 @Composable
 @Preview
 fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
-    var selectedGender by remember { mutableStateOf(state.customer.gender?: CustomerGender.MALE) }
+    var selectedGender by remember { mutableStateOf(state.customer.gender ?: CustomerGender.MALE) }
     var customerName by remember { mutableStateOf(state.customer.name) }
     var customerPhoneNumber by remember { mutableStateOf(state.customer.phoneNumber) }
     var customerAge by remember { mutableStateOf(state.customer.age) }
@@ -104,7 +108,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
 
     LaunchedEffect(selectedImageByteArray.value) {
         selectedImageByteArray.value?.let {
-            viewModel.uploadImage(isAvatar = true,it)
+            viewModel.uploadImage(isAvatar = true, it)
         }
     }
 
@@ -184,15 +188,16 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                 hint = stringResource(Res.string.customer_name_family_name)
             )
             OutlinedTextFieldModeArt(
+                isNumberOnly = true,
                 value = customerPhoneNumber.toString(),
                 onValueChange = { customerPhoneNumber = it },
                 hint = stringResource(Res.string.mobile_number_customer)
             )
 
             OutlinedTextFieldModeArt(
-                value = customerAge?:"",
+                value = customerAge ?: "",
                 isNumberOnly = true,
-                onValueChange = {customerAge = it},
+                onValueChange = { customerAge = it },
                 hint = stringResource(Res.string.age)
             )
         }
@@ -212,33 +217,54 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
             Box(
                 modifier = Modifier.padding(end = 8.dp).size(64.dp)
                     .clip(shape = RoundedCornerShape(16.dp))
-                    .clickable(onClick = { launchGallery = true }),
+                    .clickable(onClick = {
+                        selectedImageBitmap.value = null
+                        selectedImageByteArray.value = null
+                    }),
                 contentAlignment = Alignment.Center
             ) {
                 selectedImageBitmap.value?.let {
-                    Image(bitmap = it, contentDescription = null, contentScale = ContentScale.Crop)
+                    Image(
+                        bitmap = it,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                    Icon(
+                        modifier = Modifier.padding(6.dp).size(12.dp).align(Alignment.TopEnd),
+                        painter = painterResource(Res.drawable.ic_close),
+                        tint = Color.Red,
+                        contentDescription = "Remove image"
+                    )
+
                 }
             }
             // Upload
-            Box(
-                modifier = Modifier.padding(end = 16.dp).size(64.dp)
-                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
-                    .clickable(onClick = { launchGallery = true }),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(painter = painterResource(Res.drawable.ic_upload), contentDescription = null)
+            AnimatedVisibility(selectedImageBitmap.value == null) {
+                Box(
+                    modifier = Modifier.padding(end = 16.dp).size(64.dp)
+                        .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
+                        .clickable(onClick = { launchGallery = true }),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_upload),
+                        contentDescription = null
+                    )
+                }
             }
             // Take picture
-            Box(
-                modifier = Modifier.size(64.dp)
-                    .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
-                    .clickable(onClick = { launchCamera = true }),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_add_photo),
-                    contentDescription = null
-                )
+            AnimatedVisibility(selectedImageBitmap.value == null) {
+                Box(
+                    modifier = Modifier.size(64.dp)
+                        .background(color = AccentLight, shape = RoundedCornerShape(16.dp))
+                        .clickable(onClick = { launchCamera = true }),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_add_photo),
+                        contentDescription = null
+                    )
+                }
             }
         }
 
@@ -255,6 +281,7 @@ fun BasicInfo(state: NewCustomerUiState, viewModel: NewCustomerViewModel) {
                         phoneNumber = customerPhoneNumber ?: "",
                         birth = customerAge ?: "",
                     )
+                    viewModel.updateStep(NewCustomerSteps.StyleFeature)
                 })
 
             RoundedCornerButton(

@@ -179,7 +179,7 @@ fun Route.configureUpload() {
                 when (part) {
                     is PartData.FileItem -> {
                         val name = "${UUID.randomUUID()}.png"
-                        val file = File("uploads/$name")
+                        val file = File("/home/modeart-server/uploads/$name")
                         file.parentFile.mkdirs()
                         part.streamProvider().use { it.copyTo(file.outputStream()) }
                         imageUrl = "uploads/$name"

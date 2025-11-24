@@ -10,7 +10,7 @@ services:
       - ktor-net
 
   ktor:
-    image: modeart-1.2.0:latest
+    image: modeart-1.3.0:latest
     container_name: ktor-server
     depends_on:
       - mongo

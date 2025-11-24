@@ -213,4 +213,5 @@
     <string name="upper_body">بالاتنه</string>
     <string name="sleeves">دست</string>
     <string name="fast_size">اندازه سریع</string>
+    <string name="no_customer_founded">هیج مشتری پیدا نشد</string>
 </resources>
