@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
@@ -36,20 +38,33 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.active_plan
+import modearttailor.composeapp.generated.resources.buy_new_plan
+import modearttailor.composeapp.generated.resources.buy_new_plan_to_access
 import modearttailor.composeapp.generated.resources.current_plan
 import modearttailor.composeapp.generated.resources.expired_plan
+import modearttailor.composeapp.generated.resources.ic_danger
+import modearttailor.composeapp.generated.resources.ic_logout
 import modearttailor.composeapp.generated.resources.monthly_plan_title
+import modearttailor.composeapp.generated.resources.no_purchase_has_been_made
 import modearttailor.composeapp.generated.resources.pending_plan
 import modearttailor.composeapp.generated.resources.plan_upgrade
+import modearttailor.composeapp.generated.resources.save_size
 import modearttailor.composeapp.generated.resources.subtitle_digital_notebook
 import modearttailor.composeapp.generated.resources.yearly_plan_title
+import modearttailor.composeapp.generated.resources.your_plan_has_been_ended
+import modearttailor.composeapp.generated.resources.your_plan_history
 import moe.tlaster.precompose.koin.koinViewModel
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.modeart.tailor.common.MainToolbar
+import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.addNewCustomer.contract.NewCustomerSteps
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.business.PlanStatus
 import org.modeart.tailor.model.business.PlanType
+import org.modeart.tailor.navigation.MainNavigation
+import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
@@ -59,39 +74,138 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @Composable
-fun PlanHistoryScene(onBack: () -> Unit) {
+fun PlanHistoryScene(onBack: () -> Unit,onNavigate: (Route) -> Unit) {
     val viewModel = koinViewModel(ProfileViewModel::class)
     val state by viewModel.uiState.collectAsState()
-    PlanHistoryContent(state.plans, state.remainingPlanInDays.toString(),onBack)
+    PlanHistoryContent(state.plans, state.remainingPlanInDays.toString(), onBack,onNavigate)
 }
 
 @Composable
-fun PlanHistoryContent(plans: List<BusinessProfile.Plan>, remainingDays: String,onBack:()-> Unit) {
-    Column(modifier = Modifier.background(Background)) {
-        MainToolbar(stringResource(Res.string.plan_upgrade)) {
-            onBack()
-        }
-
-        Box(Modifier.fillMaxWidth().background(AccentLight).padding(12.dp)) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = stringResource(Res.string.current_plan),
-                    style = appTypography().title18
-                )
-                Text(
-                    text = stringResource(Res.string.subtitle_digital_notebook),
-                    style = appTypography().body14
-                )
-                CurrentPlanCard(plans.first { it.planStatus == PlanStatus.ACTIVE }, remainingDays)
+fun PlanHistoryContent(
+    plans: List<BusinessProfile.Plan>,
+    remainingDays: String,
+    onBack: () -> Unit,
+    onNavigate: (Route) -> Unit
+) {
+    val currentPlan = plans.firstOrNull { it.planStatus == PlanStatus.ACTIVE }
+    Box(modifier = Modifier.fillMaxSize().background(Background)) {
+        Column() {
+            MainToolbar(stringResource(Res.string.plan_upgrade)) {
+                onBack()
             }
-        }
 
-        LazyColumn {
-            items(plans.size){
-                HistoryItem(plans[it])
+            Box(
+                Modifier.fillMaxWidth().background(AccentLight).padding(12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = stringResource(Res.string.current_plan),
+                        style = appTypography().title18
+                    )
+                    Text(
+                        text = stringResource(Res.string.subtitle_digital_notebook),
+                        style = appTypography().body14
+                    )
+                    if (currentPlan == null)
+                        NoCurrentPlan()
+                    else
+                        CurrentPlanCard(currentPlan, remainingDays)
+
+                }
+            }
+
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(Res.string.your_plan_history),
+                style = appTypography().title17
+            )
+
+            if (plans.isEmpty())
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    text = stringResource(Res.string.no_purchase_has_been_made),
+                    style = appTypography().title17
+                )
+            else
+                LazyColumn {
+                    items(plans.size) {
+                        HistoryItem(plans[it])
+                    }
+                }
+
+        }
+        RoundedCornerButton(
+            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 64.dp),
+            isEnabled = true,
+            text = stringResource(Res.string.buy_new_plan)
+        ) {
+            onNavigate(MainNavigation.plan)
+        }
+    }
+}
+
+@Composable
+fun NoCurrentPlan() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF2C2420)
+            ),
+            modifier = Modifier
+                .width(260.dp)
+                .padding(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            color = Color(0xFFDFCBA6),
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_danger),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(12.dp))
+
+                Text(
+                    text = stringResource(Res.string.your_plan_has_been_ended),
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = stringResource(Res.string.buy_new_plan_to_access),
+                    color = Color(0xFFD0C6B6),
+                    fontSize = 14.sp
+                )
             }
         }
     }

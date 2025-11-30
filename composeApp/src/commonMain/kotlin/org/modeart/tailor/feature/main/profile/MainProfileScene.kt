@@ -187,7 +187,7 @@ fun MainProfileContent(state: ProfileUiState, viewmodel: ProfileViewModel) {
                 text = stringResource(Res.string.update_plan),
                 icon = vectorResource(Res.drawable.ic_credit_card)
             ) {
-                viewmodel.navigateToEditProfile()
+                viewmodel.navigateToPlans()
             }
             MenuItem(
                 text = stringResource(Res.string.about_modart),

@@ -6,8 +6,12 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.config.HoconApplicationConfig
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.content.static
+import io.ktor.server.http.content.staticFiles
+import io.ktor.server.http.content.staticRootFolder
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
 import org.modeart.tailor.features.business.networking.businessRouting
@@ -17,6 +21,7 @@ import org.modeart.tailor.jwt.ACCESS_TOKEN_EXPIRATION
 import org.modeart.tailor.jwt.TokenConfig
 import org.modeart.tailor.jwt.authRoute
 import org.modeart.tailor.jwt.configureSecurity
+import java.io.File
 
 fun main() {
     embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module)
@@ -34,14 +39,13 @@ fun Application.module() {
     configureSecurity(tokenConfig)
     configureContentType()
     routing {
+        staticFiles("/images", File("static/pictures"))
         customerRouting()
         businessRouting()
         configureUpload()
         authRoute(tokenConfig)
     }
 }
-
-
 
 private fun Application.configureContentType(){
     install(ContentNegotiation) {

@@ -58,6 +58,10 @@ class ProfileViewModel(
         effects.trySend(ProfileUiEffect.Navigation(MainNavigation.contact))
     }
 
+    fun navigateToPlans(){
+        effects.trySend(ProfileUiEffect.Navigation(MainNavigation.planHistory))
+    }
+
     fun logout() {
         viewModelScope.launch {
             tokenService.logout()

@@ -89,7 +89,7 @@ internal fun App() {
                         ContactUsScene()
                     }
                     scene(route = MainNavigation.planHistory.fullPath) {
-                        PlanHistoryScene(onBack = { navigator.popBackStack() })
+                        PlanHistoryScene(onBack = { navigator.popBackStack() }, onNavigate = {navigator.navigate(it.fullPath)})
                     }
                     scene(route = MainNavigation.plan.fullPath) {
                         PlansScene()

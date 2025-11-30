@@ -45,7 +45,20 @@ enum class PlanStatus{ACTIVE,PENDING,EXPIRED}
 enum class PlanType { MONTHLY, YEARLY, NONE }
 enum class NoteCategory { PERSONAL, OTHERS, WORK }
 
-
+@Serializable
+data class BuyPlanRequest(val planType: PlanType,val description:String)
+@Serializable
+data class PaymentAddressRequest(val amount:Int,val description:String,val merchantId: String,val callbackUrl: String)
+@Serializable
+data class PaymentAddressResponse(val url: String)
+@Serializable
+data class ZarinpalResponse(
+    val code: Int,
+    val message: String,
+    val authority: String,
+    val feeType: String,
+    val fee: Int
+)
 @Serializable
 data class PhoneCheckRequest(val phoneNumber: String)
 

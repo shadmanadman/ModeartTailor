@@ -1,9 +1,18 @@
 package org.modeart.tailor.features.business.networking
 
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.append
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
-import io.ktor.http.content.streamProvider
+import io.ktor.http.headers
+import io.ktor.http.isSuccess
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
@@ -17,12 +26,17 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import org.bson.types.ObjectId
+import io.ktor.utils.io.jvm.javaio.toInputStream
 import org.modeart.tailor.HOST
 import org.modeart.tailor.features.business.di.BusinessModule
-import org.modeart.tailor.features.customer.di.CustomerModule
+import org.modeart.tailor.jwt.httpClient
 import org.modeart.tailor.model.business.BusinessProfile
+import org.modeart.tailor.model.business.BuyPlanRequest
 import org.modeart.tailor.model.business.ImageUploadResponse
+import org.modeart.tailor.model.business.PaymentAddressRequest
+import org.modeart.tailor.model.business.PaymentAddressResponse
+import org.modeart.tailor.model.business.PlanType
+import org.modeart.tailor.model.business.ZarinpalResponse
 import java.io.File
 import java.util.UUID
 
@@ -161,6 +175,47 @@ fun Route.businessRouting() {
                     call.respondText("Note not found", status = HttpStatusCode.NotFound)
                 }
             }
+
+
+            get("payment-address"){
+                val request = call.receive<BuyPlanRequest>()
+                val amount = if (request.planType == PlanType.MONTHLY) 1000 else 250000
+                try {
+                    val paymentAddressRequest = PaymentAddressRequest(
+                        amount = amount,
+                        description = "Buy ${request.planType} Plan",
+                        merchantId = "",
+                        callbackUrl = "$HOST/api/v1/payment-address"
+                    )
+
+                    val response: HttpResponse = httpClient.post("https://payment.zarinpal.com/pg/v4/payment/request.json") {
+                        headers {
+                            append(HttpHeaders.ContentType, ContentType.Application.Json)
+                        }
+                        setBody(paymentAddressRequest)
+                    }
+
+                    if (response.status.isSuccess()) {
+                        val paymentAddressResponse: ZarinpalResponse = response.body()
+                        val paymentAddress = "https://payment.zarinpal.com/pg/StartPay/result['data'][${paymentAddressResponse.authority}]"
+                        // Handle successful response from zarinpal
+                        call.respond(
+                            HttpStatusCode.OK,
+                            call.respond(PaymentAddressResponse(url = paymentAddress))
+                        )
+                    } else {
+                        // Handle error response from zarinpal
+                        val errorBody = response.bodyAsText()
+                        call.respond(HttpStatusCode.InternalServerError, "Failed to get payment address: $errorBody")
+                    }
+                } catch (e: Exception) {
+                    println("Exception sending OTP: ${e.message}")
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        "An error occurred while sending the OTP."
+                    )
+                }
+            }
         }
     }
 
@@ -178,11 +233,8 @@ fun Route.configureUpload() {
             multipart.forEachPart { part ->
                 when (part) {
                     is PartData.FileItem -> {
-                        val name = "${UUID.randomUUID()}.png"
-                        val file = File("/home/modeart-server/uploads/$name")
-                        file.parentFile.mkdirs()
-                        part.streamProvider().use { it.copyTo(file.outputStream()) }
-                        imageUrl = "uploads/$name"
+                        val fileName = part.save(Constants.UPLOAD_PATH)
+                        imageUrl = "${Constants.EXTERNAL_UPLOAD_PATH}/$fileName"
                     }
 
                     else -> Unit
@@ -196,4 +248,24 @@ fun Route.configureUpload() {
                 call.respond(HttpStatusCode.BadRequest, "No file uploaded")
         }
     }
+}
+
+object Constants {
+    const val STATIC_ROOT = "static/"
+    const val UPLOADS_DIRECTORY = "pictures/"
+    const val UPLOAD_PATH = "$STATIC_ROOT/$UPLOADS_DIRECTORY"
+    const val EXTERNAL_UPLOAD_PATH = "/images"
+}
+
+fun PartData.FileItem.save(path: String): String {
+    val fileBytes = provider().toInputStream().readBytes()
+    val fileExtension = originalFileName?.takeLastWhile { it != '.' }
+    val fileName = UUID.randomUUID().toString() + "." + fileExtension
+    val folder = File(path)
+    if (!folder.parentFile.exists()) {
+        folder.parentFile.mkdirs()
+    }
+    folder.mkdir()
+    File("$path$fileName").writeBytes(fileBytes)
+    return fileName
 }

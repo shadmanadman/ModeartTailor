@@ -214,4 +214,9 @@
     <string name="sleeves">دست</string>
     <string name="fast_size">اندازه سریع</string>
     <string name="no_customer_founded">هیج مشتری پیدا نشد</string>
+    <string name="your_plan_has_been_ended">اشتراک شما به پایان رسیده.</string>
+    <string name="buy_new_plan_to_access">برای دسترسی پلن جدید خریداری نمایید.</string>
+    <string name="your_plan_history">تاریخچه خرید شما</string>
+    <string name="no_purchase_has_been_made">خریدی انحام نشده</string>
+    <string name="buy_new_plan">خرید اشتراک جدید</string>
 </resources>
