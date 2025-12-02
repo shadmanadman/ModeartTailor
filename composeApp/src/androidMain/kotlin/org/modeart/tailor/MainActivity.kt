@@ -1,5 +1,7 @@
 package org.modeart.tailor
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +16,19 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             App()
+        }
+
+        val action: String? = intent?.action
+        val data: Uri? = intent?.data
+
+        if (Intent.ACTION_VIEW == action && data != null) {
+            if (data.scheme == "modeart" && data.host == "payment_result") {
+
+                val authority = data.getQueryParameter("authority")
+                val status = data.getQueryParameter("status")
+
+                println("Payment Status: $status")
+            }
         }
     }
 }

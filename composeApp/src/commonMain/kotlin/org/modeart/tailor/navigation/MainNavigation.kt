@@ -25,6 +25,8 @@ object MainNavigation : Navigation {
     val measure = Route(name = "measure", fullPath = "measure")
     val customers = Route(name = "customer", fullPath = "customer/{mode}")
     val customerProfile = Route(name = "customerProfile", fullPath = "customerProfile")
+    val customerSizeView = Route(name = "customerSizeView", fullPath = "customerSizeView")
+
     val newCustomer = Route(name = "new_customer", fullPath = "new_customer/{mode}")
     val note = Route(name = "note")
 }

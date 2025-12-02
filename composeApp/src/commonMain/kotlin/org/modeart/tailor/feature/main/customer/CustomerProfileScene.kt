@@ -69,6 +69,7 @@ import org.modeart.tailor.feature.main.customer.contract.CustomerUiState
 import org.modeart.tailor.model.business.BusinessProfile
 import org.modeart.tailor.model.customer.CustomerProfile
 import org.modeart.tailor.model.customer.SizeType
+import org.modeart.tailor.navigation.MainNavigation
 import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
@@ -100,11 +101,14 @@ fun CustomerProfileScene(onNavigate: (Route) -> Unit,onBack:()-> Unit) {
     }
 
 
-    CustomerProfileContent(state.selectedCustomer ?: CustomerProfile(),onBack)
+    CustomerProfileContent(state.selectedCustomer ?: CustomerProfile(),onBack, onSizeClicked = {
+        viewModel.selectedSize(it)
+        onNavigate(MainNavigation.customerSizeView)
+    })
 }
 
 @Composable
-fun CustomerProfileContent(profile: CustomerProfile,onBack: () -> Unit) {
+fun CustomerProfileContent(profile: CustomerProfile,onBack: () -> Unit,onSizeClicked:(CustomerProfile.Size)-> Unit) {
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
         ProfileHeaderCard(profile,onBack)
         LazyColumn {
@@ -112,7 +116,10 @@ fun CustomerProfileContent(profile: CustomerProfile,onBack: () -> Unit) {
                 MeasurementItem(
                     profile.sizes?.get(it)?.createdAt ?: "",
                     profile.sizes?.get(it)?.type ?: emptyList(),
-                    profile.sizes?.get(it)?.createdAt ?: ""
+                    profile.sizes?.get(it)?.createdAt ?: "",
+                    onClick = {
+                        onSizeClicked(profile.sizes?.get(it)!!)
+                    }
                 )
             }
         }
@@ -236,7 +243,7 @@ fun ProfileActionButton(label: String, value: String) {
 }
 
 @Composable
-fun MeasurementItem(date: String, types: List<SizeType>, tag: String) {
+fun MeasurementItem(date: String, types: List<SizeType>, tag: String,onClick:()-> Unit) {
     var type = ""
     types.forEach { type += "/${it.toLocal()}" }
     val dateInPersian = PersianDateTime.parse(date.toLong())
@@ -245,7 +252,7 @@ fun MeasurementItem(date: String, types: List<SizeType>, tag: String) {
             .padding(18.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .clickable { /* Handle item click */ },
+            .clickable { onClick() },
         border = BorderStroke(1.dp, Accent),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {

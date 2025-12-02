@@ -19,6 +19,7 @@ import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondRedirect
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -27,6 +28,7 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.utils.io.jvm.javaio.toInputStream
+import org.modeart.tailor.BASE_URL
 import org.modeart.tailor.HOST
 import org.modeart.tailor.features.business.di.BusinessModule
 import org.modeart.tailor.jwt.httpClient
@@ -177,7 +179,7 @@ fun Route.businessRouting() {
             }
 
 
-            get("payment-address"){
+            get("payment/address"){
                 val request = call.receive<BuyPlanRequest>()
                 val amount = if (request.planType == PlanType.MONTHLY) 1000 else 250000
                 try {
@@ -185,7 +187,7 @@ fun Route.businessRouting() {
                         amount = amount,
                         description = "Buy ${request.planType} Plan",
                         merchantId = "",
-                        callbackUrl = "$HOST/api/v1/payment-address"
+                        callbackUrl = "http://$BASE_URL:8080/payment/callback"
                     )
 
                     val response: HttpResponse = httpClient.post("https://payment.zarinpal.com/pg/v4/payment/request.json") {
@@ -215,6 +217,30 @@ fun Route.businessRouting() {
                         "An error occurred while sending the OTP."
                     )
                 }
+            }
+
+            get("/payment/callback") {
+                val queryParams = call.request.queryParameters
+                val status = queryParams["Status"]
+                val authority = queryParams["Authority"]
+
+                // 2. Determine success or failure and set internal variables
+                val internalStatus: String
+                val internalAuthority: String = authority ?: "unknown"
+
+                if (status == "OK") {
+                    // IMPORTANT: The backend 'verify' method should only be called here.
+                    // callVerificationAPI(internalAuthority) // <-- Your API call goes here
+                    internalStatus = "success"
+                } else {
+                    // Status is "NOK" (Failed or Cancelled)
+                    internalStatus = "failure"
+                }
+
+                // 3. Construct the Deep Link URL with clean, English keys for the app
+                val deepLinkUrl = "modeart://payment_result?authority=$internalAuthority&status=$internalStatus"
+
+                call.respondRedirect(deepLinkUrl, permanent = false)
             }
         }
     }

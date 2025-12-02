@@ -23,6 +23,8 @@
     <string name="customer">مشتری</string>
     <string name="note">یادداشت</string>
     <string name="search_in_customers">جستجو در مشتریان</string>
+    <string name="search_in_sizes">جستجو در اندازه</string>
+
     <string name="referred_name">نام معرف</string>
     <string name="all_customer">همه مشتریان</string>
     <string name="this_month_customer">مشتریان این ماه</string>

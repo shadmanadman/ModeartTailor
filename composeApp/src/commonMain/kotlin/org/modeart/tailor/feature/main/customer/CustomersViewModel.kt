@@ -51,6 +51,10 @@ class CustomersViewModel(private val businessService: BusinessService): ViewMode
         _uiState.update { it.copy(selectedCustomer = customer) }
     }
 
+    fun selectedSize(size: CustomerProfile.Size){
+        _uiState.update { it.copy(selectedSize = size) }
+    }
+
     fun searchQueryChanged(query: String){
         _uiState.update { it.copy(searchQuery = query) }
     }

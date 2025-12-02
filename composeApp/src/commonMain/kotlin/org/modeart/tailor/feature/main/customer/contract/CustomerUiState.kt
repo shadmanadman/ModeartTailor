@@ -7,5 +7,6 @@ data class CustomerUiState(
     val businessCustomers:List<CustomerProfile> = emptyList(),
     val customerListFilter: CustomerFilter = CustomerFilter.ALPHABETIC,
     val selectedCustomer: CustomerProfile? = null,
+    val selectedSize: CustomerProfile.Size? = null,
     val searchQuery: String = ""
 )

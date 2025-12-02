@@ -23,6 +23,7 @@ import org.modeart.tailor.jwt.authRoute
 import org.modeart.tailor.jwt.configureSecurity
 import java.io.File
 
+const val BASE_URL = "194.60.231.174"
 fun main() {
     embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
