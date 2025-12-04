@@ -27,6 +27,8 @@ startup = "1.2.0"
 accompanist-permissions = "0.32.0"
 coil = "3.3.0"
 kotlinxDateTime = "0.7.1"
+browser = "1.8.0"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -83,6 +85,9 @@ coil-http = {module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coi
 
 kotlinx-date-time = {module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDateTime"}
 persian-date-time = {module = "io.github.faridsolgi:persianDateTime", version = "0.2.3"}
+
+browser = { module = "androidx.browser:browser", version.ref = "browser" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }

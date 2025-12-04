@@ -16,7 +16,9 @@ import io.ktor.http.HttpHeaders
 import org.modeart.tailor.api.ApiResult
 import org.modeart.tailor.api.safeRequest
 import org.modeart.tailor.model.business.BusinessProfile
+import org.modeart.tailor.model.business.BuyPlanRequest
 import org.modeart.tailor.model.business.ImageUploadResponse
+import org.modeart.tailor.model.business.PaymentAddressResponse
 import org.modeart.tailor.model.customer.CustomerProfile
 
 class BusinessRepo(private val client: HttpClient) : BusinessService {
@@ -74,6 +76,13 @@ class BusinessRepo(private val client: HttpClient) : BusinessService {
                         }
                     )
                 )
+            }.body()
+        }
+
+    override suspend fun createPaymentUrl(buyPlanRequest: BuyPlanRequest): ApiResult<PaymentAddressResponse> =
+        safeRequest {
+            client.post("payment/address"){
+                setBody(buyPlanRequest)
             }.body()
         }
 

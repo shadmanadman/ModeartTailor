@@ -187,7 +187,7 @@ fun Route.businessRouting() {
                         amount = amount,
                         description = "Buy ${request.planType} Plan",
                         merchantId = "",
-                        callbackUrl = "http://$BASE_URL:8080/payment/callback"
+                        callbackUrl = "http://$BASE_URL:8080/payment/callback/?plan=${request.planType}"
                     )
 
                     val response: HttpResponse = httpClient.post("https://payment.zarinpal.com/pg/v4/payment/request.json") {
@@ -223,22 +223,20 @@ fun Route.businessRouting() {
                 val queryParams = call.request.queryParameters
                 val status = queryParams["Status"]
                 val authority = queryParams["Authority"]
+                val planType = queryParams["plan"]
 
                 // 2. Determine success or failure and set internal variables
                 val internalStatus: String
                 val internalAuthority: String = authority ?: "unknown"
 
                 if (status == "OK") {
-                    // IMPORTANT: The backend 'verify' method should only be called here.
-                    // callVerificationAPI(internalAuthority) // <-- Your API call goes here
                     internalStatus = "success"
                 } else {
-                    // Status is "NOK" (Failed or Cancelled)
                     internalStatus = "failure"
                 }
 
                 // 3. Construct the Deep Link URL with clean, English keys for the app
-                val deepLinkUrl = "modeart://payment_result?authority=$internalAuthority&status=$internalStatus"
+                val deepLinkUrl = "modeart://payment_result?authority=$internalAuthority&status=$internalStatus&plan=$planType"
 
                 call.respondRedirect(deepLinkUrl, permanent = false)
             }

@@ -20,6 +20,8 @@ interface BusinessDao {
     suspend fun updateOne(objectId: String, businessProfile: BusinessProfile): Long
 
     suspend fun updateAvatar(objectId: String, avatarUrl: String): Long
+    suspend fun updatePlan(objectId: String, plan: BusinessProfile.Plan): Long
+
 
     suspend fun insertNote(businessId: String, note: BusinessProfile.Notes): Long?
 

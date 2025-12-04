@@ -46,7 +46,7 @@ enum class PlanType { MONTHLY, YEARLY, NONE }
 enum class NoteCategory { PERSONAL, OTHERS, WORK }
 
 @Serializable
-data class BuyPlanRequest(val planType: PlanType,val description:String)
+data class BuyPlanRequest(val planType: PlanType)
 @Serializable
 data class PaymentAddressRequest(val amount:Int,val description:String,val merchantId: String,val callbackUrl: String)
 @Serializable

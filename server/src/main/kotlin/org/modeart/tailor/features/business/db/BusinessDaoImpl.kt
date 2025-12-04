@@ -139,6 +139,23 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
         return 0
     }
 
+    override suspend fun updatePlan(
+        objectId: String,
+        plan: BusinessProfile.Plan
+    ): Long {
+        return try {
+            val collection = mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
+            val query = Filters.eq("id", objectId)
+            val update =
+                Updates.push(BusinessProfile::plan.name, plan)
+            val result: UpdateResult = collection.updateOne(query, update)
+            result.modifiedCount
+        } catch (e: MongoException) {
+            System.err.println("Error adding plan to business $objectId: $e")
+            0L
+        }
+    }
+
     override suspend fun insertNote(businessId: String, note: BusinessProfile.Notes): Long? {
         return try {
             val collection = mongoDatabase.getCollection<BusinessProfile>(BUSINESS_COLLECTION)
@@ -191,6 +208,5 @@ class BusinessDaoImpl(private val mongoDatabase: MongoDatabase) : BusinessDao {
         }
     }
 
-    
-    
+
 }

@@ -21,8 +21,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,6 +35,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.ic_calender_date_yearly
 import modearttailor.composeapp.generated.resources.monthly_plan_access
@@ -50,8 +57,12 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.modeart.tailor.common.InAppNotification
 import org.modeart.tailor.common.RoundedCornerButton
+import org.modeart.tailor.feature.main.plans.contract.PlanUiEffect
+import org.modeart.tailor.feature.main.profile.contract.ProfileUiEffect
 import org.modeart.tailor.model.business.PlanType
+import org.modeart.tailor.platform.openWebBrowser
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.Background
 import org.modeart.tailor.theme.Primary
@@ -61,12 +72,39 @@ import org.modeart.tailor.theme.appTypography
 fun PlansDetailsScene() {
     val viewModel = koinViewModel(PlansViewModel::class)
     val state by viewModel.uiState.collectAsState()
-    PlansDetailsContent(state.selectedPlan)
+    val effects = viewModel.effects.receiveAsFlow()
+    var notification by remember { mutableStateOf<PlanUiEffect.ShowRawNotification?>(null) }
+    var paymentUrl by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(effects) {
+        effects.onEach { effect ->
+            when (effect) {
+                is PlanUiEffect.Navigation -> Unit
+                is PlanUiEffect.ShowRawNotification -> {
+                    notification = effect
+                }
+
+                is PlanUiEffect.ShowLocalizedNotification -> {}
+                is PlanUiEffect.SendToPayment -> {paymentUrl = effect.url}
+            }
+        }.collect()
+    }
+    notification?.let { notif ->
+        InAppNotification(message = notif.msg, networkErrorCode = notif.errorCode) {
+            notification = null
+        }
+    }
+    LaunchedEffect(paymentUrl){
+        paymentUrl?.let {
+            openWebBrowser(it)
+        }
+    }
+    PlansDetailsContent(state.selectedPlan, viewModel)
 }
 
 
 @Composable
-fun PlansDetailsContent(planType: PlanType) {
+fun PlansDetailsContent(planType: PlanType,plansViewModel: PlansViewModel) {
     Column(
         modifier = Modifier.fillMaxSize().background(Background),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -110,7 +148,7 @@ fun PlansDetailsContent(planType: PlanType) {
         RoundedCornerButton(
             isEnabled = true,
             text = stringResource(Res.string.pay),
-            onClick = { /*TODO*/ },
+            onClick = { plansViewModel.generatePaymentUrl() },
             backgroundColor = Primary,
             textColor = Color.White
         )
@@ -221,9 +259,9 @@ fun SubscriptionDetails(text: String, textColor: Color, bulletPointColor: Color)
         Text(text = text, style = appTypography().title16, color = textColor)
     }
 }
-
-@Composable
-@Preview
-fun PlansDetailsPreview() {
-    PlansDetailsContent(PlanType.YEARLY)
-}
+//
+//@Composable
+//@Preview
+//fun PlansDetailsPreview() {
+//    PlansDetailsContent(PlanType.YEARLY)
+//}

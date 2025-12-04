@@ -3,7 +3,9 @@ package org.modeart.tailor.api.business
 import io.ktor.client.statement.HttpResponse
 import org.modeart.tailor.api.ApiResult
 import org.modeart.tailor.model.business.BusinessProfile
+import org.modeart.tailor.model.business.BuyPlanRequest
 import org.modeart.tailor.model.business.ImageUploadResponse
+import org.modeart.tailor.model.business.PaymentAddressResponse
 import org.modeart.tailor.model.customer.CustomerProfile
 
 interface BusinessService {
@@ -19,4 +21,6 @@ interface BusinessService {
 
     suspend fun searchCustomers(query: String): ApiResult<List<CustomerProfile>>
     suspend fun uploadImage(byteArray: ByteArray): ApiResult<ImageUploadResponse>
+
+    suspend fun createPaymentUrl(buyPlanRequest: BuyPlanRequest) : ApiResult<PaymentAddressResponse>
 }

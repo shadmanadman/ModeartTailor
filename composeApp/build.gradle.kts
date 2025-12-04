@@ -36,6 +36,7 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.androidx.startup)
             implementation(libs.accompanist.permissions)
+            implementation(libs.browser)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
