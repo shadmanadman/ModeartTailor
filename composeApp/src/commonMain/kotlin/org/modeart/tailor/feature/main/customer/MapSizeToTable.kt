@@ -111,7 +111,7 @@ fun mapLowerBodySizeToSizeTable(lowerBodySizes: CustomerProfile.LowerBodySizes):
 }
 
 @Composable
-fun convertUpperBodySizeToSizeTable(upperBodySizes: CustomerProfile.UpperBodySizes): List<SizeTable> {
+fun mapUpperBodySizeToSizeTable(upperBodySizes: CustomerProfile.UpperBodySizes): List<SizeTable> {
 
     return listOf(
         SizeTable(

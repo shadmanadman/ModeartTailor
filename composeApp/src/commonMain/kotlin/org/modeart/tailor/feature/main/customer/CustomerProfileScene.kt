@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -52,6 +53,7 @@ import modearttailor.composeapp.generated.resources.Res
 import modearttailor.composeapp.generated.resources.acquaintance_period
 import modearttailor.composeapp.generated.resources.code
 import modearttailor.composeapp.generated.resources.fast_size
+import modearttailor.composeapp.generated.resources.list_of_registered_sizes
 import modearttailor.composeapp.generated.resources.login
 import modearttailor.composeapp.generated.resources.lower_body
 import modearttailor.composeapp.generated.resources.measure
@@ -74,11 +76,12 @@ import org.modeart.tailor.navigation.Route
 import org.modeart.tailor.theme.Accent
 import org.modeart.tailor.theme.AccentLight
 import org.modeart.tailor.theme.Background
+import org.modeart.tailor.theme.Hint
 import org.modeart.tailor.theme.Primary
 import org.modeart.tailor.theme.appTypography
 
 @Composable
-fun CustomerProfileScene(onNavigate: (Route) -> Unit,onBack:()-> Unit) {
+fun CustomerProfileScene(onNavigate: (Route) -> Unit, onBack: () -> Unit) {
     val viewModel = koinViewModel(CustomersViewModel::class)
     val state by viewModel.uiState.collectAsState()
     val effects = viewModel.effects.receiveAsFlow()
@@ -101,22 +104,31 @@ fun CustomerProfileScene(onNavigate: (Route) -> Unit,onBack:()-> Unit) {
     }
 
 
-    CustomerProfileContent(state.selectedCustomer ?: CustomerProfile(),onBack, onSizeClicked = {
+    CustomerProfileContent(state.selectedCustomer ?: CustomerProfile(), onBack, onSizeClicked = {
         viewModel.selectedSize(it)
         onNavigate(MainNavigation.customerSizeView)
     })
 }
 
 @Composable
-fun CustomerProfileContent(profile: CustomerProfile,onBack: () -> Unit,onSizeClicked:(CustomerProfile.Size)-> Unit) {
+fun CustomerProfileContent(
+    profile: CustomerProfile,
+    onBack: () -> Unit,
+    onSizeClicked: (CustomerProfile.Size) -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize().background(Background)) {
-        ProfileHeaderCard(profile,onBack)
+        ProfileHeaderCard(profile, onBack)
+        Text(
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
+            textAlign = TextAlign.Center,
+            text = stringResource(Res.string.list_of_registered_sizes),
+            style = appTypography().title17.copy(fontWeight = FontWeight.Bold)
+        )
         LazyColumn {
             items(profile.sizes?.size ?: 0) {
                 MeasurementItem(
                     profile.sizes?.get(it)?.createdAt ?: "",
                     profile.sizes?.get(it)?.type ?: emptyList(),
-                    profile.sizes?.get(it)?.createdAt ?: "",
                     onClick = {
                         onSizeClicked(profile.sizes?.get(it)!!)
                     }
@@ -128,7 +140,7 @@ fun CustomerProfileContent(profile: CustomerProfile,onBack: () -> Unit,onSizeCli
 
 @Preview
 @Composable
-fun ProfileHeaderCard(customerProfile: CustomerProfile = CustomerProfile(),onBack: () -> Unit) {
+fun ProfileHeaderCard(customerProfile: CustomerProfile = CustomerProfile(), onBack: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -242,18 +254,20 @@ fun ProfileActionButton(label: String, value: String) {
     }
 }
 
+
 @Composable
-fun MeasurementItem(date: String, types: List<SizeType>, tag: String,onClick:()-> Unit) {
+fun MeasurementItem(date: String, types: List<SizeType>, onClick: () -> Unit) {
     var type = ""
-    types.forEach { type += "/${it.toLocal()}" }
+    types.forEach { type += "${it.toLocal()}/" }
     val dateInPersian = PersianDateTime.parse(date.toLong())
+
     Card(
         modifier = Modifier
             .padding(18.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() },
-        border = BorderStroke(1.dp, Accent),
+        border = BorderStroke(1.dp, Hint),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Row(
@@ -283,24 +297,25 @@ fun MeasurementItem(date: String, types: List<SizeType>, tag: String,onClick:()-
                 Text(
                     text = "${dateInPersian.day} ${dateInPersian.persianMonth().displayName} ${dateInPersian.year}",
                     color = Primary,
-                    style = appTypography().body14,
+                    style = appTypography().title16,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = type,
                     color = Color.Gray,
-                    style = appTypography().body13
+                    style = appTypography().body14
                 )
             }
         }
     }
 }
 
-private fun SizeType.toLocal(): StringResource{
-    return when(this){
-        SizeType.UpperBody -> Res.string.upper_body
-        SizeType.LowerBody -> Res.string.lower_body
-        SizeType.Sleeves -> Res.string.sleeve
-        SizeType.FastSize -> Res.string.fast_size
+@Composable
+private fun SizeType.toLocal(): String {
+    return when (this) {
+        SizeType.UpperBody -> stringResource(Res.string.upper_body)
+        SizeType.LowerBody -> stringResource(Res.string.lower_body)
+        SizeType.Sleeves -> stringResource(Res.string.sleeve)
+        SizeType.FastSize -> stringResource(Res.string.fast_size)
     }
 }

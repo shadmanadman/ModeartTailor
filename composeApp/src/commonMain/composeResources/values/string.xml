@@ -24,6 +24,7 @@
     <string name="note">یادداشت</string>
     <string name="search_in_customers">جستجو در مشتریان</string>
     <string name="search_in_sizes">جستجو در اندازه</string>
+    <string name="filter_sizes">فیلتر اندازه‌ها</string>
 
     <string name="referred_name">نام معرف</string>
     <string name="all_customer">همه مشتریان</string>
@@ -221,4 +222,5 @@
     <string name="your_plan_history">تاریخچه خرید شما</string>
     <string name="no_purchase_has_been_made">خریدی انحام نشده</string>
     <string name="buy_new_plan">خرید اشتراک جدید</string>
+    <string name="list_of_registered_sizes">لیست اندازه‌های ثبت شده</string>
 </resources>

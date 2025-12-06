@@ -30,7 +30,7 @@ val mainModule = module {
     single { CustomersViewModel(get()) }
     single { MeasurementViewModel() }
     single { NewCustomerViewModel(get(),get()) }
-    single { PlansViewModel() }
+    single { PlansViewModel(get()) }
     singleOf(::BusinessRepo).bind<BusinessService>()
     singleOf(::CustomerRepo).bind<CustomerService>()
     singleOf(::OnBoardingRepo).bind<OnBoardingService>()
